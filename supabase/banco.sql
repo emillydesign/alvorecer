@@ -85,3 +85,64 @@ create trigger ao_criar_conta after insert on auth.users for each row execute fu
 insert into public.novas_contas (user_id, email, criado, avisado)
 select id, email, created_at, true from auth.users u
 where not exists (select 1 from public.novas_contas n where n.user_id = u.id);
+
+-- ===== Travas contra abuso (uma pessoa não consegue gastar os recursos de todo mundo) =====
+-- 1) controle de e-mails: no máximo 1 e-mail do dia e 1 lembrete por pessoa por dia
+create table if not exists public.emails_enviados (
+  user_id uuid not null, dia date not null, tipo text not null, enviado_em timestamptz not null default now(),
+  primary key (user_id, dia, tipo)
+);
+alter table public.emails_enviados enable row level security;
+grant all on public.emails_enviados to service_role;
+
+-- 2) mensagens para a Emilly: até 5 por hora por pessoa e 40 por hora no total
+create or replace function public.limitar_feedback() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  new.user_id := auth.uid(); new.enviado := false; new.created_at := now();
+  if (select count(*) from public.feedback where created_at > now() - interval '1 hour') >= 40 then
+    raise exception 'Muitas mensagens agora. Tente de novo mais tarde.';
+  end if;
+  if new.user_id is not null and (select count(*) from public.feedback where user_id = new.user_id and created_at > now() - interval '1 hour') >= 5 then
+    raise exception 'Você já enviou várias mensagens nesta hora. Tente de novo mais tarde.';
+  end if;
+  return new;
+end $$;
+drop trigger if exists limite_feedback on public.feedback;
+create trigger limite_feedback before insert on public.feedback for each row execute function public.limitar_feedback();
+
+-- 3) espaço por conta: arquivo de até 3 MB, até 3.000 arquivos e 50 MB por pessoa
+alter table public.arquivos drop constraint if exists arquivo_tamanho;
+alter table public.arquivos add constraint arquivo_tamanho check (pg_column_size(data) <= 3000000 and char_length(path) <= 200) not valid;
+create or replace function public.limitar_arquivos() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  if tg_op = 'INSERT' and (select count(*) from public.arquivos where user_id = new.user_id) >= 3000 then
+    raise exception 'Sua conta atingiu o limite de arquivos.';
+  end if;
+  if pg_column_size(new.data) > 100000 and
+     (select coalesce(sum(pg_column_size(data)), 0) from public.arquivos where user_id = new.user_id and path <> new.path) + pg_column_size(new.data) > 50000000 then
+    raise exception 'Sua conta atingiu o limite de espaço.';
+  end if;
+  return new;
+end $$;
+drop trigger if exists limite_arquivos on public.arquivos;
+create trigger limite_arquivos before insert or update on public.arquivos for each row execute function public.limitar_arquivos();
+
+-- 4) IA: além do limite diário, no máximo 12 usos por minuto por pessoa
+alter table public.uso_ia add column if not exists minuto timestamptz;
+alter table public.uso_ia add column if not exists n_min int not null default 0;
+create or replace function public.registrar_uso_ia(uid uuid, d date) returns json
+language sql security definer set search_path = '' as $$
+  insert into public.uso_ia as u (user_id, dia, n, minuto, n_min) values (uid, d, 1, date_trunc('minute', now()), 1)
+  on conflict (user_id, dia) do update set
+    n = u.n + 1,
+    n_min = case when u.minuto = date_trunc('minute', now()) then u.n_min + 1 else 1 end,
+    minuto = date_trunc('minute', now())
+  returning json_build_object('n', n, 'n_min', n_min);
+$$;
+revoke all on function public.registrar_uso_ia(uuid, date) from public, anon, authenticated;
+grant execute on function public.registrar_uso_ia(uuid, date) to service_role;
+
+-- 5) aulas compartilhadas: apaga as antigas (agora a chave inclui uma impressão digital do pedido, ninguém consegue "envenenar" uma aula)
+delete from public.licoes_publicas;

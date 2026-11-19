@@ -1,8 +1,8 @@
 import { $, $$, esc, md, uid, today, ym, weekday, fmtDay, fmtShort, fmtMonth, holiday, isRestDay, prevStudyDay, weekStart, addDays, daysBetween, norm, schedule, isDue, shuffle } from './util.js';
-import { DemoStore, SupabaseStore, defaultState } from './store.js?v=52';
-import { ic, icoOf, initFx } from './fx.js?v=52';
+import { DemoStore, SupabaseStore, defaultState } from './store.js?v=53';
+import { ic, icoOf, initFx } from './fx.js?v=53';
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=52';
+import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=53';
 let sb = null;
 const authStorage = {
   _s: () => { try { return localStorage.getItem('pg_remember') === '0' ? sessionStorage : localStorage; } catch { return null; } },
@@ -10,10 +10,10 @@ const authStorage = {
   setItem(k, v) { try { this._s()?.setItem(k, v); } catch { } },
   removeItem(k) { try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch { } }
 };
-import { makeAI, NoKeyError } from './ai.js?v=52';
-import { speak, stopSpeaking, listen, canListen, canSpeak } from './speech.js?v=52';
-import { initSaude, cuidar, startAgua } from './saude.js?v=52';
-import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=52';
+import { makeAI, NoKeyError } from './ai.js?v=53';
+import { speak, stopSpeaking, listen, canListen, canSpeak } from './speech.js?v=53';
+import { initSaude, cuidar, startAgua } from './saude.js?v=53';
+import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=53';
 
 let C, S, AI;
 const app = $('#app');
@@ -23,7 +23,7 @@ const LS = { get: k => { try { return localStorage.getItem(k); } catch { return 
 function toast(msg, ms = 3200) { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(t._t); t._t = setTimeout(() => t.hidden = true, ms); }
 const grad = g => `background:linear-gradient(160deg,${g[0]},${g[1]})`;
 const spinner = (txt) => `<div class="loading"><span class="spin"></span>&nbsp; ${esc(txt)}</div>`;
-const errBox = (e) => `<div class="panel" style="margin-top:20px"><p><b>Ops.</b> ${esc(e.message || e)}</p>${e instanceof NoKeyError ? '<a class="btn btn-pink btn-sm" href="#/ajustes">Ir para Ajustes</a>' : '<button class="btn btn-ghost btn-sm" onclick="location.reload()">Tentar de novo</button>'}</div>`;
+const errBox = (e) => `<div class="panel" style="margin-top:20px"><p><b>Ops.</b> ${esc(e.message || e)}</p>${e instanceof NoKeyError ? '<a class="btn btn-pink btn-sm" href="#/ajustes">Ir para Ajustes</a>' : '<button class="btn btn-ghost btn-sm" data-reload>Tentar de novo</button>'}</div>`;
 const lang = id => C.languages.find(l => l.id === id) || (S?.state?.customLangs || []).find(l => l.id === id);
 const LOC = { hindi: 'hi-IN', holandes: 'nl-NL', sueco: 'sv-SE', grego: 'el-GR', hebraico: 'he-IL', polones: 'pl-PL', tailandes: 'th-TH', vietnamita: 'vi-VN', indonesio: 'id-ID', ucraniano: 'uk-UA', turco: 'tr-TR', 'portugues de portugal': 'pt-PT', catalao: 'ca-ES', dinamarques: 'da-DK', noruegues: 'nb-NO', finlandes: 'fi-FI', tcheco: 'cs-CZ', hungaro: 'hu-HU', romeno: 'ro-RO', malaio: 'ms-MY', filipino: 'fil-PH', tagalo: 'fil-PH', bengali: 'bn-IN', urdu: 'ur-PK', persa: 'fa-IR', suaili: 'sw-KE', latim: 'it-IT', guarani: 'es-PY', libras: 'pt-BR', irlandes: 'ga-IE', galego: 'gl-ES', basco: 'eu-ES', islandes: 'is-IS', croata: 'hr-HR', servio: 'sr-RS', bulgaro: 'bg-BG', eslovaco: 'sk-SK', lituano: 'lt-LT', estoniano: 'et-EE', afrikaans: 'af-ZA', tamil: 'ta-IN', punjabi: 'pa-IN', canto: 'zh-HK', cantones: 'zh-HK' };
 function addCustomLang(name) {
@@ -821,7 +821,7 @@ async function ajustes() {
     <div class="field"><label>Modelo</label><input id="gm" value="${esc(cf.model || '')}" placeholder="automático (recomendado)"><div class="help">Deixe vazio: o site escolhe sozinho o modelo mais atual do Google.</div></div>
     <button class="btn btn-ghost btn-sm" id="tst">Testar IA</button> <span class="small" id="tstm"></span></div>
   <div class="panel" style="margin-bottom:18px"><h3 style="margin-bottom:6px">E-mails</h3><p class="small muted" style="margin-bottom:14px">Um e-mail por dia, de segunda a sexta (fora feriados), com tudo o que você precisa: a aula do dia, as revisões e a sua conversação. Lembrete extra só se você marcar uma conversação e pedir o aviso.</p>
-    <div class="field"><label>E-mail que recebe as aulas</label><input id="em" value="${esc(cf.email || '')}"></div>
+    <div class="field"><label>E-mail que recebe as aulas</label><input id="em" value="${esc(S.user?.email || cf.email || '')}" readonly><div class="help">Os e-mails vão sempre para o e-mail da sua conta.</div></div>
     <label class="check small" style="margin-bottom:10px"><input type="checkbox" id="eon" style="width:auto" ${cf.emailsOn !== false ? 'checked' : ''}> Enviar e-mails</label>
     <div class="grid g2" style="margin-top:4px"><div class="field"><label>Horário do e-mail do dia</label><select id="hA">${Array.from({ length: 17 }, (_, i) => i + 6).map(h => `<option value="${h}" ${(cf.emailHoraAula ?? 8) === h ? 'selected' : ''}>${h}h</option>`).join('')}</select></div>
     <div class="field"><label>Conversação com o IAlvorecer</label><div class="small" id="convRes" style="margin-bottom:8px">${esc(convResumo())}</div><button class="btn btn-ghost btn-sm" data-agenda>Marcar conversação</button></div></div>
@@ -842,7 +842,7 @@ async function ajustes() {
     cs('lang:' + st.plan.main); if (st.plan.second) cs('lang:' + st.plan.second);
     const k = $('#gk').value.trim(); if (k !== cf.geminiKey) { cf.geminiKey = k; delete cf.noThinkCfg; delete cf.modelChains; }
     if ($('#gm').value.trim()) cf.model = $('#gm').value.trim(); else delete cf.model;
-    cf.email = $('#em').value.trim(); cf.emailHoraAula = +$('#hA').value; cf.emailsOn = $('#eon').checked; cf.pauseUntil = $('#pz').value || null;
+    cf.email = S.user?.email || cf.email; cf.emailHoraAula = +$('#hA').value; cf.emailsOn = $('#eon').checked; cf.pauseUntil = $('#pz').value || null;
     S.saveState(); S.saveConfig(); await S.flush(); $('#avatar').textContent = (st.profile.name || 'E')[0].toUpperCase(); toast('Ajustes salvos ✓');
   };
   $('#tst').onclick = async () => {
@@ -1142,7 +1142,7 @@ async function mentoria(sub) {
   $$('[data-mcv]').forEach(b => b.onclick = async () => { const box = $(`[data-mbox="${b.dataset.mcv}"]`); box.innerHTML = '<span class="spin"></span>'; const c = await S.getConvo(b.dataset.mcv); box.innerHTML = c ? `<div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">${c.history.map(m => `<div class="msg ${m.role}" style="max-width:100%">${esc(m.text)}</div>`).join('')}</div>` : '<p class="small muted">Conversa não encontrada.</p>'; b.remove(); });
 }
 function lockedHTML() {
-  return `<div class="lock panel"><div class="ci">🔒</div><h2>Crie sua conta grátis para começar</h2><p class="muted" style="margin:12px 0 24px">No modo visitante você explora o IAlvorecer à vontade. Para fazer aulas, conversar, revisar e salvar seu progresso, é só criar uma conta.</p><div class="row" style="justify-content:center"><a class="btn btn-pink" href="./">Criar minha conta</a><button class="btn btn-ghost" onclick="history.back()">Continuar visitando</button></div></div>`;
+  return `<div class="lock panel"><div class="ci">🔒</div><h2>Crie sua conta grátis para começar</h2><p class="muted" style="margin:12px 0 24px">No modo visitante você explora o IAlvorecer à vontade. Para fazer aulas, conversar, revisar e salvar seu progresso, é só criar uma conta.</p><div class="row" style="justify-content:center"><a class="btn btn-pink" href="./">Criar minha conta</a><button class="btn btn-ghost" data-back>Continuar visitando</button></div></div>`;
 }
 function openInfo(html) {
   document.querySelector('.modal-ov')?.remove();
@@ -1281,7 +1281,7 @@ function extraHTML(lesson, d) {
   const notas = ex.notas?.length ? ex.notas : (lesson.sections || []).map(s => s.heading);
   return `<div class="grid g2">
     <div class="panel"><h3>▶ Vídeo-aulas sugeridas</h3><p class="small muted" style="margin:6px 0 14px">Buscas prontas no YouTube sobre o tema da aula.</p>${vids.map(v => `<a class="task" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=${encodeURIComponent(v)}" style="margin-bottom:8px"><span class="ck">▶</span><span class="t">${esc(v)}</span></a>`).join('')}</div>
-    <div class="panel"><h3>📝 Anotações da aula</h3><ul style="margin:12px 0;padding-left:18px">${notas.map(n => `<li style="margin:6px 0">${esc(n)}</li>`).join('')}</ul><button class="btn btn-ghost btn-sm" onclick="navigator.clipboard.writeText(${esc(JSON.stringify(notas.map(n => '• ' + n).join('\n')))});this.textContent='Copiado ✓'">Copiar anotações</button></div>
+    <div class="panel"><h3>📝 Anotações da aula</h3><ul style="margin:12px 0;padding-left:18px">${notas.map(n => `<li style="margin:6px 0">${esc(n)}</li>`).join('')}</ul><button class="btn btn-ghost btn-sm" data-copy="${esc(notas.map(n => '• ' + n).join('\n'))}">Copiar anotações</button></div>
   </div>${ex.desafio ? `<div class="panel section"><h3>🎯 Desafio extra (opcional)</h3><p style="margin-top:10px">${esc(ex.desafio)}</p></div>` : ''}`;
 }
 
@@ -1290,7 +1290,7 @@ let sbPub = null;
 const getSb = () => sb || (sbPub ||= createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } }));
 // ---------- MARCAR CONVERSAÇÃO ----------
 const convOrd = (a, b) => (a.d + String(a.h).padStart(2, '0')).localeCompare(b.d + String(b.h).padStart(2, '0'));
-function convCfg() { const c = S?.config?.conversa || {}; return { modo: c.modo || 'livre', hora: c.hora ?? 19, agenda: (c.agenda || []).filter(x => x.d >= today()).sort(convOrd), lembrete: !!c.lembrete }; }
+function convCfg() { const c = S?.config?.conversa || {}; return { modo: c.modo || 'livre', hora: c.hora ?? 19, agenda: (c.agenda || []).filter(x => x.d >= today()).sort(convOrd).filter((x, i, arr) => arr.findIndex(y => y.d === x.d) === i).slice(0, 60), lembrete: !!c.lembrete }; }
 function convResumo() {
   const c = convCfg(), av = c.lembrete && S.config.emailsOn !== false ? ', com e-mail de lembrete' : ', sem e-mail de lembrete';
   if (c.modo === 'nenhuma') return 'Sem conversação por enquanto';
@@ -1305,12 +1305,12 @@ function openAgendaConversa() {
   const ov = openInfo(`<div class="eyebrow">Conversação</div><h2 style="margin:10px 0 8px">Marcar conversação com o IAlvorecer</h2><p class="muted" style="margin-bottom:16px">Escolha o que combina com a sua rotina. Mesmo com horário marcado, você pode conversar a qualquer hora.</p>
     ${op('livre', 'Iniciar quando eu estiver disponível', 'Sem dia nem horário marcado e sem e-mail de lembrete.')}
     ${op('diario', 'Mesmo horário em todos os dias de semana', 'De segunda a sexta, fora feriados.')}
-    ${op('agendada', 'Dia e horário específicos', 'Marque um ou mais dias, quando quiser.')}
+    ${op('agendada', 'Dia e horário específicos', 'Uma conversação por dia. Marque um ou mais dias.')}
     ${op('nenhuma', 'Não quero fazer conversação agora', 'Ela sai do seu e-mail do dia. Dá para voltar quando quiser.')}
     <div id="cmD" class="field" style="margin-top:12px"><label>Horário (segunda a sexta)</label><select id="cmH" style="max-width:160px">${horas(c.hora)}</select></div>
     <div id="cmA" style="margin-top:12px"><div class="row" style="gap:8px;align-items:flex-end"><div class="field" style="margin:0"><label>Dia</label><input type="date" id="cmDia" min="${today()}" value="${today()}"></div><div class="field" style="margin:0"><label>Horário</label><select id="cmHA">${horas(19)}</select></div><button class="btn btn-ghost btn-sm" id="cmAdd">Adicionar</button></div><div id="cmList" style="margin-top:10px"></div></div>
     <label class="check" id="cmL" style="margin-top:14px;gap:10px"><input type="checkbox" id="cmLemb" style="width:auto" ${c.lembrete ? 'checked' : ''}> Quero receber um e-mail de lembrete no horário marcado</label>
-    <p class="help" id="cmOff" style="margin-top:6px"></p>
+    <p class="help" id="cmOff" style="margin-top:6px"></p><p class="help" style="margin-top:4px">Só dá para marcar uma conversação por dia. Se o horário passar e você não conseguir, pode remarcar para mais tarde no mesmo dia, mas o e-mail de lembrete é enviado só uma vez por dia (não chega de novo no novo horário).</p>
     <button class="btn btn-pink" id="cmSave" style="margin-top:14px">Salvar</button>`);
   const q = x => ov.querySelector(x), modo = () => (ov.querySelector('[name=cm]:checked') || {}).value || 'livre';
   const lista = () => {
@@ -1326,7 +1326,7 @@ function openAgendaConversa() {
   q('#cmAdd').onclick = () => {
     const d = q('#cmDia').value, h = +q('#cmHA').value;
     if (!d || d < today()) return toast('Escolha um dia de hoje em diante.');
-    if (!agenda.some(a => a.d === d && a.h === h)) agenda.push({ d, h });
+    const ja = agenda.find(a => a.d === d); if (ja) { ja.h = h; toast('Esse dia já tinha conversação: troquei para as ' + h + 'h (uma por dia).', 5000); } else { if (agenda.length >= 60) return toast('Você já tem muitos dias marcados. Remova alguns antes.'); agenda.push({ d, h }); }
     agenda.sort(convOrd); lista();
   };
   q('#cmSave').onclick = async () => {
@@ -1568,13 +1568,13 @@ function newPasswordScreen() {
 // ---------- INÍCIO DO APP ----------
 async function boot() {
   initFx();
-  document.addEventListener('click', e => { const b = e.target.closest('[data-fb]'); if (b) { e.preventDefault(); openFeedback(b.dataset.fb); } const ag = e.target.closest('[data-agenda]'); if (ag) { e.preventDefault(); openAgendaConversa(); } const ii = e.target.closest('[data-iainfo]'); if (ii) { e.preventDefault(); iaInfo(ii.dataset.iainfo); } });
+  document.addEventListener('click', e => { const b = e.target.closest('[data-fb]'); if (b) { e.preventDefault(); openFeedback(b.dataset.fb); } if (e.target.closest('[data-reload]')) location.reload(); if (e.target.closest('[data-back]')) history.back(); const cp = e.target.closest('[data-copy]'); if (cp) { navigator.clipboard.writeText(cp.dataset.copy); cp.textContent = 'Copiado ✓'; } const ag = e.target.closest('[data-agenda]'); if (ag) { e.preventDefault(); openAgendaConversa(); } const ii = e.target.closest('[data-iainfo]'); if (ii) { e.preventDefault(); iaInfo(ii.dataset.iainfo); } });
   window.addEventListener('ia-uso', () => document.querySelectorAll('.ia-meter').forEach(el => el.outerHTML = iaMeterHTML()));
   C = await (await fetch('data/catalog.json', { cache: 'no-cache' })).json();
   const qs = new URLSearchParams(location.search);
   const demo = qs.has('demo') || qs.has('visita');
   if (demo) {
-    const { demoData, demoAI } = await import('./demo.js?v=52');
+    const { demoData, demoAI } = await import('./demo.js?v=53');
     S = new DemoStore(() => demoData(C)); S.demoAI = demoAI;
     if (qs.has('visita')) S.readonly = true;
     document.body.insertAdjacentHTML('beforeend', S.readonly ? '<a class="demo-badge" href="./">👁 Modo visitante · Criar conta</a>' : '<div class="demo-badge">DEMONSTRAÇÃO</div>');
