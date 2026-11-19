@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IAlvorecer</title>
+<meta name="theme-color" content="#06141c">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2314b8a6'/%3E%3Ctext x='32' y='44' font-size='34' font-family='Arial' font-weight='700' fill='white' text-anchor='middle'%3EP%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/app.css?v=51">
+</head>
+<body>
+<header class="topbar" id="topbar" hidden>
+  <a class="brand" href="#/"><em>IA</em>lvorecer<span>.</span></a>
+  <nav class="mainnav" id="mainnav">
+    <a href="#/" data-nav="home">Início</a>
+    <a href="#/trilha/tech" data-nav="tech">Tecnologia &amp; IA</a>
+    <a href="#/idiomas" data-nav="idiomas">Idiomas</a>
+    <a href="#/memorizacao" data-nav="memorizacao">Memorização</a>
+    <a href="#/historico" data-nav="historico">Histórico</a>
+    <a href="#/trilha/design" data-nav="area" id="areaTab">Design &amp; Criação</a>
+    <button class="areasbtn" id="areasBtn" title="Áreas de interesse e Seu Alvorecer">▦ <span>Áreas</span></button>
+  </nav>
+  <div class="topright">
+    <a href="#/guia" class="iconbtn" title="Guia">?</a>
+    <a href="#/ajustes" class="avatar" id="avatar" title="Ajustes">E</a>
+  </div>
+</header>
+<main id="app"><div class="loading">Carregando…</div></main>
+<footer class="site-foot" id="sitefoot"><div style="max-width:640px"><b style="color:var(--text)"><em style="font-style:normal">IA</em>lvorecer</b> · feito por uma única designer com utilização de IA. Podem ocorrer erros e ele não substitui profissionais qualificados. Problemas técnicos? Reporte em Ajustes → "Reportar erro".</div><div class="lnk"><a href="#/sobre">Sobre</a><a href="#/apoiar">Apoiar</a><button data-fb="avaliacao">Avaliar</button><button data-fb="erro">Reportar erro</button></div></footer>
+<nav class="tabbar" id="tabbar" hidden>
+  <a href="#/" data-nav="home"><i data-lucide="house"></i>Início</a>
+  <a href="#/idiomas" data-nav="idiomas"><i data-lucide="languages"></i>Idiomas</a>
+  <a href="#/cursos" data-nav="cursos"><i data-lucide="layout-grid"></i>Cursos</a>
+  <a href="#/memorizacao" data-nav="memorizacao"><i data-lucide="repeat-2"></i>Revisar</a>
+  <a href="#/historico" data-nav="historico"><i data-lucide="history"></i>Histórico</a>
+</nav>
+<div id="toast" class="toast" hidden></div>
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script type="module" src="js/app.js?v=51"></script>
+</body>
+</html>
