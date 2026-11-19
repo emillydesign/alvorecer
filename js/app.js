@@ -1,8 +1,8 @@
 import { $, $$, esc, md, uid, today, ym, weekday, fmtDay, fmtShort, fmtMonth, holiday, isRestDay, prevStudyDay, weekStart, addDays, daysBetween, norm, schedule, isDue, shuffle } from './util.js';
-import { DemoStore, SupabaseStore, defaultState } from './store.js?v=53';
-import { ic, icoOf, initFx } from './fx.js?v=53';
+import { DemoStore, SupabaseStore, defaultState } from './store.js?v=54';
+import { ic, icoOf, initFx } from './fx.js?v=54';
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=53';
+import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=54';
 let sb = null;
 const authStorage = {
   _s: () => { try { return localStorage.getItem('pg_remember') === '0' ? sessionStorage : localStorage; } catch { return null; } },
@@ -10,10 +10,10 @@ const authStorage = {
   setItem(k, v) { try { this._s()?.setItem(k, v); } catch { } },
   removeItem(k) { try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch { } }
 };
-import { makeAI, NoKeyError } from './ai.js?v=53';
-import { speak, stopSpeaking, listen, canListen, canSpeak } from './speech.js?v=53';
-import { initSaude, cuidar, startAgua } from './saude.js?v=53';
-import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=53';
+import { makeAI, NoKeyError } from './ai.js?v=54';
+import { speak, stopSpeaking, listen, canListen, canSpeak } from './speech.js?v=54';
+import { initSaude, cuidar, startAgua } from './saude.js?v=54';
+import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=54';
 
 let C, S, AI;
 const app = $('#app');
@@ -367,7 +367,7 @@ async function curso(key) {
     <div class="row" style="margin-top:8px">
       ${nx ? `<a class="btn btn-pink" href="#/aula/${key}/${nx.id}">${Object.keys(s.done).length ? 'Continuar' : 'Começar'}: Aula ${nx.n}</a>` : ''}
       <a class="btn btn-ghost" href="#/conversa/${key}">🎙 Conversar</a>
-      ${isLang ? '<button class="btn btn-ghost" data-agenda>Marcar conversação</button>' : ''}
+      ${isLang ? `<button class="btn btn-ghost" data-agenda="${esc(d.id)}">Marcar conversação</button>` : ''}
       ${isLang ? `<button class="btn btn-ghost" id="mkmain">${S.state.plan.main === d.id ? '★ Curso principal' : 'Tornar principal'}</button>` : ''}
       ${d.kind === 'trk' || d.kind === 'cus' ? `<div class="langsel" title="Idioma das aulas deste curso">${[['pt', 'PT'], ['en', 'EN'], ['es', 'ES']].map(([v, l]) => `<button data-cl="${v}" class="${d.contentLang === v ? 'on' : ''}">${l}</button>`).join('')}</div>` : ''}${d.kind === 'cus' ? '<button class="btn btn-ghost" id="delCus">🗑 Excluir curso</button>' : ''}
     </div>
@@ -1290,16 +1290,22 @@ let sbPub = null;
 const getSb = () => sb || (sbPub ||= createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } }));
 // ---------- MARCAR CONVERSAÇÃO ----------
 const convOrd = (a, b) => (a.d + String(a.h).padStart(2, '0')).localeCompare(b.d + String(b.h).padStart(2, '0'));
-function convCfg() { const c = S?.config?.conversa || {}; return { modo: c.modo || 'livre', hora: c.hora ?? 19, agenda: (c.agenda || []).filter(x => x.d >= today()).sort(convOrd).filter((x, i, arr) => arr.findIndex(y => y.d === x.d) === i).slice(0, 60), lembrete: !!c.lembrete }; }
+function convLangs() {
+  const st = S?.state || {}, ativos = [st.plan?.main, st.plan?.second, ...Object.keys(st.courses || {}).filter(k => k.startsWith('lang:')).map(k => k.slice(5)), ...(st.customLangs || []).map(l => l.id)].filter(Boolean);
+  const meus = [...new Set(ativos)].map(lang).filter(Boolean), outros = C.languages.filter(l => !meus.some(m => m.id === l.id));
+  return { meus, outros };
+}
+const convLangName = id => lang(id)?.name || id;
+function convCfg() { const c = S?.config?.conversa || {}; const l0 = (lang(c.lang) && c.lang) || S?.state?.plan?.main || 'en'; return { modo: c.modo || 'livre', hora: c.hora ?? 19, lang: l0, agenda: (c.agenda || []).filter(x => x.d >= today()).sort(convOrd).filter((x, i, arr) => arr.findIndex(y => y.d === x.d) === i).slice(0, 60).map(x => ({ ...x, l: (lang(x.l) && x.l) || l0 })), lembrete: !!c.lembrete }; }
 function convResumo() {
   const c = convCfg(), av = c.lembrete && S.config.emailsOn !== false ? ', com e-mail de lembrete' : ', sem e-mail de lembrete';
   if (c.modo === 'nenhuma') return 'Sem conversação por enquanto';
-  if (c.modo === 'diario') return `Segunda a sexta às ${c.hora}h${av}`;
-  if (c.modo === 'agendada') return c.agenda.length ? `Próxima: ${fmtShort(c.agenda[0].d)} às ${c.agenda[0].h}h${c.agenda.length > 1 ? ` (e mais ${c.agenda.length - 1})` : ''}${av}` : 'Nenhum dia marcado ainda';
-  return 'Quando você quiser, sem lembrete';
+  if (c.modo === 'diario') return `${convLangName(c.lang)}, segunda a sexta às ${c.hora}h${av}`;
+  if (c.modo === 'agendada') return c.agenda.length ? `Próxima: ${convLangName(c.agenda[0].l)}, ${fmtShort(c.agenda[0].d)} às ${c.agenda[0].h}h${c.agenda.length > 1 ? ` (e mais ${c.agenda.length - 1})` : ''}${av}` : 'Nenhum dia marcado ainda';
+  return `${convLangName(c.lang)}, quando você quiser, sem lembrete`;
 }
-function openAgendaConversa() {
-  const c = convCfg(); const agenda = [...c.agenda];
+function openAgendaConversa(pre = '') {
+  const c = convCfg(); if (pre && lang(pre)) c.lang = pre; const agenda = [...c.agenda];
   const horas = sel => Array.from({ length: 18 }, (_, i) => i + 6).map(h => `<option value="${h}" ${sel === h ? 'selected' : ''}>${h}h</option>`).join('');
   const op = (v, t, d) => `<label class="check" style="align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;cursor:pointer"><input type="radio" name="cm" value="${v}" style="width:auto;margin-top:3px" ${c.modo === v ? 'checked' : ''}><span><b>${t}</b><br><span class="small muted">${d}</span></span></label>`;
   const ov = openInfo(`<div class="eyebrow">Conversação</div><h2 style="margin:10px 0 8px">Marcar conversação com o IAlvorecer</h2><p class="muted" style="margin-bottom:16px">Escolha o que combina com a sua rotina. Mesmo com horário marcado, você pode conversar a qualquer hora.</p>
@@ -1307,6 +1313,7 @@ function openAgendaConversa() {
     ${op('diario', 'Mesmo horário em todos os dias de semana', 'De segunda a sexta, fora feriados.')}
     ${op('agendada', 'Dia e horário específicos', 'Uma conversação por dia. Marque um ou mais dias.')}
     ${op('nenhuma', 'Não quero fazer conversação agora', 'Ela sai do seu e-mail do dia. Dá para voltar quando quiser.')}
+    <div id="cmI" class="field" style="margin-top:12px"><label>Idioma da conversação</label><select id="cmLang" style="max-width:260px">${(() => { const { meus, outros } = convLangs(); const o = l => `<option value="${esc(l.id)}" ${l.id === c.lang ? 'selected' : ''}>${esc(l.name)}</option>`; return (meus.length ? `<optgroup label="Seus idiomas">${meus.map(o).join('')}</optgroup>` : '') + (outros.length ? `<optgroup label="Outros idiomas do site">${outros.map(o).join('')}</optgroup>` : ''); })()}</select><div class="help">Pode ser diferente do idioma das suas aulas. No modo de dias específicos, cada dia guarda o idioma escolhido na hora de adicionar.</div></div>
     <div id="cmD" class="field" style="margin-top:12px"><label>Horário (segunda a sexta)</label><select id="cmH" style="max-width:160px">${horas(c.hora)}</select></div>
     <div id="cmA" style="margin-top:12px"><div class="row" style="gap:8px;align-items:flex-end"><div class="field" style="margin:0"><label>Dia</label><input type="date" id="cmDia" min="${today()}" value="${today()}"></div><div class="field" style="margin:0"><label>Horário</label><select id="cmHA">${horas(19)}</select></div><button class="btn btn-ghost btn-sm" id="cmAdd">Adicionar</button></div><div id="cmList" style="margin-top:10px"></div></div>
     <label class="check" id="cmL" style="margin-top:14px;gap:10px"><input type="checkbox" id="cmLemb" style="width:auto" ${c.lembrete ? 'checked' : ''}> Quero receber um e-mail de lembrete no horário marcado</label>
@@ -1314,26 +1321,26 @@ function openAgendaConversa() {
     <button class="btn btn-pink" id="cmSave" style="margin-top:14px">Salvar</button>`);
   const q = x => ov.querySelector(x), modo = () => (ov.querySelector('[name=cm]:checked') || {}).value || 'livre';
   const lista = () => {
-    q('#cmList').innerHTML = agenda.length ? agenda.map((a, i) => `<div class="row small" style="padding:6px 0;border-bottom:1px solid var(--line)"><span>${esc(fmtDay(a.d))} às ${a.h}h</span><span class="spacer"></span><button class="btn btn-ghost btn-sm" data-rm="${i}">Remover</button></div>`).join('') : '<p class="small muted">Nenhum dia marcado.</p>';
+    q('#cmList').innerHTML = agenda.length ? agenda.map((a, i) => `<div class="row small" style="padding:6px 0;border-bottom:1px solid var(--line)"><span>${esc(fmtDay(a.d))} às ${a.h}h · ${esc(convLangName(a.l))}</span><span class="spacer"></span><button class="btn btn-ghost btn-sm" data-rm="${i}">Remover</button></div>`).join('') : '<p class="small muted">Nenhum dia marcado.</p>';
     q('#cmList').querySelectorAll('[data-rm]').forEach(b => b.onclick = () => { agenda.splice(+b.dataset.rm, 1); lista(); });
   };
   const vis = () => {
     const m = modo(), marca = ['diario', 'agendada'].includes(m);
-    q('#cmD').hidden = m !== 'diario'; q('#cmA').hidden = m !== 'agendada'; q('#cmL').hidden = !marca;
+    q('#cmD').hidden = m !== 'diario'; q('#cmI').hidden = m === 'nenhuma'; q('#cmA').hidden = m !== 'agendada'; q('#cmL').hidden = !marca;
     q('#cmOff').textContent = marca && S.config.emailsOn === false ? 'Seus e-mails estão desligados em Ajustes: o lembrete só chega se você ligar "Enviar e-mails".' : '';
   };
   ov.querySelectorAll('[name=cm]').forEach(r => r.onchange = vis); vis(); lista();
   q('#cmAdd').onclick = () => {
-    const d = q('#cmDia').value, h = +q('#cmHA').value;
+    const d = q('#cmDia').value, h = +q('#cmHA').value, l = q('#cmLang').value;
     if (!d || d < today()) return toast('Escolha um dia de hoje em diante.');
-    const ja = agenda.find(a => a.d === d); if (ja) { ja.h = h; toast('Esse dia já tinha conversação: troquei para as ' + h + 'h (uma por dia).', 5000); } else { if (agenda.length >= 60) return toast('Você já tem muitos dias marcados. Remova alguns antes.'); agenda.push({ d, h }); }
+    const ja = agenda.find(a => a.d === d); if (ja) { ja.h = h; ja.l = l; toast('Esse dia já tinha conversação: troquei para ' + convLangName(l) + ' às ' + h + 'h (uma por dia).', 5000); } else { if (agenda.length >= 60) return toast('Você já tem muitos dias marcados. Remova alguns antes.'); agenda.push({ d, h, l }); }
     agenda.sort(convOrd); lista();
   };
   q('#cmSave').onclick = async () => {
     if (S.readonly) return toast('Modo visitante: crie sua conta para marcar a conversação.');
     const m = modo();
     if (m === 'agendada' && !agenda.length) return toast('Adicione pelo menos um dia, ou escolha outra opção.');
-    S.config.conversa = { modo: m, hora: +q('#cmH').value, agenda, lembrete: ['diario', 'agendada'].includes(m) && q('#cmLemb').checked };
+    S.config.conversa = { modo: m, hora: +q('#cmH').value, lang: q('#cmLang').value, agenda, lembrete: ['diario', 'agendada'].includes(m) && q('#cmLemb').checked };
     S.saveConfig(); if (S.flush) await S.flush();
     ov.remove(); const r = $('#convRes'); if (r) r.textContent = convResumo();
     toast('Conversação salva: ' + convResumo(), 5000);
@@ -1568,13 +1575,13 @@ function newPasswordScreen() {
 // ---------- INÍCIO DO APP ----------
 async function boot() {
   initFx();
-  document.addEventListener('click', e => { const b = e.target.closest('[data-fb]'); if (b) { e.preventDefault(); openFeedback(b.dataset.fb); } if (e.target.closest('[data-reload]')) location.reload(); if (e.target.closest('[data-back]')) history.back(); const cp = e.target.closest('[data-copy]'); if (cp) { navigator.clipboard.writeText(cp.dataset.copy); cp.textContent = 'Copiado ✓'; } const ag = e.target.closest('[data-agenda]'); if (ag) { e.preventDefault(); openAgendaConversa(); } const ii = e.target.closest('[data-iainfo]'); if (ii) { e.preventDefault(); iaInfo(ii.dataset.iainfo); } });
+  document.addEventListener('click', e => { const b = e.target.closest('[data-fb]'); if (b) { e.preventDefault(); openFeedback(b.dataset.fb); } if (e.target.closest('[data-reload]')) location.reload(); if (e.target.closest('[data-back]')) history.back(); const cp = e.target.closest('[data-copy]'); if (cp) { navigator.clipboard.writeText(cp.dataset.copy); cp.textContent = 'Copiado ✓'; } const ag = e.target.closest('[data-agenda]'); if (ag) { e.preventDefault(); openAgendaConversa(ag.dataset.agenda || ''); } const ii = e.target.closest('[data-iainfo]'); if (ii) { e.preventDefault(); iaInfo(ii.dataset.iainfo); } });
   window.addEventListener('ia-uso', () => document.querySelectorAll('.ia-meter').forEach(el => el.outerHTML = iaMeterHTML()));
   C = await (await fetch('data/catalog.json', { cache: 'no-cache' })).json();
   const qs = new URLSearchParams(location.search);
   const demo = qs.has('demo') || qs.has('visita');
   if (demo) {
-    const { demoData, demoAI } = await import('./demo.js?v=53');
+    const { demoData, demoAI } = await import('./demo.js?v=54');
     S = new DemoStore(() => demoData(C)); S.demoAI = demoAI;
     if (qs.has('visita')) S.readonly = true;
     document.body.insertAdjacentHTML('beforeend', S.readonly ? '<a class="demo-badge" href="./">👁 Modo visitante · Criar conta</a>' : '<div class="demo-badge">DEMONSTRAÇÃO</div>');

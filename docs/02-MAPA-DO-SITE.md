@@ -64,10 +64,11 @@ Ficam na tabela `arquivos` do Supabase, um "arquivo" JSON por linha, e só a pr�
 
 O campo `conversa` em `config.json`:
 ```json
-{ "modo": "livre | diario | agendada | nenhuma", "hora": 19, "agenda": [{ "d": "2026-11-25", "h": 20 }], "lembrete": false }
+{ "modo": "livre | diario | agendada | nenhuma", "hora": 19, "lang": "es", "agenda": [{ "d": "2026-11-25", "h": 20, "l": "es" }], "lembrete": false }
 ```
 - Só **uma** conversação por dia na `agenda` (o site impede duas no mesmo dia).
 - `lembrete: true` só vale para `diario` e `agendada`.
+- `lang` = idioma da conversação (pode ser diferente do idioma das aulas; lista os idiomas da pessoa, inclusive os que ela criou, e depois os outros do site). Na `agenda`, cada dia guarda o próprio idioma em `l`.
 
 ## Catálogo (`data/catalog.json`)
 - `languages`: idiomas (id, nome, bandeira, nível inicial)

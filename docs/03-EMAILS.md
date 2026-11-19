@@ -16,7 +16,7 @@ Arquivo: `scripts/email_diario.py`. Roda de hora em hora (das 6h às 23h de Bras
 | E-mail | Para quem | Quando |
 |---|---|---|
 | **E-mail do dia** (aula, expressão do dia, revisões, conversação) | alunos com "Enviar e-mails" ligado | seg a sex (fora feriados), no horário escolhido. **No máximo 1 por dia** |
-| **Lembrete de conversação** | só quem marcou conversação (todo dia útil ou dia específico) **e** pediu o lembrete | no dia e hora marcados. **No máximo 1 por dia**, mesmo se a pessoa remarcar. Não vai se ela já conversou naquele dia |
+| **Lembrete de conversação** | só quem marcou conversação (todo dia útil ou dia específico) **e** pediu o lembrete | no dia e hora marcados, no idioma escolhido para a conversação. **No máximo 1 por dia**, mesmo se a pessoa remarcar. Não vai se ela já conversou naquele dia |
 | `⚠️ [SITE · ERRO]`, `⭐ [SITE · AVALIAÇÃO]`, `💬 [SITE · CONTATO]` | só para iaalvorecer@gmail.com | um por mensagem, até 15 por hora |
 | `🌱 [SITE · NOVA CONTA]` | só para iaalvorecer@gmail.com | um resumo por hora |
 
