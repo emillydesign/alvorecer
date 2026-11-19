@@ -1,14 +1,9 @@
-# alvorecer.
+# IAlvorecer
 
-Curso pessoal de idiomas, design, tecnologia e carreira, com professor de IA, conversação por voz, memorização (repetição espaçada) e histórico completo.
+Um novo dia. Uma nova chance. Plataforma gratuita de aprendizado e cuidado: idiomas, tecnologia, carreira, cursos sob medida e "Cuidar de mim", com o IAlvorecer (IA) do lado.
 
 - **Site:** https://emillydesign.github.io/alvorecer
-- **Demonstração (sem login):** https://emillydesign.github.io/alvorecer/?demo=1
-- **Dados:** ficam no repositório privado `alvorecer-dados` (este repositório só tem o código, nada pessoal).
+- **Contato:** iaalvorecer@gmail.com
+- **Como editar:** [EDITAR.md](EDITAR.md) e a pasta [docs/](docs/)
 
-Feito em HTML + CSS + JavaScript puro (sem build). Arquivos principais:
-- `data/catalog.json`: idiomas, cursos complementares e trilhas (para adicionar um curso, é só editar aqui)
-- `js/app.js`: telas
-- `js/ai.js`: professor (Google Gemini)
-- `js/store.js`: salvar/ler do GitHub
-- `guia.html`: guia de uso
+HTML + CSS + JavaScript puro (sem build), Supabase (login, banco, função de IA) e GitHub Actions (e-mails, no repositório privado `alvorecer-dados`).
