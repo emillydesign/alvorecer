@@ -95,7 +95,7 @@ export function demoData(C) {
   const files = {}; for (const e of history) (files[`history/${e.date.slice(0, 7)}.json`] ||= []).push(e);
   files[`lessons/lang_en/C1-7.json`] = SAMPLE_LESSON;
   files[`conversas/${cid}.json`] = { id: cid, history: [{ role: 'ai', text: 'Hey Emilly! If you could work anywhere in the world, where would it be?' }, { role: 'me', text: 'I think Lisbon, because I love the vibe and I have friends there.' }, { role: 'ai', text: 'Lisbon is a great pick! What kind of UX projects would you like to work on there?' }] };
-  return { config: { geminiKey: 'demo', email: 'voce@exemplo.com', emailsOn: true, eveningReminder: true }, state, srs, files };
+  return { config: { geminiKey: 'demo', email: 'voce@exemplo.com', emailsOn: true, conversa: { modo: 'livre', hora: 19, agenda: [], lembrete: false } }, state, srs, files };
 }
 
 const CHAT = [

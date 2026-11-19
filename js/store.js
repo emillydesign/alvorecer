@@ -144,7 +144,7 @@ export class SupabaseStore extends Base {
   async load(catalog) {
     const [config, state, srs] = await Promise.all([this.read('config.json'), this.read('state.json'), this.read('srs.json')]);
     const meta = this.user.user_metadata || {};
-    this.config = config || { email: this.user.email, emailsOn: meta.emails !== false, eveningReminder: true, emailHoraAula: 8, emailHoraConversa: 19 };
+    this.config = config || { email: this.user.email, emailsOn: meta.emails !== false, emailHoraAula: 8, conversa: { modo: 'livre', hora: 19, agenda: [], lembrete: false } };
     if (this.config.model && /^gemini-2.5/.test(this.config.model)) delete this.config.model;
     if (!this.config.email) this.config.email = this.user.email;
     this.state = state || defaultState(catalog);

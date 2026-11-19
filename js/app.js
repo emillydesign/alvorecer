@@ -1,8 +1,8 @@
 import { $, $$, esc, md, uid, today, ym, weekday, fmtDay, fmtShort, fmtMonth, holiday, isRestDay, prevStudyDay, weekStart, addDays, daysBetween, norm, schedule, isDue, shuffle } from './util.js';
-import { DemoStore, SupabaseStore, defaultState } from './store.js?v=51';
-import { ic, icoOf, initFx } from './fx.js?v=51';
+import { DemoStore, SupabaseStore, defaultState } from './store.js?v=52';
+import { ic, icoOf, initFx } from './fx.js?v=52';
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=51';
+import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=52';
 let sb = null;
 const authStorage = {
   _s: () => { try { return localStorage.getItem('pg_remember') === '0' ? sessionStorage : localStorage; } catch { return null; } },
@@ -10,10 +10,10 @@ const authStorage = {
   setItem(k, v) { try { this._s()?.setItem(k, v); } catch { } },
   removeItem(k) { try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch { } }
 };
-import { makeAI, NoKeyError } from './ai.js?v=51';
-import { speak, stopSpeaking, listen, canListen, canSpeak } from './speech.js?v=51';
-import { initSaude, cuidar, startAgua } from './saude.js?v=51';
-import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=51';
+import { makeAI, NoKeyError } from './ai.js?v=52';
+import { speak, stopSpeaking, listen, canListen, canSpeak } from './speech.js?v=52';
+import { initSaude, cuidar, startAgua } from './saude.js?v=52';
+import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=52';
 
 let C, S, AI;
 const app = $('#app');
@@ -367,6 +367,7 @@ async function curso(key) {
     <div class="row" style="margin-top:8px">
       ${nx ? `<a class="btn btn-pink" href="#/aula/${key}/${nx.id}">${Object.keys(s.done).length ? 'Continuar' : 'Começar'}: Aula ${nx.n}</a>` : ''}
       <a class="btn btn-ghost" href="#/conversa/${key}">🎙 Conversar</a>
+      ${isLang ? '<button class="btn btn-ghost" data-agenda>Marcar conversação</button>' : ''}
       ${isLang ? `<button class="btn btn-ghost" id="mkmain">${S.state.plan.main === d.id ? '★ Curso principal' : 'Tornar principal'}</button>` : ''}
       ${d.kind === 'trk' || d.kind === 'cus' ? `<div class="langsel" title="Idioma das aulas deste curso">${[['pt', 'PT'], ['en', 'EN'], ['es', 'ES']].map(([v, l]) => `<button data-cl="${v}" class="${d.contentLang === v ? 'on' : ''}">${l}</button>`).join('')}</div>` : ''}${d.kind === 'cus' ? '<button class="btn btn-ghost" id="delCus">🗑 Excluir curso</button>' : ''}
     </div>
@@ -819,12 +820,11 @@ async function ajustes() {
     <div class="field"><label>Chave do Gemini</label><input id="gk" type="password" value="${esc(cf.geminiKey || '')}" placeholder="Cole sua chave aqui"><div class="help">Crie em aistudio.google.com → Get API key.</div></div>
     <div class="field"><label>Modelo</label><input id="gm" value="${esc(cf.model || '')}" placeholder="automático (recomendado)"><div class="help">Deixe vazio: o site escolhe sozinho o modelo mais atual do Google.</div></div>
     <button class="btn btn-ghost btn-sm" id="tst">Testar IA</button> <span class="small" id="tstm"></span></div>
-  <div class="panel" style="margin-bottom:18px"><h3 style="margin-bottom:6px">E-mails</h3><p class="small muted" style="margin-bottom:14px">De segunda a sexta (fora feriados), no horário que você escolher, chega o convite da aula. No horário da conversação chega um lembrete, só se você ainda não conversou.</p>
+  <div class="panel" style="margin-bottom:18px"><h3 style="margin-bottom:6px">E-mails</h3><p class="small muted" style="margin-bottom:14px">Um e-mail por dia, de segunda a sexta (fora feriados), com tudo o que você precisa: a aula do dia, as revisões e a sua conversação. Lembrete extra só se você marcar uma conversação e pedir o aviso.</p>
     <div class="field"><label>E-mail que recebe as aulas</label><input id="em" value="${esc(cf.email || '')}"></div>
     <label class="check small" style="margin-bottom:10px"><input type="checkbox" id="eon" style="width:auto" ${cf.emailsOn !== false ? 'checked' : ''}> Enviar e-mails</label>
-    <label class="check small"><input type="checkbox" id="eev" style="width:auto" ${cf.eveningReminder !== false ? 'checked' : ''}> Lembrete da conversação à noite</label>
-    <div class="grid g2" style="margin-top:14px"><div class="field"><label>Horário do e-mail da aula</label><select id="hA">${Array.from({ length: 17 }, (_, i) => i + 6).map(h => `<option value="${h}" ${(cf.emailHoraAula ?? 8) === h ? 'selected' : ''}>${h}h</option>`).join('')}</select></div>
-    <div class="field"><label>Horário do lembrete da conversação</label><select id="hC">${Array.from({ length: 17 }, (_, i) => i + 6).map(h => `<option value="${h}" ${(cf.emailHoraConversa ?? 19) === h ? 'selected' : ''}>${h}h</option>`).join('')}</select></div></div>
+    <div class="grid g2" style="margin-top:4px"><div class="field"><label>Horário do e-mail do dia</label><select id="hA">${Array.from({ length: 17 }, (_, i) => i + 6).map(h => `<option value="${h}" ${(cf.emailHoraAula ?? 8) === h ? 'selected' : ''}>${h}h</option>`).join('')}</select></div>
+    <div class="field"><label>Conversação com o IAlvorecer</label><div class="small" id="convRes" style="margin-bottom:8px">${esc(convResumo())}</div><button class="btn btn-ghost btn-sm" data-agenda>Marcar conversação</button></div></div>
     <div class="field" style="margin-top:4px"><label>Pausa (férias): sem e-mails até</label><input type="date" id="pz" value="${esc(cf.pauseUntil || '')}" style="max-width:220px"></div></div>
   ${(st.backups || []).length ? `<div class="panel" style="margin-bottom:18px"><h3 style="margin-bottom:6px">Alterações feitas pelo IAlvorecer</h3><p class="small muted" style="margin-bottom:12px">Arrependeu? Desfaça a última (pode repetir para voltar mais).</p>${st.backups.slice(0, 5).map(b => `<div class="small" style="padding:6px 0;border-bottom:1px solid var(--line)">${esc(new Date(b.ts).toLocaleString('pt-BR'))} · ${esc(b.label)}</div>`).join('')}<button class="btn btn-ghost btn-sm" id="undo1" style="margin-top:12px">↶ Desfazer a última</button></div>` : ''}
   <div class="row"><button class="btn btn-pink" id="save">Salvar ajustes</button><span class="spacer"></span><a class="btn btn-ghost btn-sm" href="#/boas-vindas">Nivelamento e preferências</a><a class="btn btn-ghost btn-sm" href="#/guia">Guia de uso</a><button class="btn btn-ghost btn-sm" id="out">Sair da conta</button></div>
@@ -842,7 +842,7 @@ async function ajustes() {
     cs('lang:' + st.plan.main); if (st.plan.second) cs('lang:' + st.plan.second);
     const k = $('#gk').value.trim(); if (k !== cf.geminiKey) { cf.geminiKey = k; delete cf.noThinkCfg; delete cf.modelChains; }
     if ($('#gm').value.trim()) cf.model = $('#gm').value.trim(); else delete cf.model;
-    cf.email = $('#em').value.trim(); cf.emailHoraAula = +$('#hA').value; cf.emailHoraConversa = +$('#hC').value; cf.emailsOn = $('#eon').checked; cf.eveningReminder = $('#eev').checked; cf.pauseUntil = $('#pz').value || null;
+    cf.email = $('#em').value.trim(); cf.emailHoraAula = +$('#hA').value; cf.emailsOn = $('#eon').checked; cf.pauseUntil = $('#pz').value || null;
     S.saveState(); S.saveConfig(); await S.flush(); $('#avatar').textContent = (st.profile.name || 'E')[0].toUpperCase(); toast('Ajustes salvos ✓');
   };
   $('#tst').onclick = async () => {
@@ -927,7 +927,7 @@ function asstContext() {
     const ls = lessonsOf(k), nx = nextLesson(k);
     return { key: k, titulo: ctitle(k), nivel: s.level, aulas_feitas: Object.keys(s.done || {}).length, proxima: nx ? `Aula ${nx.n}: ${nx.title}` : null, proximas: ls ? ls.filter(l => !s.done[l.id]).slice(0, 8).map(l => `Aula ${l.n}: ${l.title}`) : 'plano ainda não montado' };
   }).filter(Boolean);
-  return { hoje: today(), perfil: st.profile, plano: st.plan, cursos, emails: { ligados: S.config.emailsOn !== false, lembrete_noite: S.config.eveningReminder !== false, pausa_ate: S.config.pauseUntil || null }, historico_visivel_desde: st.historyFrom || 'início', alteracoes_que_podem_ser_desfeitas: (st.backups || []).length,
+  return { hoje: today(), perfil: st.profile, plano: st.plan, cursos, emails: { ligados: S.config.emailsOn !== false, conversacao: convCfg(), pausa_ate: S.config.pauseUntil || null }, historico_visivel_desde: st.historyFrom || 'início', alteracoes_que_podem_ser_desfeitas: (st.backups || []).length,
     areas_disponiveis: Object.entries(C.tracks).filter(([, t]) => t.area).map(([id, t]) => `${id} = ${t.name}`), area_atual: st.area || 'design', idioma_das_aulas: st.profile?.prefs?.contentLang || 'pt',
     cursos_personalizados: (st.custom || []).map(c => `cus:${c.id} = ${c.title}`),
     cursos_disponiveis: [...C.languages.map(l => `lang:${l.id} = ${l.name}`), ...C.complementary.map(c => `comp:${c.id} = ${c.title}`), ...Object.values(C.tracks).flatMap(t => t.courses.map(c => `trk:${c.id} = ${c.title}`)), ...(st.custom || []).map(c => `cus:${c.id} = ${c.title}`)] };
@@ -938,7 +938,7 @@ function describeAction(a) {
     case 'set_plan': return `Plano: ${a.main ? 'principal ' + (lang(a.main)?.name || a.main) : ''}${'second' in a ? (a.main ? ', ' : '') + 'secundário ' + (a.second ? lang(a.second)?.name || a.second : 'nenhum') : ''}${a.secondDays ? ` (dias: ${a.secondDays.map(d => DAYN[d]).join(', ') || 'nenhum'})` : ''}`;
     case 'set_level': return `${ctitle(a.course)}: mudar para o nível ${a.level}`;
     case 'set_prefs': return 'Preferências: ' + Object.entries(a).filter(([k]) => k !== 'type').map(([k, v]) => `${{ minutes: 'aula', convMinutes: 'conversação', style: 'estilo', explain: 'explicações', interests: 'interesses' }[k] || k} = ${Array.isArray(v) ? v.join(', ') : v}${/inutes/.test(k) ? ' min' : ''}`).join('; ');
-    case 'emails': return `E-mails: ${a.on === false ? 'desligados' : 'ligados'}${a.evening === false ? ', sem lembrete à noite' : ''}${a.pauseUntil ? `, pausa até ${fmtShort(a.pauseUntil)}` : a.pauseUntil === null ? ', sem pausa' : ''}`;
+    case 'emails': return `E-mails: ${a.on === false ? 'desligados' : 'ligados'}${a.evening === false ? ', sem lembrete de conversação' : a.evening === true ? ', com lembrete de conversação' : ''}${a.pauseUntil ? `, pausa até ${fmtShort(a.pauseUntil)}` : a.pauseUntil === null ? ', sem pausa' : ''}`;
     case 'skip_lessons': return `${ctitle(a.course)}: pular ${a.count} aula(s)`;
     case 'edit_lesson': return `${ctitle(a.course)}: Aula ${a.n} vira "${a.title || 'mesmo tema'}"${a.notes ? ` (foco: ${a.notes})` : ''}`;
     case 'replan_level': return `${ctitle(a.course)}: refazer as próximas aulas do nível (${a.wishes || 'novo plano'}). Aulas já feitas ficam.`;
@@ -957,7 +957,7 @@ function describeAction(a) {
 }
 async function snapshot(label) {
   const id = uid();
-  const snap = { ts: new Date().toISOString(), label, state: JSON.parse(JSON.stringify(S.state)), srs: S.srs, config: { emailsOn: S.config.emailsOn, eveningReminder: S.config.eveningReminder, pauseUntil: S.config.pauseUntil || null } };
+  const snap = { ts: new Date().toISOString(), label, state: JSON.parse(JSON.stringify(S.state)), srs: S.srs, config: { emailsOn: S.config.emailsOn, conversa: S.config.conversa, pauseUntil: S.config.pauseUntil || null } };
   await S.write(`backups/${id}.json`, snap);
   S.state.backups = [{ id, label, ts: snap.ts }, ...(S.state.backups || [])].slice(0, 20);
 }
@@ -989,7 +989,7 @@ async function applyActions(actions) {
         break;
       case 'set_level': if (C.levels.includes(a.level)) { const s = cs(a.course); s.level = a.level; s.cycle = 1; S.addEvent({ type: 'level', course: a.course, title: `Nível ajustado para ${a.level} (IAlvorecer)`, level: a.level }); } break;
       case 'set_prefs': { const { type, ...rest } = a; P.prefs = { ...(P.prefs || {}), ...rest }; break; }
-      case 'emails': if ('on' in a) S.config.emailsOn = !!a.on; if ('evening' in a) S.config.eveningReminder = !!a.evening; if ('pauseUntil' in a) S.config.pauseUntil = a.pauseUntil || null; break;
+      case 'emails': if ('on' in a) S.config.emailsOn = !!a.on; if ('evening' in a) S.config.conversa = { ...convCfg(), lembrete: !!a.evening }; if ('pauseUntil' in a) S.config.pauseUntil = a.pauseUntil || null; break;
       case 'skip_lessons': { const s = cs(a.course); (lessonsOf(a.course) || []).filter(l => !s.done[l.id]).slice(0, Math.max(1, +a.count || 1)).forEach(l => s.done[l.id] = { score: null, skipped: true, date: today() }); break; }
       case 'edit_lesson': { const s = cs(a.course), ls = lessonsOf(a.course) || []; const L = ls.find(l => l.n === +a.n); if (L) { if (a.title) L.outline.title = a.title; if (a.notes) L.outline.notes = a.notes; L.outline.v = (L.outline.v || 0) + 1; if (course(a.course).kind !== 'lang') { const ex = s.extra || []; } } break; }
       case 'replan_level': toast('Refazendo o plano… (uns 20 segundos)', 8000); await replanLevel(a.course, a.wishes || ''); break;
@@ -1288,6 +1288,58 @@ function extraHTML(lesson, d) {
 // ---------- AVALIAÇÕES, ERROS E CONTATO ----------
 let sbPub = null;
 const getSb = () => sb || (sbPub ||= createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } }));
+// ---------- MARCAR CONVERSAÇÃO ----------
+const convOrd = (a, b) => (a.d + String(a.h).padStart(2, '0')).localeCompare(b.d + String(b.h).padStart(2, '0'));
+function convCfg() { const c = S?.config?.conversa || {}; return { modo: c.modo || 'livre', hora: c.hora ?? 19, agenda: (c.agenda || []).filter(x => x.d >= today()).sort(convOrd), lembrete: !!c.lembrete }; }
+function convResumo() {
+  const c = convCfg(), av = c.lembrete && S.config.emailsOn !== false ? ', com e-mail de lembrete' : ', sem e-mail de lembrete';
+  if (c.modo === 'nenhuma') return 'Sem conversação por enquanto';
+  if (c.modo === 'diario') return `Segunda a sexta às ${c.hora}h${av}`;
+  if (c.modo === 'agendada') return c.agenda.length ? `Próxima: ${fmtShort(c.agenda[0].d)} às ${c.agenda[0].h}h${c.agenda.length > 1 ? ` (e mais ${c.agenda.length - 1})` : ''}${av}` : 'Nenhum dia marcado ainda';
+  return 'Quando você quiser, sem lembrete';
+}
+function openAgendaConversa() {
+  const c = convCfg(); const agenda = [...c.agenda];
+  const horas = sel => Array.from({ length: 18 }, (_, i) => i + 6).map(h => `<option value="${h}" ${sel === h ? 'selected' : ''}>${h}h</option>`).join('');
+  const op = (v, t, d) => `<label class="check" style="align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;cursor:pointer"><input type="radio" name="cm" value="${v}" style="width:auto;margin-top:3px" ${c.modo === v ? 'checked' : ''}><span><b>${t}</b><br><span class="small muted">${d}</span></span></label>`;
+  const ov = openInfo(`<div class="eyebrow">Conversação</div><h2 style="margin:10px 0 8px">Marcar conversação com o IAlvorecer</h2><p class="muted" style="margin-bottom:16px">Escolha o que combina com a sua rotina. Mesmo com horário marcado, você pode conversar a qualquer hora.</p>
+    ${op('livre', 'Iniciar quando eu estiver disponível', 'Sem dia nem horário marcado e sem e-mail de lembrete.')}
+    ${op('diario', 'Mesmo horário em todos os dias de semana', 'De segunda a sexta, fora feriados.')}
+    ${op('agendada', 'Dia e horário específicos', 'Marque um ou mais dias, quando quiser.')}
+    ${op('nenhuma', 'Não quero fazer conversação agora', 'Ela sai do seu e-mail do dia. Dá para voltar quando quiser.')}
+    <div id="cmD" class="field" style="margin-top:12px"><label>Horário (segunda a sexta)</label><select id="cmH" style="max-width:160px">${horas(c.hora)}</select></div>
+    <div id="cmA" style="margin-top:12px"><div class="row" style="gap:8px;align-items:flex-end"><div class="field" style="margin:0"><label>Dia</label><input type="date" id="cmDia" min="${today()}" value="${today()}"></div><div class="field" style="margin:0"><label>Horário</label><select id="cmHA">${horas(19)}</select></div><button class="btn btn-ghost btn-sm" id="cmAdd">Adicionar</button></div><div id="cmList" style="margin-top:10px"></div></div>
+    <label class="check" id="cmL" style="margin-top:14px;gap:10px"><input type="checkbox" id="cmLemb" style="width:auto" ${c.lembrete ? 'checked' : ''}> Quero receber um e-mail de lembrete no horário marcado</label>
+    <p class="help" id="cmOff" style="margin-top:6px"></p>
+    <button class="btn btn-pink" id="cmSave" style="margin-top:14px">Salvar</button>`);
+  const q = x => ov.querySelector(x), modo = () => (ov.querySelector('[name=cm]:checked') || {}).value || 'livre';
+  const lista = () => {
+    q('#cmList').innerHTML = agenda.length ? agenda.map((a, i) => `<div class="row small" style="padding:6px 0;border-bottom:1px solid var(--line)"><span>${esc(fmtDay(a.d))} às ${a.h}h</span><span class="spacer"></span><button class="btn btn-ghost btn-sm" data-rm="${i}">Remover</button></div>`).join('') : '<p class="small muted">Nenhum dia marcado.</p>';
+    q('#cmList').querySelectorAll('[data-rm]').forEach(b => b.onclick = () => { agenda.splice(+b.dataset.rm, 1); lista(); });
+  };
+  const vis = () => {
+    const m = modo(), marca = ['diario', 'agendada'].includes(m);
+    q('#cmD').hidden = m !== 'diario'; q('#cmA').hidden = m !== 'agendada'; q('#cmL').hidden = !marca;
+    q('#cmOff').textContent = marca && S.config.emailsOn === false ? 'Seus e-mails estão desligados em Ajustes: o lembrete só chega se você ligar "Enviar e-mails".' : '';
+  };
+  ov.querySelectorAll('[name=cm]').forEach(r => r.onchange = vis); vis(); lista();
+  q('#cmAdd').onclick = () => {
+    const d = q('#cmDia').value, h = +q('#cmHA').value;
+    if (!d || d < today()) return toast('Escolha um dia de hoje em diante.');
+    if (!agenda.some(a => a.d === d && a.h === h)) agenda.push({ d, h });
+    agenda.sort(convOrd); lista();
+  };
+  q('#cmSave').onclick = async () => {
+    if (S.readonly) return toast('Modo visitante: crie sua conta para marcar a conversação.');
+    const m = modo();
+    if (m === 'agendada' && !agenda.length) return toast('Adicione pelo menos um dia, ou escolha outra opção.');
+    S.config.conversa = { modo: m, hora: +q('#cmH').value, agenda, lembrete: ['diario', 'agendada'].includes(m) && q('#cmLemb').checked };
+    S.saveConfig(); if (S.flush) await S.flush();
+    ov.remove(); const r = $('#convRes'); if (r) r.textContent = convResumo();
+    toast('Conversação salva: ' + convResumo(), 5000);
+  };
+}
+
 function openFeedback(kind = 'avaliacao') {
   const T = { avaliacao: ['Avaliar o IAlvorecer', 'Sua opinião chega direto para a Emilly, a criadora. Ela lê tudo.'], erro: ['Reportar um erro', 'Conte o que aconteceu e onde. Isso ajuda muito a melhorar o site.'], contato: ['Falar com a Emilly', 'Antes, vale falar com o IAlvorecer ✦: ele se esforça ao máximo para resolver. Se mesmo assim precisar, escreva aqui ou mande um e-mail para ' + CONTATO + '.'] }[kind];
   let nota = 0;
@@ -1516,13 +1568,13 @@ function newPasswordScreen() {
 // ---------- INÍCIO DO APP ----------
 async function boot() {
   initFx();
-  document.addEventListener('click', e => { const b = e.target.closest('[data-fb]'); if (b) { e.preventDefault(); openFeedback(b.dataset.fb); } const ii = e.target.closest('[data-iainfo]'); if (ii) { e.preventDefault(); iaInfo(ii.dataset.iainfo); } });
+  document.addEventListener('click', e => { const b = e.target.closest('[data-fb]'); if (b) { e.preventDefault(); openFeedback(b.dataset.fb); } const ag = e.target.closest('[data-agenda]'); if (ag) { e.preventDefault(); openAgendaConversa(); } const ii = e.target.closest('[data-iainfo]'); if (ii) { e.preventDefault(); iaInfo(ii.dataset.iainfo); } });
   window.addEventListener('ia-uso', () => document.querySelectorAll('.ia-meter').forEach(el => el.outerHTML = iaMeterHTML()));
   C = await (await fetch('data/catalog.json', { cache: 'no-cache' })).json();
   const qs = new URLSearchParams(location.search);
   const demo = qs.has('demo') || qs.has('visita');
   if (demo) {
-    const { demoData, demoAI } = await import('./demo.js?v=51');
+    const { demoData, demoAI } = await import('./demo.js?v=52');
     S = new DemoStore(() => demoData(C)); S.demoAI = demoAI;
     if (qs.has('visita')) S.readonly = true;
     document.body.insertAdjacentHTML('beforeend', S.readonly ? '<a class="demo-badge" href="./">👁 Modo visitante · Criar conta</a>' : '<div class="demo-badge">DEMONSTRAÇÃO</div>');
