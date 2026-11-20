@@ -388,10 +388,10 @@ body{background:linear-gradient(140deg,#cdf3e4 0%,#d3ecf6 45%,#d9e3fb 100%) fixe
   /* paleta base do IAlvorecer */
   --c-deep:#174C43; --c-soft:#76B89A; --c-blue:#397DA5; --c-mist:#DCEEE8;
   /* degradê do fundo (três cores, trocáveis na personalização) */
-  --bg-a:#0b2c27; --bg-b:#174C43; --bg-c:#1f5272;
-  --bg:#0d322c; --bg2:#174C43;
+  --bg-a:#0b2a30; --bg-b:#1a5470; --bg-c:#2b5e7c;
+  --bg:#0e3036; --bg2:#164a5c;
   /* versões "r,g,b" para brilhos e transparências */
-  --bg-rgb:11,44,39; --text-rgb:220,238,232;
+  --bg-rgb:11,42,48; --text-rgb:220,238,232;
   --mint-rgb:118,184,154; --sky-rgb:130,176,195; --blue-rgb:57,125,165;
   --panel:rgba(255,255,255,.05); --panel2:rgba(255,255,255,.085);
   --line:rgba(var(--text-rgb),.13); --line2:rgba(var(--text-rgb),.24);
@@ -407,9 +407,9 @@ html{scroll-behavior:smooth}
 body{color:var(--text);background:var(--bg-a);background-image:none;min-height:100vh;overflow-x:hidden}
 /* aurora animada + grade fina */
 body::before{content:"";position:fixed;inset:-20%;z-index:-2;pointer-events:none;
-  background:radial-gradient(38% 34% at 18% 12%,rgba(var(--mint-rgb),.20),transparent 70%),
-             radial-gradient(34% 30% at 82% 8%,rgba(var(--sky-rgb),.20),transparent 70%),
-             radial-gradient(40% 36% at 60% 92%,rgba(var(--blue-rgb),.14),transparent 70%),
+  background:radial-gradient(38% 34% at 18% 12%,rgba(var(--mint-rgb),.17),transparent 70%),
+             radial-gradient(40% 34% at 82% 8%,rgba(var(--sky-rgb),.30),transparent 70%),
+             radial-gradient(46% 40% at 60% 92%,rgba(var(--blue-rgb),.30),transparent 70%),
              radial-gradient(26% 22% at 92% 60%,rgba(255,213,138,.08),transparent 70%),
              linear-gradient(170deg,var(--bg-a) 0%,var(--bg-b) 55%,var(--bg-c) 100%);
   animation:aurora 38s var(--ease) infinite alternate}
