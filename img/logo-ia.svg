@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="IAlvorecer">
+  <defs>
+    <linearGradient id="fundo" gradientUnits="userSpaceOnUse" x1="150" y1="0" x2="362" y2="512">
+      <stop offset="0" stop-color="#0a2b2d"/><stop offset=".48" stop-color="#175244"/><stop offset="1" stop-color="#1d5b7b"/>
+    </linearGradient>
+    <radialGradient id="verde" cx="16%" cy="14%" r="60%"><stop offset="0" stop-color="#76B89A" stop-opacity=".30"/><stop offset="1" stop-color="#76B89A" stop-opacity="0"/></radialGradient>
+    <radialGradient id="ceu" cx="86%" cy="8%" r="55%"><stop offset="0" stop-color="#82B0C3" stop-opacity=".28"/><stop offset="1" stop-color="#82B0C3" stop-opacity="0"/></radialGradient>
+    <radialGradient id="azul" cx="62%" cy="96%" r="55%"><stop offset="0" stop-color="#397DA5" stop-opacity=".30"/><stop offset="1" stop-color="#397DA5" stop-opacity="0"/></radialGradient>
+    <linearGradient id="letras" gradientUnits="userSpaceOnUse" x1="97.3" y1="0" x2="363.1" y2="0">
+      <stop offset="0" stop-color="#76B89A"/><stop offset="1" stop-color="#82B0C3"/>
+    </linearGradient>
+    <radialGradient id="brilho" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ffd58a" stop-opacity=".55"/><stop offset="1" stop-color="#ffd58a" stop-opacity="0"/></radialGradient>
+    <clipPath id="forma"><rect width="512" height="512" rx="116"/></clipPath>
+  </defs>
+  <g clip-path="url(#forma)">
+    <rect width="512" height="512" fill="url(#fundo)"/>
+    <rect width="512" height="512" fill="url(#verde)"/>
+    <rect width="512" height="512" fill="url(#ceu)"/>
+    <rect width="512" height="512" fill="url(#azul)"/>
+  </g>
+  <path d="M97.28 353.04V158.96H140.88V353.04Z M158.69 353.04 222.77 158.96H293.22L359.69 353.04H314.49L298.80 304.92H217.72L202.30 353.04ZM229.15 268.76H286.84L262.65 194.59H252.81Z" fill="url(#letras)"/>
+  <path d="M367.93 353.04V305.45H414.72V353.04Z" fill="#ffd58a"/>
+</svg>
