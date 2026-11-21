@@ -584,7 +584,7 @@
       "#27bead",
       "#766feb"
      ],
-     "ctx": "Prático: roteiros, respostas-modelo, simulações. Sugira treinar as respostas na conversação por voz do site.",
+     "ctx": "Prático: roteiros, respostas-modelo, simulações. Sugira treinar as respostas em voz alta e gravar para se ouvir.",
      "lessons": [
       "Pesquisando a empresa e a vaga",
       "\"Fale sobre você\" em 90 segundos",
@@ -843,7 +843,7 @@
     {
      "id": "web",
      "title": "Sites do seu jeito: HTML, CSS e IA",
-     "sub": "Sem virar programadora",
+     "sub": "Entenda como funciona e crie com a ajuda da IA",
      "art": "</>",
      "icon": "code-xml",
      "pat": "dots",
@@ -851,7 +851,7 @@
       "#27bead",
       "#48795b"
      ],
-     "ctx": "Público: designer que NÃO quer virar programadora, mas quer fazer sites lindos e personalizados. Método do curso: o Claude (plano grátis em claude.ai) escreve e edita o código; ela entende o suficiente para pedir bem, ajustar detalhes e publicar. Ferramentas grátis: GitHub (editar arquivos pelo navegador, ou github.dev apertando a tecla '.' no repositório), GitHub Pages para publicar, Google Fonts, ícones grátis. Fluxo de edição: abrir o arquivo no GitHub, copiar, colar no Claude com um pedido claro, colar a resposta de volta e fazer 'Commit changes'. Sempre ensine prompts prontos para copiar.",
+     "ctx": "Curso aberto a qualquer pessoa curiosa sobre como os sites são feitos, de qualquer profissão e sem precisar saber programar. Objetivo: explicar, do zero e em linguagem simples, como um site funciona (HTML, CSS e publicação) e como usar a IA (o Claude, plano grátis em claude.ai) para acelerar e facilitar a criação: a IA escreve e edita o código, e a pessoa entende o suficiente para pedir bem, conferir o resultado, ajustar detalhes e publicar. Estrutura: as primeiras aulas explicam os conceitos e a lógica (o que é HTML, o que é CSS, como as peças se encaixam) com analogias do dia a dia, sem pedir nada à IA ainda; a IA entra aos poucos, depois que o conceito foi entendido, sempre no ritmo entender → pedir à IA → conferir o resultado. Só na última aula o foco é escrever bons prompts. Ferramentas grátis: GitHub (editar arquivos pelo navegador, ou github.dev apertando a tecla . no repositório), GitHub Pages para publicar, Google Fonts, ícones grátis. Fluxo de edição: abrir o arquivo no GitHub, copiar, colar no Claude com um pedido claro, colar a resposta de volta e fazer Commit changes. Mostre prompts prontos para copiar apenas depois de explicar o conceito por trás.",
      "lessons": [
       "Como um site funciona (sem mistério)",
       "Anatomia do HTML: o esqueleto da página",

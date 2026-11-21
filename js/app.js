@@ -1,8 +1,8 @@
 import { $, $$, esc, md, uid, today, ym, weekday, fmtDay, fmtShort, fmtMonth, holiday, isRestDay, prevStudyDay, weekStart, addDays, daysBetween, norm, schedule, isDue, shuffle } from './util.js';
-import { DemoStore, SupabaseStore, defaultState } from './store.js?v=56';
-import { ic, icoOf, initFx } from './fx.js?v=56';
+import { DemoStore, SupabaseStore, defaultState } from './store.js?v=57';
+import { ic, icoOf, initFx } from './fx.js?v=57';
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=56';
+import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=57';
 let sb = null;
 const authStorage = {
   _s: () => { try { return localStorage.getItem('pg_remember') === '0' ? sessionStorage : localStorage; } catch { return null; } },
@@ -10,10 +10,10 @@ const authStorage = {
   setItem(k, v) { try { this._s()?.setItem(k, v); } catch { } },
   removeItem(k) { try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch { } }
 };
-import { makeAI, NoKeyError } from './ai.js?v=56';
-import { speak, stopSpeaking, listen, canListen, canSpeak } from './speech.js?v=56';
-import { initSaude, cuidar, startAgua } from './saude.js?v=56';
-import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=56';
+import { makeAI, NoKeyError } from './ai.js?v=57';
+import { speak, stopSpeaking, pauseSpeaking, resumeSpeaking, onSpeechState, speechState, listen, canListen, canSpeak } from './speech.js?v=57';
+import { initSaude, cuidar, startAgua } from './saude.js?v=57';
+import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=57';
 
 let C, S, AI;
 const app = $('#app');
@@ -414,41 +414,69 @@ async function aula(key, id) {
   let ls = lessonsOf(key);
   if (!ls) { app.innerHTML = spinner('Montando seu plano do nível…'); await makePlan(key); ls = lessonsOf(key); }
   const L = ls.find(l => l.id === id) || nextLesson(key) || ls[0];
+  const isLangC = d.kind === 'lang' || d.kind === 'comp';
   let lesson = await S.getLesson(key, L.cacheId || L.id);
+  if (lesson && !isLangC && !lesson.v && !s.done[L.id]) lesson = null; // aula no formato antigo (ainda não feita): refaz com Termos e texto novo
   if (!lesson) {
     app.innerHTML = spinner('Preparando sua aula… (uns 20 segundos)');
-    lesson = await AI.lesson({ kind: d.kind, course: d, outline: L.outline, level: s.level, lang: d.lang, errors: recentErrors(key), contentLang: d.contentLang, cacheKey: d.kind === 'trk' || d.kind === 'comp' ? key + '|' + (L.cacheId || L.id) : null });
-    lesson.generated = today();
+    lesson = await AI.lesson({ kind: d.kind, course: d, outline: L.outline, level: s.level, lang: d.lang, errors: recentErrors(key), contentLang: d.contentLang, cacheKey: d.kind === 'trk' || d.kind === 'comp' ? key + '|' + (L.cacheId || L.id) + (d.kind === 'trk' ? '|v2' : '') : null });
+    lesson.generated = today(); lesson.v = 2;
     S.putLesson(key, L.cacheId || L.id, lesson);
   }
   const loc = d.locale;
   const sayBtn = t => canSpeak ? `<button class="say" data-say="${esc(t)}" title="Ouvir">🔊</button>` : '';
   let step = 0;
-  const tabs = ['Aula', 'Vocabulário', 'Exercícios', 'Conversação', 'Para ir além'];
+  const tabs = isLangC ? [['aula', 'Aula'], ['vocab', 'Vocabulário'], ['ex', 'Exercícios'], ['conv', 'Conversação'], ['mais', 'Para ir além']] : [['aula', 'Aula'], ['vocab', 'Termos'], ['ex', 'Exercícios'], ['mais', 'Para ir além']];
+  const bodyLoc = !isLangC && d.contentLang && d.contentLang !== 'pt' ? loc : 'pt-BR';
+  const plain = t => String(t || '').replace(/```[\s\S]*?```/g, ' ').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/^\s*(?:[-*•]|\d+[.)])\s+/gm, '').replace(/[`*_#>|]/g, '').replace(/\s+/g, ' ').trim();
+  function lessonSegments() { // o que a IA lê quando a pessoa toca em "Ouvir a aula"
+    const segs = [], add = (t, l = bodyLoc) => { t = plain(t); if (t) segs.push({ t, l }); };
+    add((lesson.title || L.title) + '.'); add(lesson.goal);
+    if (lesson.warmup) { add('Aquecimento.'); add(lesson.warmup, isLangC ? loc : bodyLoc); }
+    (lesson.sections || []).forEach(sec => { add(sec.heading + '.'); add(sec.body); (sec.examples || []).forEach(x => add(x.t, isLangC ? loc : bodyLoc)); });
+    if (lesson.tip) { add('Dica.'); add(lesson.tip); }
+    return segs;
+  }
+  async function saibaMais(i) { // pop-up com a explicação aprofundada de um termo
+    const v = (lesson.vocab || [])[i]; if (!v) return;
+    const ov = openInfo(`<div class="eyebrow">Termo da aula</div><h2 style="margin:8px 0 6px">${esc(v.term)}</h2><p class="muted" style="margin-bottom:16px">${esc(v.meaning)}</p><div class="prose" id="sm-body">${v.more ? md(v.more) : '<span class="spin"></span> Preparando a explicação…'}</div><div class="row" style="margin-top:22px"><button class="btn btn-ghost" data-close>Fechar</button></div>`);
+    if (v.more) return;
+    const box = () => ov.isConnected && ov.querySelector('#sm-body');
+    try {
+      const r = await AI.explainTerm({ term: v.term, meaning: v.meaning, courseTitle: d.title, lessonTitle: lesson.title || L.title });
+      v.more = String(r?.more || '').slice(0, 2500);
+      if (v.more) S.putLesson(key, L.cacheId || L.id, lesson);
+      if (box()) box().innerHTML = v.more ? md(v.more) : '<p class="muted">Não consegui montar a explicação agora. Tente de novo em instantes.</p>';
+    } catch (e) { if (box()) box().innerHTML = '<p class="muted">Não consegui montar a explicação agora. Tente de novo em instantes.</p>'; }
+  }
   function render() {
-    const done = s.done[L.id];
+    const done = s.done[L.id], tab = tabs[step][0];
     app.innerHTML = `
     <a class="back" href="#/curso/${key}">← ${esc(d.title)}</a>
     <div class="eyebrow" style="margin-top:14px">Aula ${L.n}${d.kind === 'lang' ? ` · ${s.level}` : ''}${done ? ` · feita (${done.score}%)` : ''}</div>
     <h1 style="margin-top:6px">${esc(lesson.title || L.title)}</h1>
     ${lesson.subtitle ? `<p class="muted" style="margin-top:6px">${esc(lesson.subtitle)}</p>` : ''}
-    <div class="steps">${tabs.map((t, i) => `<button data-step="${i}" class="${i === step ? 'on' : ''}">${i + 1}. ${t}</button>`).join('')}</div>
+    <div class="steps">${tabs.map((t, i) => `<button data-step="${i}" class="${i === step ? 'on' : ''}">${i + 1}. ${t[1]}</button>`).join('')}</div>
     <div id="stepbody"></div>`;
     const body = $('#stepbody');
-    if (step === 0) {
+    if (tab === 'aula') {
       body.innerHTML = `<div class="prose">
+        ${canSpeak ? `<div class="row" style="margin-bottom:16px"><button class="btn btn-ghost btn-sm" data-listen><i data-lucide="volume-2"></i> Ouvir a aula</button></div>` : ''}
         ${lesson.goal ? `<div class="notice" style="background:#e9fbf5;border-color:#bfeee0;color:#0f5446;margin-bottom:18px">🎯 ${esc(lesson.goal)}</div>` : ''}
         ${lesson.warmup ? `<p><b>Aquecimento:</b> ${esc(lesson.warmup)} ${sayBtn(lesson.warmup)}</p>` : ''}
         ${(lesson.sections || []).map(sec => `<h3>${esc(sec.heading)}</h3>${md(sec.body)}${(sec.examples || []).map(x => `<div class="ex"><div class="tg">${esc(x.t)} ${d.kind === 'lang' || d.kind === 'comp' || d.contentLang !== 'pt' ? sayBtn(x.t) : ''}</div>${x.pt ? `<div class="pt">${esc(x.pt)}</div>` : ''}</div>`).join('')}`).join('')}
         ${lesson.tip ? `<h3>💡 Dica</h3><p>${esc(lesson.tip)}</p>` : ''}
-        <div class="row" style="margin-top:26px"><button class="btn btn-pink" data-step="1">Vocabulário</button></div></div>`;
-    } else if (step === 1) {
-      body.innerHTML = `<p class="muted" style="margin-bottom:14px">Estas palavras vão para a sua Memorização quando você concluir a aula.</p>
-        <div class="vocab">${(lesson.vocab || []).map(v => `<div class="vcard"><b>${esc(v.term)}</b> ${d.kind === 'lang' || d.kind === 'comp' || d.contentLang !== 'pt' ? sayBtn(v.term) : ''}<div class="muted small" style="margin-top:4px">${esc(v.meaning)}</div>${v.example ? `<div class="small" style="margin-top:8px;font-style:italic">${esc(v.example)}</div>` : ''}</div>`).join('')}</div>
-        <div class="row" style="margin-top:26px"><button class="btn btn-pink" data-step="2">Exercícios</button></div>`;
-    } else if (step === 2) {
+        <div class="row" style="margin-top:26px"><button class="btn btn-pink" data-step="1">${tabs[1][1]}</button></div></div>`;
+    } else if (tab === 'vocab') {
+      body.innerHTML = isLangC ? `<p class="muted" style="margin-bottom:14px">Estas palavras vão para a sua Memorização quando você concluir a aula.</p>
+        <div class="vocab">${(lesson.vocab || []).map(v => `<div class="vcard"><b>${esc(v.term)}</b> ${sayBtn(v.term)}<div class="muted small" style="margin-top:4px">${esc(v.meaning)}</div>${v.example ? `<div class="small" style="margin-top:8px;font-style:italic">${esc(v.example)}</div>` : ''}</div>`).join('')}</div>
+        <div class="row" style="margin-top:26px"><button class="btn btn-pink" data-step="2">${tabs[2][1]}</button></div>`
+        : `<p class="muted" style="margin-bottom:14px">Estes termos vão para a sua Memorização quando você concluir a aula. Toque em <b>Saiba mais</b> para ver uma explicação mais completa.</p>
+        <div class="vocab">${(lesson.vocab || []).map((v, i) => `<div class="vcard"><b>${esc(v.term)}</b> ${d.contentLang !== 'pt' ? sayBtn(v.term) : ''}<div class="muted small" style="margin-top:4px">${esc(v.meaning)}</div>${v.example ? `<div class="small" style="margin-top:8px;font-style:italic">${esc(v.example)}</div>` : ''}<button class="btn btn-ghost btn-sm" data-more="${i}" style="margin-top:12px">Saiba mais</button></div>`).join('')}</div>
+        <div class="row" style="margin-top:26px"><button class="btn btn-pink" data-step="2">${tabs[2][1]}</button></div>`;
+    } else if (tab === 'ex') {
       exercisesUI(body, lesson.exercises || [], { langName: d.lang.name, onDone: res => finish(res) });
-    } else if (step === 4) {
+    } else if (tab === 'mais') {
       body.innerHTML = extraHTML(lesson, d);
     } else {
       const cv = lesson.conversation || {};
@@ -458,6 +486,8 @@ async function aula(key, id) {
     }
     $$('[data-step]').forEach(b => b.onclick = () => { step = +b.dataset.step; render(); window.scrollTo(0, 0); });
     $$('[data-say]').forEach(b => b.onclick = () => speak(b.dataset.say, loc));
+    $$('[data-more]').forEach(b => b.onclick = () => saibaMais(+b.dataset.more));
+    $$('[data-listen]').forEach(b => b.onclick = () => speak(lessonSegments(), bodyLoc));
   }
   async function finish(res) {
     const first = !s.done[L.id];
@@ -471,9 +501,9 @@ async function aula(key, id) {
     app.innerHTML = `<div class="panel" style="max-width:640px;margin:30px auto;text-align:center">
       <div class="eyebrow">Aula ${L.n} concluída</div><div class="score">${res.score}%</div>
       <p class="muted">${res.score >= 85 ? 'Excelente! 🔥' : res.score >= 60 ? 'Muito bom, os erros já foram para a sua revisão.' : 'Normal errar: é assim que se aprende. Os erros viraram cartões de revisão.'}</p>
-      <p class="small dim">${nCards} palavras novas na Memorização · 🔥 ${streakNow()} dias seguidos</p>
+      <p class="small dim">${nCards} ${isLangC ? 'palavras novas' : 'termos novos'} na Memorização · 🔥 ${streakNow()} dias seguidos</p>
       <div class="row" style="justify-content:center;margin-top:18px">
-        <a class="btn btn-pink" href="#/conversa/${key}/${L.id}">🎙 Conversar sobre o tema</a>
+        ${isLangC ? `<a class="btn btn-pink" href="#/conversa/${key}/${L.id}">🎙 Conversar sobre o tema</a>` : ''}
         ${nx ? `<a class="btn btn-ghost" href="#/aula/${key}/${nx.id}">Próxima aula</a>` : `<a class="btn btn-ghost" href="#/curso/${key}">Ver curso</a>`}
         <a class="btn btn-ghost" href="#/">Início</a>
       </div></div>`;
@@ -1290,12 +1320,9 @@ function iaInfo(foco) {
 // ---------- PARA IR ALÉM (conteúdo extra da aula) ----------
 function extraHTML(lesson, d) {
   const ex = lesson.extra || {};
-  const vids = ex.videos?.length ? ex.videos : [`${lesson.title} ${d.title}`];
   const notas = ex.notas?.length ? ex.notas : (lesson.sections || []).map(s => s.heading);
-  return `<div class="grid g2">
-    <div class="panel"><h3>▶ Vídeo-aulas sugeridas</h3><p class="small muted" style="margin:6px 0 14px">Buscas prontas no YouTube sobre o tema da aula.</p>${vids.map(v => `<a class="task" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=${encodeURIComponent(v)}" style="margin-bottom:8px"><span class="ck">▶</span><span class="t">${esc(v)}</span></a>`).join('')}</div>
-    <div class="panel"><h3>📝 Anotações da aula</h3><ul style="margin:12px 0;padding-left:18px">${notas.map(n => `<li style="margin:6px 0">${esc(n)}</li>`).join('')}</ul><button class="btn btn-ghost btn-sm" data-copy="${esc(notas.map(n => '• ' + n).join('\n'))}">Copiar anotações</button></div>
-  </div>${ex.desafio ? `<div class="panel section"><h3>🎯 Desafio extra (opcional)</h3><p style="margin-top:10px">${esc(ex.desafio)}</p></div>` : ''}`;
+  return `<div class="panel"><h3>📝 Anotações da aula</h3><ul style="margin:12px 0;padding-left:18px">${notas.map(n => `<li style="margin:6px 0">${esc(n)}</li>`).join('')}</ul><button class="btn btn-ghost btn-sm" data-copy="${esc(notas.map(n => '• ' + n).join('\n'))}">Copiar anotações</button></div>
+  ${ex.desafio ? `<div class="panel section"><h3>🎯 Desafio extra (opcional)</h3><p style="margin-top:10px">${esc(ex.desafio)}</p></div>` : ''}`;
 }
 
 // ---------- AVALIAÇÕES, ERROS E CONTATO ----------
@@ -1469,7 +1496,7 @@ async function boasVindas() {
     () => `<h2>Por qual idioma você quer começar?</h2><p class="muted" style="margin:8px 0 16px">Escolha um (ou mais). O primeiro escolhido vira o principal.</p><button class="chip ${o.noLang ? 'on' : ''}" id="o-nolang" style="margin-bottom:16px">${o.noLang ? '✓ ' : ''}Não quero aprender idiomas agora</button>${o.noLang ? '<p class="muted">Tudo bem! Quando quiser, é só abrir a aba Idiomas.</p>' : ''}<button class="btn btn-ghost btn-sm" id="o-zero" style="margin-bottom:16px">⏭ Pular nivelamento: começar do zero (A1)</button>${chips('langs', [...C.languages, ...(S.state.customLangs || [])].map(l => [l.id, l.flag ? `<img class="flagimg" src="https://flagcdn.com/w40/${l.flag}.png" alt="">${l.name}` : `🌎 ${l.name}`]), true)}<div class="row" style="margin-top:14px"><input id="o-otherlang" placeholder="Outro idioma? Ex.: Hindi, Holandês, Libras…" style="max-width:300px"><button class="btn btn-ghost btn-sm" id="o-addlang">＋ Adicionar</button></div>
       ${o.langs.length ? `<h3 style="margin:26px 0 6px">Qual você acha que é o seu nível?</h3><p class="small muted" style="margin-bottom:8px">Na próxima etapa dá pra confirmar com um teste.</p>${o.langs.map(id => `<div class="lvrow"><b>${esc(lang(id).name)}</b><select data-lv="${id}">${C.levels.map(l => `<option value="${l}" ${(o.levels[id] || 'A1') === l ? 'selected' : ''}>${l} · ${lvName(l)}</option>`).join('')}</select></div>`).join('')}` : ''}`,
     () => `<h2>Como você prefere aprender?</h2>
-      <h3 style="margin:20px 0 6px">Do que você mais gosta nas aulas?</h3><p class="small muted" style="margin-bottom:10px">Escolha quantas quiser (as aulas se adaptam), ou fique no recomendado. Dá pra mudar depois em Ajustes.</p>${chips('styles', [['recomendado', '⭐ Recomendado'], ['conversa', '💬 Conversação'], ['video', '▶ Vídeo-aulas'], ['exercicios', '✏️ Exercícios'], ['teoria', '📐 Teoria e regras'], ['anotacoes', '📝 Anotações']], true)}
+      <h3 style="margin:20px 0 6px">Do que você mais gosta nas aulas?</h3><p class="small muted" style="margin-bottom:10px">Escolha quantas quiser (as aulas se adaptam), ou fique no recomendado. Dá pra mudar depois em Ajustes.</p>${chips('styles', [['recomendado', '⭐ Recomendado'], ['conversa', '💬 Conversação'], ['exercicios', '✏️ Exercícios'], ['teoria', '📐 Teoria e regras'], ['anotacoes', '📝 Anotações']], true)}
       <h3 style="margin:24px 0 10px">Tempo por aula</h3>${chips('minutes', [[15, '15 min'], [30, '30 min'], [45, '45 min'], [60, '1 hora']])}
       <h3 style="margin:24px 0 10px">Conversação</h3>${chips('convMinutes', [[15, '15 min'], [20, '20 min'], [30, '30 min'], [45, '45 min']])}
       <h3 style="margin:24px 0 10px">Seus interesses</h3>${chips('interests', ['Games', 'Séries e filmes', 'Música', 'Viagens', 'Design', 'Tecnologia', 'Moda', 'Culinária', 'Esportes', 'Negócios', 'Arte', 'Natureza'].map(x => [x, x]), true)}`,
@@ -1587,15 +1614,34 @@ function newPasswordScreen() {
 }
 
 // ---------- INÍCIO DO APP ----------
+// Barra da leitura em voz alta: aparece sempre que a IA está lendo e deixa pausar, continuar ou parar
+function vozBar() {
+  let bar = null;
+  onSpeechState(st => {
+    if (st === 'idle') { bar?.remove(); bar = null; return; }
+    if (!bar) {
+      document.body.insertAdjacentHTML('beforeend', `<div class="vozbar" role="region" aria-label="Leitura em voz alta"><span class="vz-txt"></span><button class="btn btn-pink btn-sm" data-vz="toggle"></button><button class="btn btn-ghost btn-sm" data-vz="stop"><i data-lucide="square"></i> Parar</button></div>`);
+      bar = document.body.lastElementChild;
+      bar.addEventListener('click', e => {
+        const b = e.target.closest('[data-vz]'); if (!b) return;
+        if (b.dataset.vz === 'stop') stopSpeaking(); else if (speechState() === 'paused') resumeSpeaking(); else pauseSpeaking();
+      });
+    }
+    bar.querySelector('.vz-txt').textContent = st === 'paused' ? 'Leitura pausada' : 'Lendo em voz alta…';
+    bar.querySelector('[data-vz="toggle"]').innerHTML = st === 'paused' ? '<i data-lucide="play"></i> Continuar' : '<i data-lucide="pause"></i> Pausar';
+  });
+}
+
 async function boot() {
   initFx();
+  vozBar();
   document.addEventListener('click', e => { const b = e.target.closest('[data-fb]'); if (b) { e.preventDefault(); openFeedback(b.dataset.fb); } if (e.target.closest('[data-reload]')) location.reload(); if (e.target.closest('[data-back]')) history.back(); const cp = e.target.closest('[data-copy]'); if (cp) { navigator.clipboard.writeText(cp.dataset.copy); cp.textContent = 'Copiado ✓'; } const ag = e.target.closest('[data-agenda]'); if (ag) { e.preventDefault(); openAgendaConversa(ag.dataset.agenda || ''); } const ii = e.target.closest('[data-iainfo]'); if (ii) { e.preventDefault(); iaInfo(ii.dataset.iainfo); } if (e.target.closest('[data-comoentrar]')) { e.preventDefault(); comoEntrar(); } });
   window.addEventListener('ia-uso', () => document.querySelectorAll('.ia-meter').forEach(el => el.outerHTML = iaMeterHTML()));
   C = await (await fetch('data/catalog.json', { cache: 'no-cache' })).json();
   const qs = new URLSearchParams(location.search);
   const demo = qs.has('demo') || qs.has('visita');
   if (demo) {
-    const { demoData, demoAI } = await import('./demo.js?v=56');
+    const { demoData, demoAI } = await import('./demo.js?v=57');
     S = new DemoStore(() => demoData(C)); S.demoAI = demoAI;
     if (qs.has('visita')) S.readonly = true;
     document.body.insertAdjacentHTML('beforeend', S.readonly ? '<a class="demo-badge" href="./">👁 Modo visitante · Criar conta</a>' : '<div class="demo-badge">DEMONSTRAÇÃO</div>');

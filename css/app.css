@@ -642,3 +642,10 @@ select option{background:var(--bg2);color:var(--text)}
 .tm-ov2{z-index:75}
 .tm-box2{width:min(560px,100%)}
 .tm-box2 .tm-ed{margin-top:0;padding:0;border:0;background:none}
+
+/* Barra da leitura em voz alta (pausar / continuar / parar) */
+.vozbar{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:96;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;max-width:calc(100vw - 24px);padding:10px 14px;border-radius:999px;background:rgba(var(--modal-rgb),.94);color:var(--text);border:1px solid rgba(var(--text-rgb),.16);box-shadow:0 12px 34px rgba(0,0,0,.4);backdrop-filter:blur(10px)}
+.vozbar .vz-txt{font-size:14px;font-weight:600;padding:0 4px}
+.vozbar .btn i,.vozbar .btn svg{width:16px;height:16px;vertical-align:-3px}
+.vcard .btn[data-more]{font-size:13px}
+@media(max-width:900px){.vozbar{bottom:84px;border-radius:20px}}

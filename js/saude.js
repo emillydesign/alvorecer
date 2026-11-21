@@ -1,7 +1,7 @@
 // Cuidar de mim: desabafo, alimentação + água + foto do prato, treino.
 // IA de apoio: NÃO substitui psicólogo, nutricionista, educador físico ou médico.
 import { $, $$, esc, md, today, uid, addDays } from './util.js';
-import { listen, canListen, stopSpeaking } from './speech.js?v=40';
+import { listen, canListen, stopSpeaking } from './speech.js?v=57';
 
 let X; // contexto: { S, AI, app, toast, spinner, errBox, setCleanup }
 export function initSaude(ctx) { X = ctx; }
@@ -309,7 +309,7 @@ async function treino(tab = 'plano') {
 function treinoHTML(p) {
   return `<div class="panel"><h3>Seu treino</h3><p class="muted" style="margin:8px 0 14px">${esc(p.resumo || '')}</p>${p.aquecimento ? `<p class="small"><b>Aquecimento:</b> ${esc(p.aquecimento)}</p>` : ''}
     <div class="grid g2" style="margin-top:16px">${(p.dias || []).map((d, i) => `<div class="job"><div class="row"><b>${esc(d.nome)}</b><span class="spacer"></span><button class="btn btn-ghost btn-sm" data-feito="${i}">✓ Fiz hoje</button></div><div class="small dim">${esc(d.foco || '')}</div>
-      ${(d.exercicios || []).map(x => `<div style="padding:8px 0;border-bottom:1px solid var(--line)"><div class="row small"><b>${esc(x.nome)}</b><span class="spacer"></span><span>${esc(x.series)}x ${esc(x.reps)} · ${esc(x.descanso)}</span></div>${x.dica ? `<div class="small dim">${esc(x.dica)}</div>` : ''}<a class="small" style="color:var(--mint)" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=${encodeURIComponent('como fazer ' + x.nome + ' execução correta')}">▶ ver execução</a></div>`).join('')}</div>`).join('')}</div>
+      ${(d.exercicios || []).map(x => `<div style="padding:8px 0;border-bottom:1px solid var(--line)"><div class="row small"><b>${esc(x.nome)}</b><span class="spacer"></span><span>${esc(x.series)}x ${esc(x.reps)} · ${esc(x.descanso)}</span></div>${x.dica ? `<div class="small dim">${esc(x.dica)}</div>` : ''}</div>`).join('')}</div>`).join('')}</div>
     ${p.progressao ? `<p class="small" style="margin-top:16px"><b>Progressão:</b> ${esc(p.progressao)}</p>` : ''}
     ${p.beneficios?.length ? `<h4 style="margin:18px 0 8px">Por que vale a pena</h4><ul class="small">${p.beneficios.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
     ${p.cuidados?.length ? `<div class="notice" style="margin-top:16px">${p.cuidados.map(esc).join('<br>')}</div>` : ''}</div>`;
