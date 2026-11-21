@@ -227,9 +227,17 @@ Responda JSON:
 "tip":"${isLang ? 'dica de nativo/cultura' : 'dica de ouro'}",
 ${isLang ? '"vocab":[{"term":"...","meaning":"significado em PT","example":"exemplo de uso"}],' : '"vocab":[{"term":"termo ou conceito-chave","meaning":"explicação rápida em 1 frase simples, sem jargão","example":"exemplo curto do dia a dia"}],'}
 "exercises":[...],
-${isLang ? '"conversation":{"topic":"tema da conversação","goal":"objetivo (PT)","questions":["3 a 5 perguntas para puxar conversa"]},' : ''}
 "extra":{"notas":["5 a 8 tópicos de resumo para anotar"],"desafio":"um mini desafio extra, opcional"}}
 Regras: ${z.sec} seções ricas; ${isLang ? z.voc : '6 a 8'} ${isLang ? 'itens de vocabulário' : 'TERMOS (conceitos-chave da aula, cada um só com a explicação rápida; a explicação aprofundada é pedida depois, no botão "Saiba mais")'};${z.ex} exercícios misturando os tipos (pelo menos 3 mcq, 2 fill${isLang ? ', 2 translate' : ''}, 1 write), do mais fácil ao mais difícil.${isLang ? '' : ` COMO ESCREVER (importante): este curso é aberto a qualquer pessoa interessada no tema, de qualquer profissão e nível; nunca presuma quem está lendo, nunca fale de "quem não quer virar" algo nem de objetivos pessoais da pessoa. Linguagem simples e amigável, sem jargão: explique cada termo técnico na primeira vez que aparecer. Comece pela ideia geral (o que é e para que serve), use analogias do dia a dia, e só depois entre nos detalhes, do mais fácil ao mais completo. Não presuma conhecimento prévio. Quando o tema envolver IA, ensine primeiro o conceito e como a coisa funciona; use a IA como ferramenta para acelerar e facilitar, mostrando como pedir (prompts prontos em \`código\`) apenas quando já tiver explicado o necessário, sem começar a aula por prompts. Se for aula prática (Figma, código, projeto), as seções devem ser um PASSO A PASSO numerado e detalhado.`}${kind === 'cus' ? ' Este é um curso personalizado pedido pelo aluno: mantenha tudo educativo, seguro e legal; recuse qualquer conteúdo adulto, perigoso ou ilegal.' : ''}`, temperature: 0.8, cache: cacheKey
+      });
+    },
+
+    // Conversação da aula, gerada à parte (curta e rápida) para a aula principal abrir mais depressa
+    async conversationFor({ lang, level, title, terms = [], contentLang = 'pt' }) {
+      return gen({
+        prompt: `${BACKGROUND()}
+Crie a CONVERSAÇÃO de uma aula de ${lang.name} (${lang.native}), nível ${level}, tema "${title}".${terms.length ? ` Palavras da aula para reaproveitar: ${terms.slice(0, 10).join(', ')}.` : ''}
+Responda JSON: {"topic":"tema da conversação (PT)","goal":"objetivo (PT)","questions":["3 a 5 perguntas na língua-alvo, simples para o nível, para puxar conversa"]}`, temperature: 0.8, fast: true
       });
     },
 

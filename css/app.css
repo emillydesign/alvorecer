@@ -649,3 +649,21 @@ select option{background:var(--bg2);color:var(--text)}
 .vozbar .btn i,.vozbar .btn svg{width:16px;height:16px;vertical-align:-3px}
 .vcard .btn[data-more]{font-size:13px}
 @media(max-width:900px){.vozbar{bottom:84px;border-radius:20px}}
+
+/* Espera animada (aula, plano, teste): pulso suave, frases que mudam e blocos que brilham, para não parecer travado */
+.espera{display:flex;flex-direction:column;align-items:center;gap:16px;padding:56px 16px;text-align:center}
+.espera-orb{position:relative;width:68px;height:68px}
+.espera-orb i{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(var(--mint-rgb),.6);opacity:0;animation:esp-pulse 2.4s ease-out infinite}
+.espera-orb i:nth-child(2){animation-delay:.8s}.espera-orb i:nth-child(3){animation-delay:1.6s}
+.espera-orb b{position:absolute;inset:23px;border-radius:50%;background:radial-gradient(circle,var(--sun),rgba(var(--mint-rgb),.85));box-shadow:0 0 26px rgba(var(--mint-rgb),.55);animation:esp-beat 1.6s ease-in-out infinite}
+.espera-txt{font:600 18px/1.3 Sora,Inter,sans-serif;color:var(--text)}
+.espera-steps{position:relative;height:22px;width:100%;max-width:380px;color:var(--text);opacity:.75;font-size:14px}
+.espera-steps span{position:absolute;inset:0;opacity:0;animation:esp-step 12s ease-in-out infinite;animation-delay:calc(var(--i)*3s)}
+.espera-sk{display:flex;flex-direction:column;gap:10px;width:100%;max-width:420px;margin-top:10px}
+.espera-sk i{display:block;height:14px;border-radius:8px;background:linear-gradient(90deg,rgba(var(--text-rgb),.06),rgba(var(--text-rgb),.18),rgba(var(--text-rgb),.06));background-size:200% 100%;animation:esp-shine 1.8s linear infinite}
+.espera-sk i:nth-child(2){width:85%;animation-delay:.2s}.espera-sk i:nth-child(3){width:60%;animation-delay:.4s}
+@keyframes esp-pulse{0%{transform:scale(.35);opacity:.9}100%{transform:scale(1.5);opacity:0}}
+@keyframes esp-beat{50%{transform:scale(1.25)}}
+@keyframes esp-step{0%{opacity:0;transform:translateY(6px)}3%,22%{opacity:1;transform:none}25%,100%{opacity:0}}
+@keyframes esp-shine{to{background-position:-200% 0}}
+@media (prefers-reduced-motion:reduce){.espera-orb i,.espera-orb b,.espera-sk i{animation:none}.espera-steps span{animation:none}.espera-steps span:first-child{opacity:1}}

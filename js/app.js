@@ -1,8 +1,8 @@
 import { $, $$, esc, md, uid, today, ym, weekday, fmtDay, fmtShort, fmtMonth, holiday, isRestDay, prevStudyDay, weekStart, addDays, daysBetween, norm, schedule, isDue, shuffle } from './util.js';
-import { DemoStore, SupabaseStore, defaultState } from './store.js?v=59';
-import { ic, icoOf, initFx } from './fx.js?v=59';
+import { DemoStore, SupabaseStore, defaultState } from './store.js?v=60';
+import { ic, icoOf, initFx } from './fx.js?v=60';
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=59';
+import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=60';
 let sb = null;
 const authStorage = {
   _s: () => { try { return localStorage.getItem('pg_remember') === '0' ? sessionStorage : localStorage; } catch { return null; } },
@@ -10,10 +10,10 @@ const authStorage = {
   setItem(k, v) { try { this._s()?.setItem(k, v); } catch { } },
   removeItem(k) { try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch { } }
 };
-import { makeAI, NoKeyError } from './ai.js?v=59';
-import { speak, stopSpeaking, pauseSpeaking, resumeSpeaking, onSpeechState, speechState, listen, canListen, canSpeak } from './speech.js?v=59';
-import { initSaude, cuidar, startAgua } from './saude.js?v=59';
-import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=59';
+import { makeAI, NoKeyError } from './ai.js?v=60';
+import { speak, stopSpeaking, pauseSpeaking, resumeSpeaking, onSpeechState, speechState, listen, canListen, canSpeak } from './speech.js?v=60';
+import { initSaude, cuidar, startAgua } from './saude.js?v=60';
+import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=60';
 
 let C, S, AI;
 const app = $('#app');
@@ -22,7 +22,9 @@ const LS = { get: k => { try { return localStorage.getItem(k); } catch { return 
 // ---------- helpers ----------
 function toast(msg, ms = 3200) { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(t._t); t._t = setTimeout(() => t.hidden = true, ms); }
 const grad = g => `background:linear-gradient(160deg,${g[0]},${g[1]})`;
-const spinner = (txt) => `<div class="loading"><span class="spin"></span>&nbsp; ${esc(txt)}</div>`;
+const ESPERA = ['Pensando com carinho no seu conteúdo…', 'Organizando as ideias…', 'Quase lá, só mais um pouquinho…', 'Dando os últimos retoques…'];
+const spinner = (txt, passos = ESPERA) => `<div class="espera" role="status" aria-live="polite"><div class="espera-orb"><i></i><i></i><i></i><b></b></div><div class="espera-txt">${esc(txt)}</div><div class="espera-steps">${passos.slice(0, 4).map((t, i) => `<span style="--i:${i}">${esc(t)}</span>`).join('')}</div><div class="espera-sk"><i></i><i></i><i></i></div></div>`;
+const PASSOS_AULA = ['Escolhendo bons exemplos para você…', 'Montando a explicação passo a passo…', 'Criando os exercícios…', 'Revisando tudo antes de mostrar…'];
 const errBox = (e) => `<div class="panel" style="margin-top:20px"><p><b>Ops.</b> ${esc(e.message || e)}</p>${e instanceof NoKeyError ? '<a class="btn btn-pink btn-sm" href="#/ajustes">Ir para Ajustes</a>' : '<button class="btn btn-ghost btn-sm" data-reload>Tentar de novo</button>'}</div>`;
 const lang = id => C.languages.find(l => l.id === id) || (S?.state?.customLangs || []).find(l => l.id === id);
 const LOC = { hindi: 'hi-IN', holandes: 'nl-NL', sueco: 'sv-SE', grego: 'el-GR', hebraico: 'he-IL', polones: 'pl-PL', tailandes: 'th-TH', vietnamita: 'vi-VN', indonesio: 'id-ID', ucraniano: 'uk-UA', turco: 'tr-TR', 'portugues de portugal': 'pt-PT', catalao: 'ca-ES', dinamarques: 'da-DK', noruegues: 'nb-NO', finlandes: 'fi-FI', tcheco: 'cs-CZ', hungaro: 'hu-HU', romeno: 'ro-RO', malaio: 'ms-MY', filipino: 'fil-PH', tagalo: 'fil-PH', bengali: 'bn-IN', urdu: 'ur-PK', persa: 'fa-IR', suaili: 'sw-KE', latim: 'it-IT', guarani: 'es-PY', libras: 'pt-BR', irlandes: 'ga-IE', galego: 'gl-ES', basco: 'eu-ES', islandes: 'is-IS', croata: 'hr-HR', servio: 'sr-RS', bulgaro: 'bg-BG', eslovaco: 'sk-SK', lituano: 'lt-LT', estoniano: 'et-EE', afrikaans: 'af-ZA', tamil: 'ta-IN', punjabi: 'pa-IN', canto: 'zh-HK', cantones: 'zh-HK' };
@@ -430,7 +432,7 @@ async function cachedLesson(key, L) { // aula pronta (memória ou arquivo salvo)
   if (lesson) lessonMem[mk] = lesson;
   return lesson;
 }
-let preparoMod; const preparo = () => preparoMod ||= import('./preparo.js?v=59'); // arquivo à parte: só carrega quando uma aula ou curso abre
+let preparoMod; const preparo = () => preparoMod ||= import('./preparo.js?v=60'); // arquivo à parte: só carrega quando uma aula ou curso abre
 function lessonFor(key, L) { // cria a aula (uma só vez, mesmo que peçam duas vezes) e salva
   const d = course(key), s = cs(key), id = L.cacheId || L.id, mk = key + '|' + id;
   if (!lessonJobs[mk]) {
@@ -463,12 +465,16 @@ async function aula(key, id) {
   const isLangC = d.kind === 'lang' || d.kind === 'comp';
   let lesson = await cachedLesson(key, L);
   if (!lesson) {
-    app.innerHTML = spinner(lessonJobs[key + '|' + (L.cacheId || L.id)] ? 'Sua aula já está quase pronta…' : 'Preparando sua aula…');
+    app.innerHTML = spinner(lessonJobs[key + '|' + (L.cacheId || L.id)] ? 'Sua aula já está quase pronta…' : 'Preparando sua aula…', PASSOS_AULA);
     lesson = await lessonFor(key, L);
   }
   prefetchNext(key, L); // já deixa a próxima aula pronta enquanto a pessoa estuda esta
   const loc = d.locale;
   const sayBtn = t => canSpeak ? `<button class="say" data-say="${esc(t)}" title="Ouvir">🔊</button>` : '';
+  let convJob = null; // conversação da aula: gerada à parte, salva junto da aula
+  const convFor = () => convJob ||= AI.conversationFor({ lang: d.lang, level: s.level, title: lesson.title || L.title, terms: (lesson.vocab || []).map(v => v.term), contentLang: d.contentLang })
+    .then(c => { lesson.conversation = c; S.putLesson(key, L.cacheId || L.id, lesson); }).finally(() => { convJob = null; });
+  if (isLangC && !lesson.conversation) setTimeout(() => { if (!lesson.conversation && location.hash.includes('/aula/')) preparo().then(P => P.podePreparar(S, LIMITE_IA) && convFor()).catch(() => { }); }, 2500); // já deixa a conversação pronta enquanto a pessoa lê a aula
   let step = 0;
   const tabs = isLangC ? [['aula', 'Aula'], ['vocab', 'Vocabulário'], ['ex', 'Exercícios'], ['conv', 'Conversação'], ['mais', 'Para ir além']] : [['aula', 'Aula'], ['vocab', 'Termos'], ['ex', 'Exercícios'], ['mais', 'Para ir além']];
   const bodyLoc = !isLangC && d.contentLang && d.contentLang !== 'pt' ? loc : 'pt-BR';
@@ -523,6 +529,11 @@ async function aula(key, id) {
     } else if (tab === 'mais') {
       body.innerHTML = extraHTML(lesson, d);
     } else {
+      if (!lesson.conversation) { // a conversação é criada à parte (não atrasa a aula); se ainda não ficou pronta, mostra a espera e completa sozinha
+        body.innerHTML = spinner('Preparando sua conversação…', ['Pensando em perguntas para puxar conversa…', 'Ajustando ao seu nível…', 'Quase pronto…', 'Só mais um instante…']);
+        convFor().then(() => { if (step === 3) render(); }).catch(er => { if (step === 3) body.innerHTML = errBox(er); });
+        return;
+      }
       const cv = lesson.conversation || {};
       body.innerHTML = `<div class="panel"><div class="eyebrow">Conversação</div><h2 style="margin:8px 0">${esc(cv.topic || lesson.title)}</h2><p class="muted">${esc(cv.goal || '')}</p>
         <ul class="prose" style="font-size:15px">${(cv.questions || []).map(q => `<li>${esc(q)}</li>`).join('')}</ul>
@@ -1685,7 +1696,7 @@ async function boot() {
   const qs = new URLSearchParams(location.search);
   const demo = qs.has('demo') || qs.has('visita');
   if (demo) {
-    const { demoData, demoAI } = await import('./demo.js?v=59');
+    const { demoData, demoAI } = await import('./demo.js?v=60');
     S = new DemoStore(() => demoData(C)); S.demoAI = demoAI;
     if (qs.has('visita')) S.readonly = true;
     document.body.insertAdjacentHTML('beforeend', S.readonly ? '<a class="demo-badge" href="./">👁 Modo visitante · Criar conta</a>' : '<div class="demo-badge">DEMONSTRAÇÃO</div>');

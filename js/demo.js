@@ -61,7 +61,6 @@ export const SAMPLE_LESSON = {
     { type: 'translate', q: 'Vamos fazer uma pausa de 10 minutos.', answer: 'Let\'s take a 10-minute break.', explain: '' },
     { type: 'write', q: 'Write 3 sentences about your work week using at least 3 collocations from today.' }
   ],
-  conversation: { topic: 'Decisions at work', goal: 'Usar make/do e as collocations da aula falando do seu trabalho.', questions: ['What was the hardest decision you made this year?', 'How do you deal with tight deadlines?', 'Do you prefer running meetings or just attending them?'] }
 };
 
 export function demoData(C) {
@@ -116,7 +115,6 @@ function demoLesson(prompt) {
     tip: 'Fale com o IAlvorecer para pedir mudanças no tema ou no ritmo das aulas.',
     vocab: es ? [{ term: 'me encantaría', meaning: 'eu adoraria', example: 'Me encantaría viajar a México.' }, { term: 'echar de menos', meaning: 'sentir falta', example: 'Echo de menos a mi familia.' }] : [{ term: 'Conceito-chave', meaning: 'O ponto principal da aula', example: '' }],
     exercises: es ? [{ type: 'mcq', q: '"Sentir falta" em espanhol é…', options: ['sentir falta', 'echar de menos', 'faltar', 'extrañar mucho'], answer: 1, explain: 'Na Espanha se usa "echar de menos"; na América Latina também "extrañar".' }] : [{ type: 'mcq', q: 'Esta é uma aula de…', options: ['demonstração', 'verdade'], answer: 0, explain: 'No site real a aula é completa.' }],
-    conversation: { topic: t, goal: 'Conversar sobre o tema', questions: es ? ['¿Qué opinas de este tema?'] : ['O que você aprendeu hoje?'] }
   };
 }
 let mi = 0;
@@ -128,6 +126,7 @@ export async function demoAI({ prompt, contents, system }) {
   if (contents && /plataforma pessoal de estudos/.test(system || '')) return { reply: 'Fechado! Inglês continua na segunda, quarta e sexta, e o espanhol entra na terça e na quinta. Posso aplicar?', actions: [{ type: 'set_plan', second: 'es', secondDays: [2, 4] }] };
   if (contents && /modo mentoria de carreira/.test(system || '')) return { reply: MENTOR[Math.min(mi++, MENTOR.length - 1)] };
   if (contents) return CHAT[Math.min(ci++, CHAT.length - 1)];
+  if (/CONVERSAÇÃO de uma aula/.test(prompt)) return { topic: 'Conversa de exemplo', goal: 'Usar o que aprendeu falando do seu dia.', questions: ['What did you learn today?', 'How would you use it at work?', 'Tell me about your week.'] };
   if (/Monte o plano/.test(prompt)) return { lessons: PLAN_EN };
   if (/moderador RIGOROSO/.test(prompt)) return { allowed: true, reason: '' };
   if (/BUSCAS DE VAGAS/.test(prompt)) return { jobs: [{ titulo: 'UX Designer Pleno remoto', palavras: 'UX designer pleno', local: 'Brasil', remoto: true, internacional: false, porque: 'Combina com seu objetivo de agora.' }, { titulo: 'UX/UI Designer (remote)', palavras: 'UX UI designer', local: 'Remote', remoto: true, internacional: true, porque: 'Próximo passo, em dólar.' }] };
