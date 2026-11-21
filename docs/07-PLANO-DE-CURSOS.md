@@ -15,17 +15,17 @@ Regras para TODOS os cursos (prontos e criados), já valendo na geração das au
 3. Design para todos (hierarquia, teoria da cor, tipografia, sustentabilidade)
 4. Figma do zero ao avançado (edição à mão)
 5. Branding e identidade visual
-6. UX com IA
+6. IA e UX Design
 7. Loja virtual sem gastar
 8. Projetos criativos, Criatividade, Design como negócio
 
 ## Outras áreas (mesma lógica: base primeiro, depois IA como ajuda)
 
-- Tecnologia & IA: IA no dia a dia, Tirando o máximo do Claude grátis, Dados e planilhas, Segurança digital, depois carreira e comunicação.
-- Saúde: Nutrição sem neura, Musculação do zero, Corrida, Sono e estresse, Postura. A IA ajuda a organizar; em dúvidas de saúde, procurar profissional.
-- Negócios: Empreender do zero, Marketing digital, Vendas, Criação de conteúdo.
+- Tecnologia & IA: IA no dia a dia, Tirando o máximo do Claude grátis, Planilhas, Excel e IA, Segurança digital, depois carreira e comunicação.
+- Saúde: Nutrição, Musculação do zero, Corrida, Sono e estresse, Postura. A IA ajuda a organizar; em dúvidas de saúde, procurar profissional.
+- Negócios: Empreender do zero, Marketing digital, Vendas, Conteúdo: CapCut, Canva e IA.
 - Engenharia: Eletricidade básica, Eletrônica e Arduino, Energia solar, Automação. Segurança vem primeiro.
-- Finanças: Dinheiro organizado, Investir do zero, Dinheiro no exterior.
+- Finanças: Finanças pessoais, Investir do zero, Dinheiro no exterior.
 - Mente & Bem-estar: Inteligência emocional, Produtividade, Aprender a aprender.
 
 Nomes dos cursos: o nome específico da ferramenta ou assunto, com IA na frente quando ela for o destaque (ex.: "IA, HTML e CSS").
