@@ -551,7 +551,7 @@
       "courses": [
         {
           "id": "curriculo",
-          "title": "Currículo perfeito",
+          "title": "Currículo: ATS, IA e estrutura",
           "sub": "Passe pelos filtros e chame atenção",
           "art": "CV",
           "icon": "file-text",
@@ -600,7 +600,7 @@
         },
         {
           "id": "portfolio",
-          "title": "O melhor portfólio",
+          "title": "Portfólio: case studies e IA",
           "sub": "Mostre o que você sabe fazer",
           "art": "★",
           "icon": "layout-grid",
@@ -704,7 +704,7 @@
         },
         {
           "id": "dados",
-          "title": "Dados e planilhas",
+          "title": "Planilhas, Excel e IA",
           "sub": "Decisões com números",
           "art": "Σ",
           "icon": "bar-chart-3",
@@ -976,7 +976,7 @@
         },
         {
           "id": "projetos",
-          "title": "Projetos criativos com ferramentas grátis",
+          "title": "IA, HTML e CSS: projetos criativos",
           "sub": "Um projeto novo por aula, passo a passo",
           "art": "✦",
           "icon": "rocket",
@@ -1029,8 +1029,8 @@
         },
         {
           "id": "ux-ia",
-          "title": "UX com IA",
-          "sub": "Design mais rápido e melhor",
+          "title": "IA e UX Design",
+          "sub": "Pesquisa, wireframes e design mais rápido e melhor",
           "art": "UX",
           "icon": "compass",
           "pat": "grid",
@@ -1095,7 +1095,7 @@
       "courses": [
         {
           "id": "nutricao",
-          "title": "Nutrição sem neura",
+          "title": "Nutrição",
           "sub": "Organize sua alimentação de verdade",
           "art": "🥗",
           "icon": "salad",
@@ -1288,7 +1288,7 @@
         },
         {
           "id": "conteudo",
-          "title": "Criação de conteúdo",
+          "title": "Conteúdo: CapCut, Canva e IA",
           "sub": "Foto, vídeo e texto com o celular",
           "art": "🎬",
           "icon": "clapperboard",
@@ -1422,7 +1422,7 @@
       "courses": [
         {
           "id": "organizacao",
-          "title": "Dinheiro organizado",
+          "title": "Finanças pessoais",
           "sub": "Orçamento que funciona",
           "art": "📒",
           "icon": "notebook-pen",
