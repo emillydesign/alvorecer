@@ -1,8 +1,8 @@
 import { $, $$, esc, md, uid, today, ym, weekday, fmtDay, fmtShort, fmtMonth, holiday, isRestDay, prevStudyDay, weekStart, addDays, daysBetween, norm, schedule, isDue, shuffle } from './util.js';
-import { DemoStore, SupabaseStore, defaultState } from './store.js?v=61';
-import { ic, icoOf, initFx } from './fx.js?v=61';
+import { DemoStore, SupabaseStore, defaultState } from './store.js?v=62';
+import { ic, icoOf, initFx } from './fx.js?v=62';
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=61';
+import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=62';
 let sb = null;
 const authStorage = {
   _s: () => { try { return localStorage.getItem('pg_remember') === '0' ? sessionStorage : localStorage; } catch { return null; } },
@@ -10,10 +10,10 @@ const authStorage = {
   setItem(k, v) { try { this._s()?.setItem(k, v); } catch { } },
   removeItem(k) { try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch { } }
 };
-import { makeAI, NoKeyError } from './ai.js?v=61';
-import { speak, stopSpeaking, pauseSpeaking, resumeSpeaking, onSpeechState, speechState, listen, canListen, canSpeak } from './speech.js?v=61';
-import { initSaude, cuidar, startAgua } from './saude.js?v=61';
-import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=61';
+import { makeAI, NoKeyError } from './ai.js?v=62';
+import { speak, stopSpeaking, pauseSpeaking, resumeSpeaking, onSpeechState, speechState, listen, canListen, canSpeak } from './speech.js?v=62';
+import { initSaude, cuidar, startAgua } from './saude.js?v=62';
+import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=62';
 
 let C, S, AI;
 const app = $('#app');
@@ -428,11 +428,11 @@ const lessonMem = {}, lessonJobs = {}; // aulas já lidas nesta visita e aulas s
 async function cachedLesson(key, L) { // aula pronta (memória ou arquivo salvo); null se ainda precisa ser criada
   const d = course(key), s = cs(key), isLangC = d.kind === 'lang' || d.kind === 'comp', id = L.cacheId || L.id, mk = key + '|' + id;
   let lesson = lessonMem[mk] || await S.getLesson(key, id);
-  if (lesson && !isLangC && !lesson.v && !s.done[L.id]) lesson = null; // aula no formato antigo (ainda não feita): refaz com Termos e texto novo
+  if (lesson && !isLangC && (lesson.v || 0) < 3 && !s.done[L.id]) lesson = null; // aula no formato antigo (ainda não feita): refaz com Termos e texto novo
   if (lesson) lessonMem[mk] = lesson;
   return lesson;
 }
-let preparoMod; const preparo = () => preparoMod ||= import('./preparo.js?v=61'); // arquivo à parte: só carrega quando uma aula ou curso abre
+let preparoMod; const preparo = () => preparoMod ||= import('./preparo.js?v=62'); // arquivo à parte: só carrega quando uma aula ou curso abre
 function lessonFor(key, L) { // cria a aula (uma só vez, mesmo que peçam duas vezes) e salva
   const d = course(key), s = cs(key), id = L.cacheId || L.id, mk = key + '|' + id;
   if (!lessonJobs[mk]) {
@@ -440,9 +440,9 @@ function lessonFor(key, L) { // cria a aula (uma só vez, mesmo que peçam duas 
     lessonJobs[mk] = preparo().then(P => {
       const ls = lessonsOf(key) || [], shared = P.aberto(d); // curso pronto = aula igual para todos, criada uma vez só e compartilhada
       const c = P.continuidade(ls, ls.findIndex(l => l.id === L.id), { shared, mem: lessonMem, key });
-      return AI.lesson({ kind: d.kind, course: d, outline: L.outline, level: s.level, lang: d.lang, errors: recentErrors(key), contentLang: d.contentLang, shared, before: c.before, next: c.next, cacheKey: shared ? key + '|' + id + '|c2' : null });
+      return AI.lesson({ kind: d.kind, course: d, outline: L.outline, level: s.level, lang: d.lang, errors: recentErrors(key), contentLang: d.contentLang, shared, before: c.before, next: c.next, cacheKey: shared ? key + '|' + id + '|c3' : null });
     })
-      .then(x => { x.generated = today(); x.v = 2; lessonMem[mk] = x; S.putLesson(key, id, x); return x; })
+      .then(x => { x.generated = today(); x.v = 3; lessonMem[mk] = x; S.putLesson(key, id, x); return x; })
       .finally(() => { delete lessonJobs[mk]; });
   }
   return lessonJobs[mk];
@@ -476,7 +476,7 @@ async function aula(key, id) {
     .then(c => { lesson.conversation = c; S.putLesson(key, L.cacheId || L.id, lesson); }).finally(() => { convJob = null; });
   if (isLangC && !lesson.conversation) setTimeout(() => { if (!lesson.conversation && location.hash.includes('/aula/')) preparo().then(P => P.podePreparar(S, LIMITE_IA) && convFor()).catch(() => { }); }, 2500); // já deixa a conversação pronta enquanto a pessoa lê a aula
   let step = 0;
-  const tabs = isLangC ? [['aula', 'Aula'], ['vocab', 'Vocabulário'], ['ex', 'Exercícios'], ['conv', 'Conversação'], ['mais', 'Para ir além']] : [['aula', 'Aula'], ['vocab', 'Termos'], ['ex', 'Exercícios'], ['mais', 'Para ir além']];
+  const tabs = isLangC ? [['aula', 'Aula'], ['vocab', 'Vocabulário'], ['ex', 'Exercícios'], ['conv', 'Conversação'], ['mais', 'Para ir além']] : [['aula', 'Aula'], ['vocab', 'Termos'], ['ex', 'Exercícios'], ['valor', 'Seu valor'], ['mais', 'Para ir além']];
   const bodyLoc = !isLangC && d.contentLang && d.contentLang !== 'pt' ? loc : 'pt-BR';
   const plain = t => String(t || '').replace(/```[\s\S]*?```/g, ' ').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/^\s*(?:[-*•]|\d+[.)])\s+/gm, '').replace(/[`*_#>|]/g, '').replace(/\s+/g, ' ').trim();
   function lessonSegments() { // o que a IA lê quando a pessoa toca em "Ouvir a aula"
@@ -486,6 +486,10 @@ async function aula(key, id) {
     (lesson.sections || []).forEach(sec => { add(sec.heading + '.'); add(sec.body); (sec.examples || []).forEach(x => add(x.t, isLangC ? loc : bodyLoc)); });
     if (lesson.tip) { add('Dica.'); add(lesson.tip); }
     return segs;
+  }
+  function primeirosPassos(list) { // pop-up: baixar apps, criar conta e entrar (para quem nunca usou)
+    const itens = (list || []).slice(0, 6).map(x => `<h3 style="margin:18px 0 6px">${esc(x.title)}</h3><ol style="padding-left:20px">${(x.steps || []).slice(0, 10).map(t => `<li style="margin:6px 0">${esc(String(t).replace(/^\s*\d+[.)]\s*/, ''))}</li>`).join('')}</ol>`).join('');
+    openInfo(`<div class="eyebrow">Antes de começar</div><h2 style="margin:8px 0 6px">Como criar contas e baixar os apps</h2><p class="muted">Passo a passo simples, do zero. Os planos grátis bastam.</p><div class="prose">${itens}</div><div class="row" style="margin-top:22px"><button class="btn btn-ghost" data-close>Fechar</button></div>`);
   }
   async function saibaMais(i) { // pop-up com a explicação aprofundada de um termo
     const v = (lesson.vocab || [])[i]; if (!v) return;
@@ -512,6 +516,7 @@ async function aula(key, id) {
     if (tab === 'aula') {
       body.innerHTML = `<div class="prose">
         ${canSpeak ? `<div class="row" style="margin-bottom:16px"><button class="btn btn-ghost btn-sm" data-listen><i data-lucide="volume-2"></i> Ouvir a aula</button></div>` : ''}
+        ${!isLangC && lesson.start?.length ? `<div class="row" style="margin-bottom:16px"><button class="btn btn-ghost btn-sm" data-start><i data-lucide="user-plus"></i> Como criar contas e baixar os apps</button></div>` : ''}
         ${lesson.goal ? `<div class="notice" style="background:#e9fbf5;border-color:#bfeee0;color:#0f5446;margin-bottom:18px">🎯 ${esc(lesson.goal)}</div>` : ''}
         ${lesson.warmup ? `<p><b>Aquecimento:</b> ${esc(lesson.warmup)} ${sayBtn(lesson.warmup)}</p>` : ''}
         ${(lesson.sections || []).map(sec => `<h3>${esc(sec.heading)}</h3>${md(sec.body)}${(sec.examples || []).map(x => `<div class="ex"><div class="tg">${esc(x.t)} ${d.kind === 'lang' || d.kind === 'comp' || d.contentLang !== 'pt' ? sayBtn(x.t) : ''}</div>${x.pt ? `<div class="pt">${esc(x.pt)}</div>` : ''}</div>`).join('')}`).join('')}
@@ -526,6 +531,9 @@ async function aula(key, id) {
         <div class="row" style="margin-top:26px"><button class="btn btn-pink" data-step="2">${tabs[2][1]}</button></div>`;
     } else if (tab === 'ex') {
       exercisesUI(body, limparExercicios(lesson.exercises), { langName: d.lang.name, onDone: res => finish(res) });
+    } else if (tab === 'valor') {
+      body.innerHTML = '<span class="spin"></span>';
+      import('./valor.js?v=62').then(V => { if (body.isConnected) body.innerHTML = V.valorHTML(d.track) + `<div class="row" style="margin-top:26px"><button class="btn btn-pink" data-step="${tabs.length - 1}">${tabs[tabs.length - 1][1]}</button></div>`; $$('[data-step]').forEach(b => b.onclick = () => { step = +b.dataset.step; render(); window.scrollTo(0, 0); }); }).catch(() => { if (body.isConnected) body.innerHTML = '<p class="muted">Não consegui abrir agora. Tente de novo.</p>'; });
     } else if (tab === 'mais') {
       body.innerHTML = extraHTML(lesson, d);
     } else {
@@ -542,6 +550,7 @@ async function aula(key, id) {
     $$('[data-step]').forEach(b => b.onclick = () => { step = +b.dataset.step; render(); window.scrollTo(0, 0); });
     $$('[data-say]').forEach(b => b.onclick = () => speak(b.dataset.say, loc));
     $$('[data-more]').forEach(b => b.onclick = () => saibaMais(+b.dataset.more));
+    $$('[data-start]').forEach(b => b.onclick = () => primeirosPassos(lesson.start));
     $$('[data-listen]').forEach(b => b.onclick = () => speak(lessonSegments(), bodyLoc));
   }
   async function finish(res) {
@@ -1709,7 +1718,7 @@ async function boot() {
   const qs = new URLSearchParams(location.search);
   const demo = qs.has('demo') || qs.has('visita');
   if (demo) {
-    const { demoData, demoAI } = await import('./demo.js?v=61');
+    const { demoData, demoAI } = await import('./demo.js?v=62');
     S = new DemoStore(() => demoData(C)); S.demoAI = demoAI;
     if (qs.has('visita')) S.readonly = true;
     document.body.insertAdjacentHTML('beforeend', S.readonly ? '<a class="demo-badge" href="./">👁 Modo visitante · Criar conta</a>' : '<div class="demo-badge">DEMONSTRAÇÃO</div>');

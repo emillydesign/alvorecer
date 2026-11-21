@@ -1,1541 +1,1568 @@
 {
- "levels": [
-  "A1",
-  "A2",
-  "B1",
-  "B2",
-  "C1",
-  "C2"
- ],
- "levelNames": {
-  "A1": "Iniciante",
-  "A2": "Básico",
-  "B1": "Intermediário",
-  "B2": "Intermediário avançado",
-  "C1": "Avançado",
-  "C2": "Proficiente"
- },
- "lessonsPerLevel": 20,
- "levelThemes": {
-  "A1": [
-   "Apresentações e cumprimentos",
-   "Números, idade e contatos",
-   "Família",
-   "Profissões",
-   "Países e nacionalidades",
-   "Rotina diária",
-   "Horas e dias da semana",
-   "Comida e bebida",
-   "No restaurante: pedidos simples",
-   "Compras e preços",
-   "A casa",
-   "A cidade e direções simples",
-   "Transporte",
-   "Clima e estações",
-   "Roupas e cores",
-   "Hobbies e gostos",
-   "Corpo e saúde básica",
-   "No hotel",
-   "Planos para o fim de semana",
-   "Revisão: um dia completo de viagem"
+  "levels": [
+    "A1",
+    "A2",
+    "B1",
+    "B2",
+    "C1",
+    "C2"
   ],
-  "A2": [
-   "Contando o que aconteceu ontem",
-   "Viagens passadas",
-   "Descrevendo pessoas",
-   "Comparando coisas",
-   "Planos e convites",
-   "No aeroporto",
-   "Reservas de hotel",
-   "Pedindo ajuda na rua",
-   "Na farmácia e no médico",
-   "Trabalho e rotina profissional",
-   "Compras online e trocas",
-   "Experiências de vida",
-   "Regras e obrigações",
-   "Tecnologia no dia a dia",
-   "Festas e tradições",
-   "Cozinhando receitas",
-   "Esportes e atividades",
-   "Mudanças de vida",
-   "Ligações e mensagens",
-   "Revisão: contando uma viagem"
-  ],
-  "B1": [
-   "Dando opinião, concordando e discordando",
-   "Narrando histórias com detalhes",
-   "Hipóteses: e se...?",
-   "Conselhos e sugestões",
-   "Problemas e reclamações",
-   "Entrevista de emprego",
-   "Notícias e acontecimentos",
-   "Meio ambiente",
-   "Filmes, séries e games",
-   "Educação e aprendizado",
-   "Relacionamentos e amizade",
-   "Morar em outro país",
-   "Dinheiro e consumo",
-   "Saúde e bem-estar",
-   "Redes sociais",
-   "Planejando uma viagem longa",
-   "Explicando processos",
-   "Arrependimentos e desejos",
-   "Apresentando um projeto",
-   "Revisão: debate leve"
-  ],
-  "B2": [
-   "Argumentação e debate",
-   "Relatando o que outros disseram",
-   "Formal x informal",
-   "E-mails profissionais",
-   "Negociação",
-   "Tecnologia e ética",
-   "Ciência e descobertas",
-   "Trabalho remoto e carreira",
-   "Psicologia do dia a dia",
-   "Arte, design e criatividade",
-   "Viagem: resolvendo imprevistos",
-   "Sociedade e atualidades",
-   "Economia pessoal",
-   "Expressões idiomáticas comuns",
-   "Humor e ironia",
-   "Storytelling",
-   "Falar em público",
-   "Resolvendo conflitos",
-   "Textos argumentativos",
-   "Revisão: apresentação + debate"
-  ],
-  "C1": [
-   "Nuances de significado e registro",
-   "Collocations e phrasal verbs naturais",
-   "Expressões idiomáticas avançadas",
-   "Persuasão e retórica",
-   "Reuniões e liderança",
-   "Entrevistas de alto nível",
-   "Escrita profissional e relatórios",
-   "Gírias de séries, internet e games",
-   "Pronúncia: ritmo, entonação e reduções",
-   "Debatendo temas complexos",
-   "Feedback e conversas difíceis",
-   "Sarcasmo e duplo sentido",
-   "IA e o futuro do trabalho",
-   "Sotaques e diferenças regionais",
-   "Negociação avançada",
-   "Escrita criativa",
-   "Mídia e pensamento crítico",
-   "Erros fixos de quem aprendeu de ouvido",
-   "Small talk e networking",
-   "Revisão: discurso persuasivo"
-  ],
-  "C2": [
-   "Precisão: a palavra exata",
-   "Ironia, subtexto e implícitos",
-   "Variedades regionais",
-   "Linguagem de contratos e documentos",
-   "Vocabulário técnico da sua área",
-   "Mediação: explicar ideias de outros",
-   "Literatura e estilo",
-   "Grandes discursos e retórica",
-   "Debates filosóficos",
-   "Trocadilhos e jogos de palavras",
-   "Revisar e editar textos",
-   "Registro muito formal",
-   "Negócios internacionais",
-   "Marcadores do discurso de nativos",
-   "Entrevista em painel",
-   "Palestra de 5 minutos",
-   "Crítica cultural: filme, livro ou game",
-   "Histórias pessoais com impacto",
-   "Mudanças rápidas de registro",
-   "Revisão final: projeto livre"
-  ]
- },
- "languages": [
-  {
-   "id": "en",
-   "name": "Inglês",
-   "native": "English",
-   "art": "Hello",
-   "icon": "🗽",
-   "pat": "rings",
-   "locale": "en-US",
-   "start": "B1",
-   "g": [
-    "#22a577",
-    "#41768c"
-   ],
-   "flag": "us"
+  "levelNames": {
+    "A1": "Iniciante",
+    "A2": "Básico",
+    "B1": "Intermediário",
+    "B2": "Intermediário avançado",
+    "C1": "Avançado",
+    "C2": "Proficiente"
   },
-  {
-   "id": "es",
-   "name": "Espanhol",
-   "native": "Español",
-   "art": "¡Hola!",
-   "icon": "💃",
-   "pat": "dots",
-   "locale": "es-ES",
-   "start": "A1",
-   "g": [
-    "#f6a61f",
-    "#44948e"
-   ],
-   "flag": "es"
-  },
-  {
-   "id": "fr",
-   "name": "Francês",
-   "native": "Français",
-   "art": "Bonjour",
-   "icon": "🥐",
-   "pat": "diag",
-   "locale": "fr-FR",
-   "start": "A1",
-   "g": [
-    "#27bead",
-    "#5065a4"
-   ],
-   "flag": "fr"
-  },
-  {
-   "id": "it",
-   "name": "Italiano",
-   "native": "Italiano",
-   "art": "Ciao",
-   "icon": "🍝",
-   "pat": "waves",
-   "locale": "it-IT",
-   "start": "A1",
-   "g": [
-    "#71aa20",
-    "#c84e4e"
-   ],
-   "flag": "it"
-  },
-  {
-   "id": "de",
-   "name": "Alemão",
-   "native": "Deutsch",
-   "art": "Hallo",
-   "icon": "🥨",
-   "pat": "grid",
-   "locale": "de-DE",
-   "start": "A1",
-   "g": [
-    "#ce9318",
-    "#48795b"
-   ],
-   "flag": "de"
-  },
-  {
-   "id": "zh",
-   "name": "Mandarim",
-   "native": "中文",
-   "art": "你好",
-   "icon": "🏮",
-   "pat": "blob",
-   "locale": "zh-CN",
-   "start": "A1",
-   "g": [
-    "#df3737",
-    "#3d826f"
-   ],
-   "flag": "cn"
-  },
-  {
-   "id": "ja",
-   "name": "Japonês",
-   "native": "日本語",
-   "art": "こんにちは",
-   "icon": "🗾",
-   "pat": "rings",
-   "locale": "ja-JP",
-   "start": "A1",
-   "g": [
-    "#f57dbc",
-    "#44948e"
-   ],
-   "flag": "jp"
-  },
-  {
-   "id": "ko",
-   "name": "Coreano",
-   "native": "한국어",
-   "art": "안녕",
-   "icon": "🎧",
-   "pat": "dots",
-   "locale": "ko-KR",
-   "start": "A1",
-   "g": [
-    "#48c2f9",
-    "#3b967c"
-   ],
-   "flag": "kr"
-  },
-  {
-   "id": "ar",
-   "name": "Árabe",
-   "native": "العربية",
-   "art": "مرحبا",
-   "icon": "🌙",
-   "pat": "diag",
-   "locale": "ar-SA",
-   "start": "A1",
-   "g": [
-    "#23bf8b",
-    "#906946"
-   ],
-   "flag": "sa"
-  },
-  {
-   "id": "ru",
-   "name": "Russo",
-   "native": "Русский",
-   "art": "Привет",
-   "icon": "❄️",
-   "pat": "grid",
-   "locale": "ru-RU",
-   "start": "A1",
-   "g": [
-    "#6f72f2",
-    "#3d826f"
-   ],
-   "flag": "ru"
-  }
- ],
- "complementary": [
-  {
-   "id": "en-eua",
-   "lang": "en",
-   "title": "Vivendo nos Estados Unidos",
-   "art": "USA",
-   "icon": "🏙",
-   "pat": "grid",
-   "g": [
-    "#2f5cdb",
-    "#44948e"
-   ],
-   "lessons": [
-    "Chegando: imigração e alfândega",
-    "Alugando um apartamento",
-    "Abrindo conta em banco e entendendo crédito",
-    "Supermercado, gorjetas e impostos na etiqueta",
-    "Seguro saúde e consulta médica",
-    "Transporte: carro, Uber e transporte público",
-    "DMV e documentos",
-    "Trabalho: cultura de escritório americana",
-    "Fazendo amigos e small talk",
-    "Feriados e tradições americanas",
-    "Resolvendo problemas por telefone",
-    "Emergências: 911, polícia e hospital"
-   ],
-   "flag": "us"
-  },
-  {
-   "id": "en-viagem",
-   "lang": "en",
-   "title": "Viajando pelo mundo em inglês",
-   "art": "Trip",
-   "icon": "plane",
-   "pat": "waves",
-   "g": [
-    "#1abcd7",
-    "#3d826f"
-   ],
-   "lessons": [
-    "Planejando o roteiro",
-    "Aeroporto e conexões perdidas",
-    "Check-in e problemas no hotel",
-    "Pedindo comida com restrições",
-    "Passeios, ingressos e tours",
-    "Pedindo direções e se perdendo",
-    "Compras e pechincha",
-    "Fazendo amigos em hostels",
-    "Emergências em viagem",
-    "Contando a viagem depois"
-   ]
-  },
-  {
-   "id": "en-trabalho",
-   "lang": "en",
-   "title": "Inglês para entrevistas e trabalho",
-   "art": "Work",
-   "icon": "briefcase",
-   "pat": "diag",
-   "g": [
-    "#188364",
-    "#505866"
-   ],
-   "lessons": [
-    "Tell me about yourself",
-    "Perguntas comportamentais (método STAR)",
-    "Falando de pontos fortes e fracos",
-    "Negociando salário",
-    "Daily, stand-up e status de projeto",
-    "E-mails e Slack com naturalidade",
-    "Apresentando seu trabalho",
-    "Dando e recebendo feedback",
-    "Discordando com educação",
-    "Liderando uma reunião"
-   ]
-  },
-  {
-   "id": "en-ux",
-   "lang": "en",
-   "title": "Inglês para UX e Design",
-   "art": "UX",
-   "icon": "pen-tool",
-   "pat": "blob",
-   "g": [
-    "#aae845",
-    "#44948e"
-   ],
-   "lessons": [
-    "Vocabulário essencial de UX",
-    "Conduzindo entrevistas com usuários",
-    "Apresentando personas e jornadas",
-    "Defendendo decisões de design",
-    "Escrevendo microcopy em inglês",
-    "Testes de usabilidade: roteiro e condução",
-    "Design critique: dando feedback",
-    "Falando de métricas e resultados",
-    "Seu portfólio em inglês",
-    "Case study: contando um projeto"
-   ]
-  },
-  {
-   "id": "en-pron",
-   "lang": "en",
-   "title": "Pronúncia americana sem mistério",
-   "art": "/æ/",
-   "icon": "audio-lines",
-   "pat": "rings",
-   "g": [
-    "#34ca6b",
-    "#41728e"
-   ],
-   "lessons": [
-    "Os sons que brasileiros mais erram",
-    "TH sem medo",
-    "Vogais curtas e longas",
-    "O R americano",
-    "Final -ed e -s",
-    "Linking: juntando palavras",
-    "Reduções: gonna, wanna, kinda",
-    "Tônica das palavras",
-    "Entonação de perguntas e emoções",
-    "Treino de sombra (shadowing)"
-   ]
-  },
-  {
-   "id": "es-latam",
-   "lang": "es",
-   "title": "Viajando pela América Latina",
-   "art": "Latam",
-   "icon": "🌎",
-   "pat": "waves",
-   "g": [
-    "#f6a61f",
-    "#489c68"
-   ],
-   "lessons": [
-    "Argentina: voseo e lunfardo",
-    "Chile: o espanhol mais rápido",
-    "Peru e Bolívia: viagem pelos Andes",
-    "Colômbia: expressões e cultura",
-    "México: gírias e comida",
-    "Cuba e Caribe",
-    "Uruguai e Paraguai",
-    "Ônibus, fronteiras e câmbio",
-    "Falsos amigos com o português",
-    "Revisão: roteiro pela América do Sul"
-   ],
-   "flag": "ar"
-  },
-  {
-   "id": "es-espanha",
-   "lang": "es",
-   "title": "Espanhol da Espanha",
-   "art": "Olé",
-   "icon": "🥘",
-   "pat": "dots",
-   "g": [
-    "#f05353",
-    "#b6853e"
-   ],
-   "lessons": [
-    "Vosotros e diferenças com a América",
-    "Madri e Barcelona",
-    "Tapas e horários espanhóis",
-    "Gírias da Espanha",
-    "O sotaque: ceceo e distinción",
-    "Trabalhando na Espanha",
-    "Festas e tradições",
-    "Revisão: um fim de semana em Madri"
-   ],
-   "flag": "es"
-  },
-  {
-   "id": "fr-paris",
-   "lang": "fr",
-   "title": "Paris e a França na prática",
-   "art": "Paris",
-   "icon": "🗼",
-   "pat": "grid",
-   "g": [
-    "#3ed7c4",
-    "#5065a4"
-   ],
-   "lessons": [
-    "Sobrevivência: frases essenciais",
-    "Cafés e boulangeries",
-    "Metrô e trens",
-    "Museus e passeios",
-    "Etiqueta francesa",
-    "Compras",
-    "Restaurantes",
-    "Revisão: um dia em Paris"
-   ],
-   "flag": "fr"
-  },
-  {
-   "id": "it-viagem",
-   "lang": "it",
-   "title": "Itália para viajantes",
-   "art": "Roma",
-   "icon": "🛵",
-   "pat": "diag",
-   "g": [
-    "#8ed029",
-    "#af4d4d"
-   ],
-   "lessons": [
-    "Frases essenciais",
-    "Café e aperitivo",
-    "Trens e cidades",
-    "Restaurante italiano",
-    "Gestos e expressões",
-    "Compras e mercados",
-    "Cidadania e documentos",
-    "Revisão: uma semana na Itália"
-   ],
-   "flag": "it"
-  },
-  {
-   "id": "ja-viagem",
-   "lang": "ja",
-   "title": "Japão para viajantes",
-   "art": "東京",
-   "icon": "🍣",
-   "pat": "rings",
-   "g": [
-    "#f57dbc",
-    "#3d826f"
-   ],
-   "lessons": [
-    "Hiragana de sobrevivência",
-    "Cumprimentos e reverências",
-    "Trens e JR Pass",
-    "Konbini e restaurantes",
-    "Templos e etiqueta",
-    "Compras e números",
-    "Hospedagem e ryokan",
-    "Revisão: um dia em Tóquio"
-   ],
-   "flag": "jp"
-  }
- ],
- "tracks": {
-  "tech": {
-   "name": "Tecnologia & IA",
-   "intro": "Tecnologia, inteligência artificial e tudo o que você precisa para conseguir o trabalho dos sonhos (aqui ou lá fora).",
-   "courses": [
-    {
-     "id": "curriculo",
-     "title": "Currículo perfeito",
-     "sub": "Passe pelos filtros e chame atenção",
-     "art": "CV",
-     "icon": "file-text",
-     "pat": "grid",
-     "g": [
-      "#34ca6b",
-      "#5585ef"
-     ],
-     "ctx": "Inclua modelos prontos, exemplos antes/depois e prompts para revisar o currículo com o Claude grátis. Considere vagas no Brasil e no exterior.",
-     "lessons": [
-      "Como recrutadores e robôs (ATS) leem currículos",
-      "A estrutura que funciona",
-      "Resultados com números: transformando tarefas em conquistas",
-      "Adaptando o currículo para cada vaga",
-      "Currículo sem muita experiência",
-      "Currículo em inglês (padrão internacional)",
-      "LinkedIn alinhado com o currículo",
-      "Carta de apresentação que é lida",
-      "Revisão final com IA"
-     ]
-    },
-    {
-     "id": "entrevistas",
-     "title": "Entrevistas que dão certo",
-     "sub": "Da preparação à proposta",
-     "art": "Q&A",
-     "icon": "mic-vocal",
-     "pat": "rings",
-     "g": [
-      "#27bead",
-      "#766feb"
-     ],
-     "ctx": "Prático: roteiros, respostas-modelo, simulações. Sugira treinar as respostas em voz alta e gravar para se ouvir.",
-     "lessons": [
-      "Pesquisando a empresa e a vaga",
-      "\"Fale sobre você\" em 90 segundos",
-      "Método STAR para perguntas comportamentais",
-      "Perguntas difíceis (fraquezas, saídas, lacunas)",
-      "Pretensão salarial sem medo",
-      "Testes e cases práticos (design e tecnologia)",
-      "Entrevista em inglês",
-      "Perguntas inteligentes para fazer",
-      "Entrevista online: câmera, voz e presença",
-      "Follow-up e negociação da proposta"
-     ]
-    },
-    {
-     "id": "portfolio",
-     "title": "O melhor portfólio",
-     "sub": "Mostre o que você sabe fazer",
-     "art": "★",
-     "icon": "layout-grid",
-     "pat": "blob",
-     "g": [
-      "#23bf8b",
-      "#43b9ee"
-     ],
-     "ctx": "Foco em designers e profissionais criativos/tecnologia. Use só ferramentas grátis (GitHub Pages, Figma, Behance, Notion). Ensine a criar projetos fictícios fortes quando faltar experiência.",
-     "lessons": [
-      "O que recrutadores procuram em 30 segundos",
-      "Escolhendo os projetos certos",
-      "Estrutura de um case study",
-      "Storytelling: problema, processo, resultado",
-      "Visual do portfólio: menos é mais",
-      "Portfólio sem experiência: projetos próprios",
-      "Publicando de graça",
-      "Portfólio em inglês",
-      "Apresentando o portfólio numa entrevista",
-      "Mantendo tudo atualizado"
-     ]
-    },
-    {
-     "id": "carreira",
-     "title": "Carreira: do emprego ao internacional",
-     "sub": "Conseguir trabalho, crescer e ir longe",
-     "art": "🌎",
-     "icon": "map",
-     "pat": "waves",
-     "g": [
-      "#21aceb",
-      "#49b772"
-     ],
-     "ctx": "Realista e estratégico, para brasileiros. Caminho em etapas: ser excelente onde está → conseguir um trabalho melhor (inclusive remoto no Brasil) → trabalhar remoto para empresas de fora morando no Brasil (PJ, plataformas como Deel/Remote) → mudar de país (vistos e caminhos para EUA, Japão, Canadá, Portugal etc.). Sempre com ações concretas e sites de vagas que funcionam.",
-     "lessons": [
-      "Seu mapa de carreira: onde está e aonde quer ir",
-      "Ser um profissional excelente (o que ninguém ensina)",
-      "Comunicação no trabalho: visibilidade sem puxa-saquismo",
-      "Crescer dentro da empresa: promoções e aumentos",
-      "Onde estão as vagas que dão certo",
-      "Candidatura estratégica: qualidade > quantidade",
-      "Networking de verdade (até para tímidos)",
-      "Home office no Brasil ganhando melhor",
-      "Trabalhar para empresas de fora morando no Brasil",
-      "Sites e plataformas de vagas internacionais",
-      "Freelas internacionais",
-      "Vistos e caminhos para morar fora (EUA, Japão, Canadá, Europa)",
-      "Cultura de trabalho em outros países",
-      "Finanças da transição de carreira",
-      "Seu plano de 12 meses"
-     ]
-    },
-    {
-     "id": "ia-dia",
-     "title": "IA no dia a dia",
-     "sub": "Do zero ao uso avançado",
-     "art": "AI",
-     "icon": "bot",
-     "pat": "rings",
-     "g": [
-      "#27bead",
-      "#506ac1"
-     ],
-     "lessons": [
-      "O que é IA de verdade (sem mistério)",
-      "Como os modelos de linguagem funcionam",
-      "Prompts que funcionam: a estrutura certa",
-      "Estudando e pesquisando com IA",
-      "IA para escrever melhor",
-      "IA para imagens, vídeo e design",
-      "Automatizando tarefas repetitivas",
-      "Alucinações: como checar respostas",
-      "Privacidade e segurança com IA",
-      "IA no trabalho: casos práticos",
-      "Agentes de IA: o que são e como usar",
-      "Projeto final: seu assistente pessoal"
-     ]
-    },
-    {
-     "id": "claude-gratis",
-     "title": "Tirando o máximo do Claude grátis",
-     "sub": "Projetos grandes num plano gratuito",
-     "art": "✳",
-     "icon": "sparkles",
-     "pat": "waves",
-     "g": [
-      "#dc821a",
-      "#3d826f"
-     ],
-     "ctx": "Ensine a usar o Claude no plano gratuito (claude.ai) para criar e editar sites e projetos: prompts bem estruturados, dividir tarefas grandes, economizar mensagens, guardar contexto em um documento de 'resumo do projeto', trabalhar com arquivos do GitHub (copiar e colar, github.dev), revisar o que a IA fez.",
-     "lessons": [
-      "Como o plano grátis funciona e seus limites",
-      "A anatomia de um prompt perfeito",
-      "Dividindo projetos grandes em pedidos pequenos",
-      "O documento de contexto do projeto",
-      "Editando arquivos do GitHub com o Claude",
-      "Pedindo design: referências, cores e estilo",
-      "Revisando e corrigindo o que a IA fez",
-      "Quando usar outras IAs grátis junto"
-     ]
-    },
-    {
-     "id": "dados",
-     "title": "Dados e planilhas",
-     "sub": "Decisões com números",
-     "art": "Σ",
-     "icon": "bar-chart-3",
-     "pat": "grid",
-     "g": [
-      "#34ca6b",
-      "#41728e"
-     ],
-     "lessons": [
-      "Pensando com dados",
-      "Planilhas: fórmulas essenciais",
-      "PROCV, filtros e tabelas dinâmicas",
-      "Gráficos que contam histórias",
-      "Limpando dados bagunçados",
-      "Estatística básica sem medo",
-      "Dashboards simples",
-      "Analisando dados com IA",
-      "Métricas de negócio",
-      "Projeto final: um painel pessoal"
-     ]
-    },
-    {
-     "id": "seg",
-     "title": "Segurança digital",
-     "sub": "Proteja suas contas e dados",
-     "art": "🔒",
-     "icon": "shield-check",
-     "pat": "diag",
-     "g": [
-      "#22817a",
-      "#505866"
-     ],
-     "lessons": [
-      "Senhas e gerenciadores",
-      "Autenticação em dois fatores",
-      "Golpes, phishing e engenharia social",
-      "Privacidade nas redes",
-      "Wi-Fi público e VPN",
-      "Backup do que importa",
-      "Segurança no celular",
-      "Plano de segurança pessoal"
-     ]
-    },
-    {
-     "id": "comunicacao",
-     "title": "Comunicação e oratória",
-     "sub": "Fale com clareza e confiança",
-     "art": "Aa",
-     "icon": "megaphone",
-     "pat": "rings",
-     "g": [
-      "#f97e29",
-      "#45817e"
-     ],
-     "lessons": [
-      "Os pilares da boa comunicação",
-      "Escuta ativa",
-      "Estruturando uma fala",
-      "Nervosismo: como controlar",
-      "Voz, ritmo e pausas",
-      "Linguagem corporal",
+  "lessonsPerLevel": 20,
+  "levelThemes": {
+    "A1": [
+      "Apresentações e cumprimentos",
+      "Números, idade e contatos",
+      "Família",
+      "Profissões",
+      "Países e nacionalidades",
+      "Rotina diária",
+      "Horas e dias da semana",
+      "Comida e bebida",
+      "No restaurante: pedidos simples",
+      "Compras e preços",
+      "A casa",
+      "A cidade e direções simples",
+      "Transporte",
+      "Clima e estações",
+      "Roupas e cores",
+      "Hobbies e gostos",
+      "Corpo e saúde básica",
+      "No hotel",
+      "Planos para o fim de semana",
+      "Revisão: um dia completo de viagem"
+    ],
+    "A2": [
+      "Contando o que aconteceu ontem",
+      "Viagens passadas",
+      "Descrevendo pessoas",
+      "Comparando coisas",
+      "Planos e convites",
+      "No aeroporto",
+      "Reservas de hotel",
+      "Pedindo ajuda na rua",
+      "Na farmácia e no médico",
+      "Trabalho e rotina profissional",
+      "Compras online e trocas",
+      "Experiências de vida",
+      "Regras e obrigações",
+      "Tecnologia no dia a dia",
+      "Festas e tradições",
+      "Cozinhando receitas",
+      "Esportes e atividades",
+      "Mudanças de vida",
+      "Ligações e mensagens",
+      "Revisão: contando uma viagem"
+    ],
+    "B1": [
+      "Dando opinião, concordando e discordando",
+      "Narrando histórias com detalhes",
+      "Hipóteses: e se...?",
+      "Conselhos e sugestões",
+      "Problemas e reclamações",
+      "Entrevista de emprego",
+      "Notícias e acontecimentos",
+      "Meio ambiente",
+      "Filmes, séries e games",
+      "Educação e aprendizado",
+      "Relacionamentos e amizade",
+      "Morar em outro país",
+      "Dinheiro e consumo",
+      "Saúde e bem-estar",
+      "Redes sociais",
+      "Planejando uma viagem longa",
+      "Explicando processos",
+      "Arrependimentos e desejos",
+      "Apresentando um projeto",
+      "Revisão: debate leve"
+    ],
+    "B2": [
+      "Argumentação e debate",
+      "Relatando o que outros disseram",
+      "Formal x informal",
+      "E-mails profissionais",
+      "Negociação",
+      "Tecnologia e ética",
+      "Ciência e descobertas",
+      "Trabalho remoto e carreira",
+      "Psicologia do dia a dia",
+      "Arte, design e criatividade",
+      "Viagem: resolvendo imprevistos",
+      "Sociedade e atualidades",
+      "Economia pessoal",
+      "Expressões idiomáticas comuns",
+      "Humor e ironia",
       "Storytelling",
-      "Apresentações com slides",
-      "Falando em reuniões",
-      "Projeto: apresentação de 3 minutos"
-     ]
-    },
-    {
-     "id": "negociacao",
-     "title": "A arte da negociação",
-     "sub": "Ganhe sem perder relações",
-     "art": "🤝",
-     "icon": "scale",
-     "pat": "diag",
-     "g": [
-      "#29aa58",
-      "#6c513d"
-     ],
-     "lessons": [
-      "O que é negociar",
-      "Preparação: BATNA e limites",
-      "Ancoragem e primeira oferta",
-      "Perguntas que revelam interesses",
-      "Concessões inteligentes",
-      "Negociando salário",
-      "Lidando com pessoas difíceis",
-      "Fechamento e acordo"
-     ]
-    }
-   ],
-   "icon": "cpu",
-   "g": [
-    "#5eead4",
-    "#6366f1"
-   ]
+      "Falar em público",
+      "Resolvendo conflitos",
+      "Textos argumentativos",
+      "Revisão: apresentação + debate"
+    ],
+    "C1": [
+      "Nuances de significado e registro",
+      "Collocations e phrasal verbs naturais",
+      "Expressões idiomáticas avançadas",
+      "Persuasão e retórica",
+      "Reuniões e liderança",
+      "Entrevistas de alto nível",
+      "Escrita profissional e relatórios",
+      "Gírias de séries, internet e games",
+      "Pronúncia: ritmo, entonação e reduções",
+      "Debatendo temas complexos",
+      "Feedback e conversas difíceis",
+      "Sarcasmo e duplo sentido",
+      "IA e o futuro do trabalho",
+      "Sotaques e diferenças regionais",
+      "Negociação avançada",
+      "Escrita criativa",
+      "Mídia e pensamento crítico",
+      "Erros fixos de quem aprendeu de ouvido",
+      "Small talk e networking",
+      "Revisão: discurso persuasivo"
+    ],
+    "C2": [
+      "Precisão: a palavra exata",
+      "Ironia, subtexto e implícitos",
+      "Variedades regionais",
+      "Linguagem de contratos e documentos",
+      "Vocabulário técnico da sua área",
+      "Mediação: explicar ideias de outros",
+      "Literatura e estilo",
+      "Grandes discursos e retórica",
+      "Debates filosóficos",
+      "Trocadilhos e jogos de palavras",
+      "Revisar e editar textos",
+      "Registro muito formal",
+      "Negócios internacionais",
+      "Marcadores do discurso de nativos",
+      "Entrevista em painel",
+      "Palestra de 5 minutos",
+      "Crítica cultural: filme, livro ou game",
+      "Histórias pessoais com impacto",
+      "Mudanças rápidas de registro",
+      "Revisão final: projeto livre"
+    ]
   },
-  "design": {
-   "name": "Design & Criação",
-   "intro": "Figma, sites do seu jeito, lojas virtuais e muita criatividade, só com ferramentas grátis e a IA do seu lado.",
-   "courses": [
+  "languages": [
     {
-     "id": "figma",
-     "title": "Figma do zero ao avançado",
-     "sub": "Do primeiro frame ao site completo",
-     "art": "F",
-     "icon": "pen-tool",
-     "pat": "grid",
-     "g": [
-      "#34ca6b",
-      "#44948e"
-     ],
-     "ctx": "Use o Figma no plano gratuito (Starter). Aulas práticas e passo a passo, com atalhos de teclado, boas práticas profissionais e um mini-exercício no Figma em toda aula. O objetivo final é desenhar sites e depois transformá-los em HTML/CSS com ajuda da IA.",
-     "lessons": [
-      "Interface, arquivos e atalhos essenciais",
-      "Frames, formas e grids de layout",
-      "Texto e tipografia na prática",
-      "Cores, estilos e efeitos",
-      "Auto Layout I: o básico que muda tudo",
-      "Auto Layout II: layouts responsivos",
-      "Componentes e instâncias",
-      "Variantes e propriedades de componentes",
-      "Variáveis e modos (claro e escuro)",
-      "Montando um design system do zero",
-      "Imagens, ícones e recursos grátis",
-      "Prototipagem e interações",
-      "Smart Animate e microinterações",
-      "Desenhando uma landing page completa",
-      "Versão mobile e breakpoints",
-      "Plugins e IA dentro do Figma",
-      "Dev Mode e handoff",
-      "Do Figma para HTML/CSS com o Claude",
-      "Apresentando designs para clientes",
-      "Projeto final: site do Figma ao ar"
-     ]
+      "id": "en",
+      "name": "Inglês",
+      "native": "English",
+      "art": "Hello",
+      "icon": "🗽",
+      "pat": "rings",
+      "locale": "en-US",
+      "start": "B1",
+      "g": [
+        "#22a577",
+        "#41768c"
+      ],
+      "flag": "us"
     },
     {
-     "id": "web",
-     "title": "Sites do seu jeito: HTML, CSS e IA",
-     "sub": "Entenda como funciona e crie com a ajuda da IA",
-     "art": "</>",
-     "icon": "code-xml",
-     "pat": "dots",
-     "g": [
-      "#27bead",
-      "#48795b"
-     ],
-     "ctx": "Curso aberto a qualquer pessoa curiosa sobre como os sites são feitos, de qualquer profissão e sem precisar saber programar. Objetivo: explicar, do zero e em linguagem simples, como um site funciona (HTML, CSS e publicação) e como usar a IA (o Claude, plano grátis em claude.ai) para acelerar e facilitar a criação: a IA escreve e edita o código, e a pessoa entende o suficiente para pedir bem, conferir o resultado, ajustar detalhes e publicar. Estrutura: as primeiras aulas explicam os conceitos e a lógica (o que é HTML, o que é CSS, como as peças se encaixam) com analogias do dia a dia, sem pedir nada à IA ainda; a IA entra aos poucos, depois que o conceito foi entendido, sempre no ritmo entender → pedir à IA → conferir o resultado. Só na última aula o foco é escrever bons prompts. Ferramentas grátis: GitHub (editar arquivos pelo navegador, ou github.dev apertando a tecla . no repositório), GitHub Pages para publicar, Google Fonts, ícones grátis. Fluxo de edição: abrir o arquivo no GitHub, copiar, colar no Claude com um pedido claro, colar a resposta de volta e fazer Commit changes. Mostre prompts prontos para copiar apenas depois de explicar o conceito por trás.",
-     "lessons": [
-      "Como um site funciona (sem mistério)",
-      "Anatomia do HTML: o esqueleto da página",
-      "CSS: cores, fontes e espaçamento",
-      "Flexbox e Grid: montando layouts",
-      "Responsivo: bonito no celular",
-      "Prompts que geram código bom no Claude grátis",
-      "Editando arquivos no GitHub pelo navegador",
-      "Publicando de graça no GitHub Pages",
-      "Fontes, ícones e imagens grátis",
-      "Animações e efeitos com CSS",
-      "JavaScript para interações simples",
-      "Formulários que funcionam (Formspree grátis)",
-      "Acessibilidade e velocidade",
-      "Domínio próprio no seu site",
-      "Projeto: seu portfólio",
-      "Projeto: landing page para um cliente"
-     ]
+      "id": "es",
+      "name": "Espanhol",
+      "native": "Español",
+      "art": "¡Hola!",
+      "icon": "💃",
+      "pat": "dots",
+      "locale": "es-ES",
+      "start": "A1",
+      "g": [
+        "#f6a61f",
+        "#44948e"
+      ],
+      "flag": "es"
     },
     {
-     "id": "loja",
-     "title": "Loja virtual sem gastar",
-     "sub": "E-commerce para você e para clientes",
-     "art": "$",
-     "icon": "shopping-bag",
-     "pat": "blob",
-     "g": [
-      "#aae845",
-      "#3b967c"
-     ],
-     "ctx": "Método principal: a 'Loja Modelo' (template grátis no GitHub: github.com/emillydesign/loja-modelo). É um site de vendas em HTML/CSS/JS publicado no GitHub Pages: produtos em produtos.json, configuração em loja.json (nome, cores, WhatsApp, frete), carrinho, e finalização do pedido pelo WhatsApp ou link de pagamento por produto (Mercado Pago, InfinitePay, PagBank ou Stripe Payment Links: todos sem mensalidade, só taxa por venda). Para duplicar para um cliente: 'Use this template' no GitHub. Para editar: GitHub no navegador + Claude grátis (copiar arquivo, pedir a mudança, colar de volta). Alternativa sem código: plataformas com plano grátis (como Nuvemshop, se ainda tiver plano grátis: confira). Ensine também a parte de negócio: precificação de sites para clientes, contrato simples, manutenção mensal.",
-     "lessons": [
-      "Como funciona uma loja online",
-      "Caminhos grátis: plataforma pronta x site próprio",
-      "Duplicando a Loja Modelo no seu GitHub",
-      "Cadastrando produtos, preços e fotos",
-      "A identidade da loja com a ajuda do Claude",
-      "Pagamentos: links do Mercado Pago, InfinitePay e Stripe",
-      "Pedido pelo WhatsApp, frete e retirada",
-      "Fotos de produto bonitas com celular e IA",
-      "Domínio próprio e aparecer no Google",
-      "Políticas: trocas, privacidade e direitos do consumidor",
-      "Quanto cobrar por uma loja para cliente",
-      "Proposta, contrato e manutenção mensal",
-      "Projeto final: loja de um cliente real"
-     ]
+      "id": "fr",
+      "name": "Francês",
+      "native": "Français",
+      "art": "Bonjour",
+      "icon": "🥐",
+      "pat": "diag",
+      "locale": "fr-FR",
+      "start": "A1",
+      "g": [
+        "#27bead",
+        "#5065a4"
+      ],
+      "flag": "fr"
     },
     {
-     "id": "criatividade",
-     "title": "Criatividade e pensar fora da caixa",
-     "sub": "Ideias que ninguém teve",
-     "art": "?!",
-     "icon": "lightbulb",
-     "pat": "waves",
-     "g": [
-      "#fad028",
-      "#489c68"
-     ],
-     "lessons": [
-      "Mitos da criatividade",
-      "Observar como designer",
-      "Técnicas para gerar ideias (SCAMPER, Crazy 8s)",
-      "Restrições criativas: menos é mais",
-      "Referências sem copiar",
-      "Co-criação com IA",
-      "Vencendo o bloqueio criativo",
-      "Ideias ruins de propósito",
-      "Do rabisco ao conceito",
-      "Projeto: 30 ideias em 30 minutos"
-     ]
+      "id": "it",
+      "name": "Italiano",
+      "native": "Italiano",
+      "art": "Ciao",
+      "icon": "🍝",
+      "pat": "waves",
+      "locale": "it-IT",
+      "start": "A1",
+      "g": [
+        "#71aa20",
+        "#c84e4e"
+      ],
+      "flag": "it"
     },
     {
-     "id": "projetos",
-     "title": "Projetos criativos com ferramentas grátis",
-     "sub": "Um projeto novo por aula, passo a passo",
-     "art": "✦",
-     "icon": "rocket",
-     "pat": "rings",
-     "g": [
-      "#23bf8b",
-      "#4393a8"
-     ],
-     "ctx": "Cada aula é UM projeto completo, do zero ao ar, usando só ferramentas grátis: Claude grátis (para gerar e editar código), HTML/CSS/JS, Figma grátis, GitHub Pages, Canva grátis quando fizer sentido. Estrutura: ideia e referência → desenho rápido → prompt pronto para o Claude → ajustes de design → publicar → como mostrar no portfólio. Projetos simples e bonitos, que dão para fazer em 1 a 2 horas.",
-     "lessons": [
-      "Cartão de visita digital interativo",
-      "Seu link na bio próprio",
-      "Portfólio de uma página",
-      "Convite de evento animado",
-      "Cardápio digital para restaurante",
-      "Mini-game no navegador",
-      "Gerador de paletas de cor",
-      "Moodboard interativo",
-      "Página 'em breve' com contagem regressiva",
-      "Currículo web que impressiona",
-      "Quiz interativo para redes sociais",
-      "Galeria de fotos com efeitos",
-      "Landing page de produto",
-      "Mini site de casamento ou aniversário"
-     ]
+      "id": "de",
+      "name": "Alemão",
+      "native": "Deutsch",
+      "art": "Hallo",
+      "icon": "🥨",
+      "pat": "grid",
+      "locale": "de-DE",
+      "start": "A1",
+      "g": [
+        "#ce9318",
+        "#48795b"
+      ],
+      "flag": "de"
     },
     {
-     "id": "visual",
-     "title": "Fundamentos de design visual",
-     "sub": "O olhar de designer",
-     "art": "Aa",
-     "icon": "palette",
-     "pat": "diag",
-     "g": [
-      "#3ed7c4",
-      "#498761"
-     ],
-     "lessons": [
-      "Hierarquia visual",
-      "Tipografia que comunica",
-      "Cor: harmonia e contraste",
-      "Grids e alinhamento",
-      "Espaço em branco",
-      "Imagens e composição",
-      "Consistência e repetição",
-      "Tendências sem perder a identidade",
-      "Analisando sites incríveis",
-      "Projeto: redesign de uma página"
-     ]
+      "id": "zh",
+      "name": "Mandarim",
+      "native": "中文",
+      "art": "你好",
+      "icon": "🏮",
+      "pat": "blob",
+      "locale": "zh-CN",
+      "start": "A1",
+      "g": [
+        "#df3737",
+        "#3d826f"
+      ],
+      "flag": "cn"
     },
     {
-     "id": "branding",
-     "title": "Branding e identidade visual",
-     "sub": "Marcas com personalidade",
-     "art": "®",
-     "icon": "gem",
-     "pat": "blob",
-     "g": [
-      "#58e18a",
-      "#477572"
-     ],
-     "lessons": [
-      "O que é uma marca (além do logo)",
-      "Briefing e pesquisa",
-      "Posicionamento e personalidade",
-      "Naming",
-      "Logo: conceitos e esboços",
-      "Paleta e tipografia da marca",
-      "Elementos gráficos e padrões",
-      "Manual de marca simples",
-      "Aplicações: redes, site e embalagem",
-      "Projeto: identidade completa"
-     ]
+      "id": "ja",
+      "name": "Japonês",
+      "native": "日本語",
+      "art": "こんにちは",
+      "icon": "🗾",
+      "pat": "rings",
+      "locale": "ja-JP",
+      "start": "A1",
+      "g": [
+        "#f57dbc",
+        "#44948e"
+      ],
+      "flag": "jp"
     },
     {
-     "id": "ux-ia",
-     "title": "UX com IA",
-     "sub": "Design mais rápido e melhor",
-     "art": "UX",
-     "icon": "compass",
-     "pat": "grid",
-     "g": [
-      "#44d7a1",
-      "#5065a4"
-     ],
-     "lessons": [
-      "Pesquisa com usuários assistida por IA",
-      "Personas e jornadas com dados reais",
-      "Wireframes rápidos com IA",
-      "Design systems e consistência",
-      "Acessibilidade na prática",
-      "UX writing e microcopy",
-      "Testes de usabilidade",
-      "Métricas de produto para designers",
-      "Prototipagem com IA e código",
-      "Portfólio que impressiona"
-     ]
+      "id": "ko",
+      "name": "Coreano",
+      "native": "한국어",
+      "art": "안녕",
+      "icon": "🎧",
+      "pat": "dots",
+      "locale": "ko-KR",
+      "start": "A1",
+      "g": [
+        "#48c2f9",
+        "#3b967c"
+      ],
+      "flag": "kr"
     },
     {
-     "id": "freela",
-     "title": "Design como negócio",
-     "sub": "Clientes, preço e freelas",
-     "art": "₢",
-     "icon": "handshake",
-     "pat": "dots",
-     "g": [
-      "#ecb91c",
-      "#3d826f"
-     ],
-     "lessons": [
-      "Portfólio que vende",
-      "Encontrando os primeiros clientes",
-      "Briefing que evita retrabalho",
-      "Precificação sem medo",
-      "Proposta comercial",
-      "Contrato simples",
-      "Entregas e revisões",
-      "Clientes recorrentes e manutenção",
-      "Redes sociais para designers",
-      "Plano: primeiro cliente em 30 dias"
-     ]
+      "id": "ar",
+      "name": "Árabe",
+      "native": "العربية",
+      "art": "مرحبا",
+      "icon": "🌙",
+      "pat": "diag",
+      "locale": "ar-SA",
+      "start": "A1",
+      "g": [
+        "#23bf8b",
+        "#906946"
+      ],
+      "flag": "sa"
+    },
+    {
+      "id": "ru",
+      "name": "Russo",
+      "native": "Русский",
+      "art": "Привет",
+      "icon": "❄️",
+      "pat": "grid",
+      "locale": "ru-RU",
+      "start": "A1",
+      "g": [
+        "#6f72f2",
+        "#3d826f"
+      ],
+      "flag": "ru"
     }
-   ],
-   "area": true,
-   "icon": "palette",
-   "g": [
-    "#5eead4",
-    "#0ea5e9"
-   ]
-  },
-  "saude": {
-   "area": true,
-   "name": "Saúde, Treino & Nutrição",
-   "icon": "heart-pulse",
-   "g": [
-    "#86efac",
-    "#0ea5e9"
-   ],
-   "intro": "Organize a alimentação, treine com segurança e tenha mais energia no dia a dia.",
-   "courses": [
+  ],
+  "complementary": [
     {
-     "id": "nutricao",
-     "title": "Nutrição sem neura",
-     "sub": "Organize sua alimentação de verdade",
-     "art": "🥗",
-     "icon": "salad",
-     "pat": "rings",
-     "g": [
-      "#4ade80",
-      "#0d9488"
-     ],
-     "lessons": [
-      "Como a alimentação funciona (sem dieta da moda)",
-      "Macronutrientes: proteína, carboidrato e gordura",
-      "Montando um prato equilibrado",
-      "Planejando as refeições da semana",
-      "Lendo rótulos",
-      "Comer bem gastando pouco",
-      "Hidratação e energia",
-      "Alimentação para quem treina",
-      "Lanches práticos para o trabalho",
-      "Seu plano alimentar simples"
-     ],
-     "ctx": "Conteúdo educativo e geral, sem substituir profissionais. Sempre inclua cuidados de segurança. Recomende nutricionista para dietas específicas, doenças ou restrições."
+      "id": "en-eua",
+      "lang": "en",
+      "title": "Vivendo nos Estados Unidos",
+      "art": "USA",
+      "icon": "🏙",
+      "pat": "grid",
+      "g": [
+        "#2f5cdb",
+        "#44948e"
+      ],
+      "lessons": [
+        "Chegando: imigração e alfândega",
+        "Alugando um apartamento",
+        "Abrindo conta em banco e entendendo crédito",
+        "Supermercado, gorjetas e impostos na etiqueta",
+        "Seguro saúde e consulta médica",
+        "Transporte: carro, Uber e transporte público",
+        "DMV e documentos",
+        "Trabalho: cultura de escritório americana",
+        "Fazendo amigos e small talk",
+        "Feriados e tradições americanas",
+        "Resolvendo problemas por telefone",
+        "Emergências: 911, polícia e hospital"
+      ],
+      "flag": "us"
     },
     {
-     "id": "musculacao",
-     "title": "Musculação do zero",
-     "sub": "Treinar com técnica e segurança",
-     "art": "🏋",
-     "icon": "dumbbell",
-     "pat": "blob",
-     "g": [
-      "#34d399",
-      "#2563eb"
-     ],
-     "lessons": [
-      "Benefícios da musculação (além da estética)",
-      "Como funciona a hipertrofia",
-      "Aquecimento e mobilidade",
-      "Agachamento, terra e supino: técnica",
-      "Montando um treino A/B/C",
-      "Carga, séries e descanso",
-      "Treino em casa com pouco equipamento",
-      "Evitando lesões",
-      "Progressão e acompanhamento",
-      "Seu treino de 8 semanas"
-     ],
-     "ctx": "Conteúdo educativo e geral, sem substituir profissionais. Sempre inclua cuidados de segurança. Recomende avaliação médica e educador físico."
+      "id": "en-viagem",
+      "lang": "en",
+      "title": "Viajando pelo mundo em inglês",
+      "art": "Trip",
+      "icon": "plane",
+      "pat": "waves",
+      "g": [
+        "#1abcd7",
+        "#3d826f"
+      ],
+      "lessons": [
+        "Planejando o roteiro",
+        "Aeroporto e conexões perdidas",
+        "Check-in e problemas no hotel",
+        "Pedindo comida com restrições",
+        "Passeios, ingressos e tours",
+        "Pedindo direções e se perdendo",
+        "Compras e pechincha",
+        "Fazendo amigos em hostels",
+        "Emergências em viagem",
+        "Contando a viagem depois"
+      ]
     },
     {
-     "id": "corrida",
-     "title": "Corrida para iniciantes",
-     "sub": "Do sofá aos 5 km",
-     "art": "🏃",
-     "icon": "footprints",
-     "pat": "dots",
-     "g": [
-      "#5eead4",
-      "#0369a1"
-     ],
-     "lessons": [
-      "Benefícios da corrida para corpo e mente",
-      "Tênis, roupa e o básico",
-      "Técnica de passada e respiração",
-      "Plano caminhada + corrida",
-      "Ritmo, zonas e como não se cansar cedo",
-      "Fortalecimento para corredores",
-      "Prevenindo dores e lesões",
-      "Seu primeiro 5 km"
-     ],
-     "ctx": "Conteúdo educativo e geral, sem substituir profissionais. Sempre inclua cuidados de segurança."
+      "id": "en-trabalho",
+      "lang": "en",
+      "title": "Inglês para entrevistas e trabalho",
+      "art": "Work",
+      "icon": "briefcase",
+      "pat": "diag",
+      "g": [
+        "#188364",
+        "#505866"
+      ],
+      "lessons": [
+        "Tell me about yourself",
+        "Perguntas comportamentais (método STAR)",
+        "Falando de pontos fortes e fracos",
+        "Negociando salário",
+        "Daily, stand-up e status de projeto",
+        "E-mails e Slack com naturalidade",
+        "Apresentando seu trabalho",
+        "Dando e recebendo feedback",
+        "Discordando com educação",
+        "Liderando uma reunião"
+      ]
     },
     {
-     "id": "sono-energia",
-     "title": "Sono, estresse e energia",
-     "sub": "Mais disposição no dia a dia",
-     "art": "🌙",
-     "icon": "moon-star",
-     "pat": "dots",
-     "g": [
-      "#a5b4fc",
-      "#0f766e"
-     ],
-     "lessons": [
-      "Como o sono funciona",
-      "Rotina para dormir melhor",
-      "Estresse: o que acontece no corpo",
-      "Respiração e pausas",
-      "Energia ao longo do dia",
-      "Seu plano de bem-estar"
-     ],
-     "ctx": "Conteúdo educativo e geral, sem substituir profissionais. Sempre inclua cuidados de segurança."
+      "id": "en-ux",
+      "lang": "en",
+      "title": "Inglês para UX e Design",
+      "art": "UX",
+      "icon": "pen-tool",
+      "pat": "blob",
+      "g": [
+        "#aae845",
+        "#44948e"
+      ],
+      "lessons": [
+        "Vocabulário essencial de UX",
+        "Conduzindo entrevistas com usuários",
+        "Apresentando personas e jornadas",
+        "Defendendo decisões de design",
+        "Escrevendo microcopy em inglês",
+        "Testes de usabilidade: roteiro e condução",
+        "Design critique: dando feedback",
+        "Falando de métricas e resultados",
+        "Seu portfólio em inglês",
+        "Case study: contando um projeto"
+      ]
     },
     {
-     "id": "postura",
-     "title": "Mobilidade e postura no home office",
-     "sub": "Menos dor, mais conforto",
-     "art": "🧘",
-     "icon": "person-standing",
-     "pat": "dots",
-     "g": [
-      "#99f6e4",
-      "#4f46e5"
-     ],
-     "lessons": [
-      "Ergonomia da mesa ao monitor",
-      "Alongamentos de 5 minutos",
-      "Mobilidade para quadril e coluna",
-      "Fortalecimento do core",
-      "Pausas ativas",
-      "Sua rotina diária"
-     ],
-     "ctx": "Conteúdo educativo e geral, sem substituir profissionais. Sempre inclua cuidados de segurança."
+      "id": "en-pron",
+      "lang": "en",
+      "title": "Pronúncia americana sem mistério",
+      "art": "/æ/",
+      "icon": "audio-lines",
+      "pat": "rings",
+      "g": [
+        "#34ca6b",
+        "#41728e"
+      ],
+      "lessons": [
+        "Os sons que brasileiros mais erram",
+        "TH sem medo",
+        "Vogais curtas e longas",
+        "O R americano",
+        "Final -ed e -s",
+        "Linking: juntando palavras",
+        "Reduções: gonna, wanna, kinda",
+        "Tônica das palavras",
+        "Entonação de perguntas e emoções",
+        "Treino de sombra (shadowing)"
+      ]
+    },
+    {
+      "id": "es-latam",
+      "lang": "es",
+      "title": "Viajando pela América Latina",
+      "art": "Latam",
+      "icon": "🌎",
+      "pat": "waves",
+      "g": [
+        "#f6a61f",
+        "#489c68"
+      ],
+      "lessons": [
+        "Argentina: voseo e lunfardo",
+        "Chile: o espanhol mais rápido",
+        "Peru e Bolívia: viagem pelos Andes",
+        "Colômbia: expressões e cultura",
+        "México: gírias e comida",
+        "Cuba e Caribe",
+        "Uruguai e Paraguai",
+        "Ônibus, fronteiras e câmbio",
+        "Falsos amigos com o português",
+        "Revisão: roteiro pela América do Sul"
+      ],
+      "flag": "ar"
+    },
+    {
+      "id": "es-espanha",
+      "lang": "es",
+      "title": "Espanhol da Espanha",
+      "art": "Olé",
+      "icon": "🥘",
+      "pat": "dots",
+      "g": [
+        "#f05353",
+        "#b6853e"
+      ],
+      "lessons": [
+        "Vosotros e diferenças com a América",
+        "Madri e Barcelona",
+        "Tapas e horários espanhóis",
+        "Gírias da Espanha",
+        "O sotaque: ceceo e distinción",
+        "Trabalhando na Espanha",
+        "Festas e tradições",
+        "Revisão: um fim de semana em Madri"
+      ],
+      "flag": "es"
+    },
+    {
+      "id": "fr-paris",
+      "lang": "fr",
+      "title": "Paris e a França na prática",
+      "art": "Paris",
+      "icon": "🗼",
+      "pat": "grid",
+      "g": [
+        "#3ed7c4",
+        "#5065a4"
+      ],
+      "lessons": [
+        "Sobrevivência: frases essenciais",
+        "Cafés e boulangeries",
+        "Metrô e trens",
+        "Museus e passeios",
+        "Etiqueta francesa",
+        "Compras",
+        "Restaurantes",
+        "Revisão: um dia em Paris"
+      ],
+      "flag": "fr"
+    },
+    {
+      "id": "it-viagem",
+      "lang": "it",
+      "title": "Itália para viajantes",
+      "art": "Roma",
+      "icon": "🛵",
+      "pat": "diag",
+      "g": [
+        "#8ed029",
+        "#af4d4d"
+      ],
+      "lessons": [
+        "Frases essenciais",
+        "Café e aperitivo",
+        "Trens e cidades",
+        "Restaurante italiano",
+        "Gestos e expressões",
+        "Compras e mercados",
+        "Cidadania e documentos",
+        "Revisão: uma semana na Itália"
+      ],
+      "flag": "it"
+    },
+    {
+      "id": "ja-viagem",
+      "lang": "ja",
+      "title": "Japão para viajantes",
+      "art": "東京",
+      "icon": "🍣",
+      "pat": "rings",
+      "g": [
+        "#f57dbc",
+        "#3d826f"
+      ],
+      "lessons": [
+        "Hiragana de sobrevivência",
+        "Cumprimentos e reverências",
+        "Trens e JR Pass",
+        "Konbini e restaurantes",
+        "Templos e etiqueta",
+        "Compras e números",
+        "Hospedagem e ryokan",
+        "Revisão: um dia em Tóquio"
+      ],
+      "flag": "jp"
     }
-   ]
-  },
-  "negocios": {
-   "area": true,
-   "name": "Negócios & Marketing",
-   "icon": "trending-up",
-   "g": [
-    "#5eead4",
-    "#f59e0b"
-   ],
-   "intro": "Empreender, vender e divulgar o seu trabalho (ou o de clientes).",
-   "courses": [
-    {
-     "id": "empreender",
-     "title": "Empreender do zero",
-     "sub": "Da ideia ao primeiro cliente",
-     "art": "💡",
-     "icon": "rocket",
-     "pat": "blob",
-     "g": [
-      "#2dd4bf",
-      "#0284c7"
-     ],
-     "lessons": [
-      "Encontrando uma boa ideia",
-      "Validando antes de investir",
-      "Modelo de negócio simples",
-      "MEI e formalização",
-      "Precificação",
-      "Primeiros clientes",
-      "Organização financeira do negócio",
-      "Seu plano de 90 dias"
-     ]
+  ],
+  "tracks": {
+    "tech": {
+      "name": "Tecnologia & IA",
+      "intro": "Tecnologia, inteligência artificial e tudo o que você precisa para conseguir o trabalho dos sonhos (aqui ou lá fora).",
+      "courses": [
+        {
+          "id": "curriculo",
+          "title": "Currículo perfeito",
+          "sub": "Passe pelos filtros e chame atenção",
+          "art": "CV",
+          "icon": "file-text",
+          "pat": "grid",
+          "g": [
+            "#34ca6b",
+            "#5585ef"
+          ],
+          "ctx": "Inclua modelos prontos, exemplos antes/depois e prompts para revisar o currículo com o Claude grátis. Considere vagas no Brasil e no exterior.",
+          "lessons": [
+            "Como recrutadores e robôs (ATS) leem currículos",
+            "A estrutura que funciona",
+            "Resultados com números: transformando tarefas em conquistas",
+            "Adaptando o currículo para cada vaga",
+            "Currículo sem muita experiência",
+            "Currículo em inglês (padrão internacional)",
+            "LinkedIn alinhado com o currículo",
+            "Carta de apresentação que é lida",
+            "Revisão final com IA"
+          ]
+        },
+        {
+          "id": "entrevistas",
+          "title": "Entrevistas que dão certo",
+          "sub": "Da preparação à proposta",
+          "art": "Q&A",
+          "icon": "mic-vocal",
+          "pat": "rings",
+          "g": [
+            "#27bead",
+            "#766feb"
+          ],
+          "ctx": "Prático: roteiros, respostas-modelo, simulações. Sugira treinar as respostas em voz alta e gravar para se ouvir.",
+          "lessons": [
+            "Pesquisando a empresa e a vaga",
+            "\"Fale sobre você\" em 90 segundos",
+            "Método STAR para perguntas comportamentais",
+            "Perguntas difíceis (fraquezas, saídas, lacunas)",
+            "Pretensão salarial sem medo",
+            "Testes e cases práticos (design e tecnologia)",
+            "Entrevista em inglês",
+            "Perguntas inteligentes para fazer",
+            "Entrevista online: câmera, voz e presença",
+            "Follow-up e negociação da proposta"
+          ]
+        },
+        {
+          "id": "portfolio",
+          "title": "O melhor portfólio",
+          "sub": "Mostre o que você sabe fazer",
+          "art": "★",
+          "icon": "layout-grid",
+          "pat": "blob",
+          "g": [
+            "#23bf8b",
+            "#43b9ee"
+          ],
+          "ctx": "Foco em designers e profissionais criativos/tecnologia. Use só ferramentas grátis (GitHub Pages, Figma, Behance, Notion). Ensine a criar projetos fictícios fortes quando faltar experiência.",
+          "lessons": [
+            "O que recrutadores procuram em 30 segundos",
+            "Escolhendo os projetos certos",
+            "Estrutura de um case study",
+            "Storytelling: problema, processo, resultado",
+            "Visual do portfólio: menos é mais",
+            "Portfólio sem experiência: projetos próprios",
+            "Publicando de graça",
+            "Portfólio em inglês",
+            "Apresentando o portfólio numa entrevista",
+            "Mantendo tudo atualizado"
+          ]
+        },
+        {
+          "id": "carreira",
+          "title": "Carreira: do emprego ao internacional",
+          "sub": "Conseguir trabalho, crescer e ir longe",
+          "art": "🌎",
+          "icon": "map",
+          "pat": "waves",
+          "g": [
+            "#21aceb",
+            "#49b772"
+          ],
+          "ctx": "Realista e estratégico, para brasileiros. Caminho em etapas: ser excelente onde está → conseguir um trabalho melhor (inclusive remoto no Brasil) → trabalhar remoto para empresas de fora morando no Brasil (PJ, plataformas como Deel/Remote) → mudar de país (vistos e caminhos para EUA, Japão, Canadá, Portugal etc.). Sempre com ações concretas e sites de vagas que funcionam.",
+          "lessons": [
+            "Seu mapa de carreira: onde está e aonde quer ir",
+            "Ser um profissional excelente (o que ninguém ensina)",
+            "Comunicação no trabalho: visibilidade sem puxa-saquismo",
+            "Crescer dentro da empresa: promoções e aumentos",
+            "Onde estão as vagas que dão certo",
+            "Candidatura estratégica: qualidade > quantidade",
+            "Networking de verdade (até para tímidos)",
+            "Home office no Brasil ganhando melhor",
+            "Trabalhar para empresas de fora morando no Brasil",
+            "Sites e plataformas de vagas internacionais",
+            "Freelas internacionais",
+            "Vistos e caminhos para morar fora (EUA, Japão, Canadá, Europa)",
+            "Cultura de trabalho em outros países",
+            "Finanças da transição de carreira",
+            "Seu plano de 12 meses"
+          ]
+        },
+        {
+          "id": "ia-dia",
+          "title": "IA no dia a dia",
+          "sub": "Do zero ao uso avançado",
+          "art": "AI",
+          "icon": "bot",
+          "pat": "rings",
+          "g": [
+            "#27bead",
+            "#506ac1"
+          ],
+          "lessons": [
+            "O que é IA de verdade (sem mistério)",
+            "Como os modelos de linguagem funcionam",
+            "Prompts que funcionam: a estrutura certa",
+            "Estudando e pesquisando com IA",
+            "IA para escrever melhor",
+            "IA para imagens, vídeo e design",
+            "Automatizando tarefas repetitivas",
+            "Alucinações: como checar respostas",
+            "Privacidade e segurança com IA",
+            "IA no trabalho: casos práticos",
+            "Agentes de IA: o que são e como usar",
+            "Projeto final: seu assistente pessoal"
+          ]
+        },
+        {
+          "id": "claude-gratis",
+          "title": "Tirando o máximo do Claude grátis",
+          "sub": "Projetos grandes num plano gratuito",
+          "art": "✳",
+          "icon": "sparkles",
+          "pat": "waves",
+          "g": [
+            "#dc821a",
+            "#3d826f"
+          ],
+          "ctx": "Ensine a usar o Claude no plano gratuito (claude.ai) para criar e editar sites e projetos: prompts bem estruturados, dividir tarefas grandes, economizar mensagens, guardar contexto em um documento de 'resumo do projeto', trabalhar com arquivos do GitHub (copiar e colar, github.dev), revisar o que a IA fez.",
+          "lessons": [
+            "Como o plano grátis funciona e seus limites",
+            "A anatomia de um prompt perfeito",
+            "Dividindo projetos grandes em pedidos pequenos",
+            "O documento de contexto do projeto",
+            "Editando arquivos do GitHub com o Claude",
+            "Pedindo design: referências, cores e estilo",
+            "Revisando e corrigindo o que a IA fez",
+            "Quando usar outras IAs grátis junto"
+          ]
+        },
+        {
+          "id": "dados",
+          "title": "Dados e planilhas",
+          "sub": "Decisões com números",
+          "art": "Σ",
+          "icon": "bar-chart-3",
+          "pat": "grid",
+          "g": [
+            "#34ca6b",
+            "#41728e"
+          ],
+          "lessons": [
+            "Pensando com dados",
+            "Planilhas: fórmulas essenciais",
+            "PROCV, filtros e tabelas dinâmicas",
+            "Gráficos que contam histórias",
+            "Limpando dados bagunçados",
+            "Estatística básica sem medo",
+            "Dashboards simples",
+            "Analisando dados com IA",
+            "Métricas de negócio",
+            "Projeto final: um painel pessoal"
+          ]
+        },
+        {
+          "id": "seg",
+          "title": "Segurança digital",
+          "sub": "Proteja suas contas e dados",
+          "art": "🔒",
+          "icon": "shield-check",
+          "pat": "diag",
+          "g": [
+            "#22817a",
+            "#505866"
+          ],
+          "lessons": [
+            "Senhas e gerenciadores",
+            "Autenticação em dois fatores",
+            "Golpes, phishing e engenharia social",
+            "Privacidade nas redes",
+            "Wi-Fi público e VPN",
+            "Backup do que importa",
+            "Segurança no celular",
+            "Plano de segurança pessoal"
+          ]
+        },
+        {
+          "id": "comunicacao",
+          "title": "Comunicação e oratória",
+          "sub": "Fale com clareza e confiança",
+          "art": "Aa",
+          "icon": "megaphone",
+          "pat": "rings",
+          "g": [
+            "#f97e29",
+            "#45817e"
+          ],
+          "lessons": [
+            "Os pilares da boa comunicação",
+            "Escuta ativa",
+            "Estruturando uma fala",
+            "Nervosismo: como controlar",
+            "Voz, ritmo e pausas",
+            "Linguagem corporal",
+            "Storytelling",
+            "Apresentações com slides",
+            "Falando em reuniões",
+            "Projeto: apresentação de 3 minutos"
+          ]
+        },
+        {
+          "id": "negociacao",
+          "title": "A arte da negociação",
+          "sub": "Ganhe sem perder relações",
+          "art": "🤝",
+          "icon": "scale",
+          "pat": "diag",
+          "g": [
+            "#29aa58",
+            "#6c513d"
+          ],
+          "lessons": [
+            "O que é negociar",
+            "Preparação: BATNA e limites",
+            "Ancoragem e primeira oferta",
+            "Perguntas que revelam interesses",
+            "Concessões inteligentes",
+            "Negociando salário",
+            "Lidando com pessoas difíceis",
+            "Fechamento e acordo"
+          ]
+        }
+      ],
+      "icon": "cpu",
+      "g": [
+        "#5eead4",
+        "#6366f1"
+      ]
     },
-    {
-     "id": "marketing",
-     "title": "Marketing digital",
-     "sub": "Ser encontrado e lembrado",
-     "art": "📣",
-     "icon": "megaphone",
-     "pat": "rings",
-     "g": [
-      "#34d399",
-      "#7c3aed"
-     ],
-     "lessons": [
-      "Público e posicionamento",
-      "Funil: atrair, converter, fidelizar",
-      "Instagram e TikTok para negócios",
-      "Conteúdo que vende sem parecer venda",
-      "Google Meu Negócio e SEO local",
-      "Anúncios: o básico",
-      "Métricas que importam",
-      "Calendário de conteúdo"
-     ]
+    "design": {
+      "name": "Design & Criação",
+      "intro": "Figma, sites do seu jeito, lojas virtuais e muita criatividade, só com ferramentas grátis e a IA do seu lado.",
+      "courses": [
+        {
+          "id": "arte-ia",
+          "title": "Arte com IA: logos e posts",
+          "sub": "Crie logos, posts e artes sem editar sites",
+          "art": "✦",
+          "icon": "sparkles",
+          "pat": "blob",
+          "g": [
+            "#4fd1b0",
+            "#3f7d7a"
+          ],
+          "ctx": "Curso aberto a qualquer pessoa que queira criar artes (logos, posts, capas, cartazes) com ferramentas de IA grátis, sem precisar mexer com sites. Ensine o conceito primeiro (como a IA gera imagens, o que é um bom pedido, formatos e tamanhos) e só depois os pedidos prontos. Primeira aula: quais ferramentas grátis usar e como criar conta e entrar (campo \"start\"). Mostre que conhecer regras de design e saber ajustar à mão em Canva, Figma ou Photoshop ajuda a pedir melhor e a corrigir o que a IA não acertou.",
+          "lessons": [
+            "O que é arte com IA e como ela funciona",
+            "Ferramentas grátis: criar conta e começar",
+            "Escrevendo bons pedidos para imagens",
+            "Criando um logo simples",
+            "Posts para redes sociais",
+            "Capas, cartazes e convites",
+            "Mantendo um mesmo estilo nas artes",
+            "Ajustando à mão no Canva",
+            "Cuidados: direitos autorais e originalidade",
+            "Projeto: kit de artes para um projeto"
+          ]
+        },
+        {
+          "id": "web",
+          "title": "IA, HTML e CSS",
+          "sub": "Entenda como um site funciona e crie com a IA",
+          "art": "</>",
+          "icon": "code-xml",
+          "pat": "dots",
+          "g": [
+            "#27bead",
+            "#48795b"
+          ],
+          "ctx": "Curso aberto a qualquer pessoa curiosa sobre como os sites são feitos, de qualquer profissão e sem precisar saber programar. Objetivo: explicar, do zero e em linguagem simples, como um site funciona (HTML, CSS e publicação) e como usar a IA (o Claude, plano grátis em claude.ai) para acelerar e facilitar a criação: a IA escreve e edita o código, e a pessoa entende o suficiente para pedir bem, conferir o resultado, ajustar detalhes e publicar. Estrutura: as primeiras aulas explicam os conceitos e a lógica (o que é HTML, o que é CSS, como as peças se encaixam) com analogias do dia a dia, sem pedir nada à IA ainda; a IA entra aos poucos, depois que o conceito foi entendido, sempre no ritmo entender → pedir à IA → conferir o resultado. Só na última aula o foco é escrever bons prompts. Ferramentas grátis: GitHub (editar arquivos pelo navegador, ou github.dev apertando a tecla . no repositório), GitHub Pages para publicar, Google Fonts, ícones grátis. Fluxo de edição: abrir o arquivo no GitHub, copiar, colar no Claude com um pedido claro, colar a resposta de volta e fazer Commit changes. Mostre prompts prontos para copiar apenas depois de explicar o conceito por trás. Primeira aula: comece explicando o que é um site e quais contas serão usadas (GitHub e Claude, grátis), com os passos de criar conta e entrar no campo \"start\". Ensine HTML e CSS com calma, para quem quiser usá-los também sem a IA.",
+          "lessons": [
+            "Como um site funciona (sem mistério)",
+            "Anatomia do HTML: o esqueleto da página",
+            "CSS: cores, fontes e espaçamento",
+            "Flexbox e Grid: montando layouts",
+            "Responsivo: bonito no celular",
+            "Prompts que geram código bom no Claude grátis",
+            "Editando arquivos no GitHub pelo navegador",
+            "Publicando de graça no GitHub Pages",
+            "Fontes, ícones e imagens grátis",
+            "Animações e efeitos com CSS",
+            "JavaScript para interações simples",
+            "Formulários que funcionam (Formspree grátis)",
+            "Acessibilidade e velocidade",
+            "Domínio próprio no seu site",
+            "Projeto: seu portfólio",
+            "Projeto: landing page para um cliente"
+          ]
+        },
+        {
+          "id": "visual",
+          "title": "Design para todos",
+          "sub": "Hierarquia, cor, layout e sustentabilidade",
+          "art": "Aa",
+          "icon": "palette",
+          "pat": "diag",
+          "g": [
+            "#3ed7c4",
+            "#498761"
+          ],
+          "lessons": [
+            "Hierarquia visual",
+            "Tipografia que comunica",
+            "Cor: harmonia e contraste",
+            "Grids e alinhamento",
+            "Espaço em branco",
+            "Imagens e composição",
+            "Consistência e repetição",
+            "Tendências sem perder a identidade",
+            "Analisando sites incríveis",
+            "Design sustentável e consciente",
+            "Projeto: redesign de uma página"
+          ],
+          "ctx": "Curso aberto a qualquer pessoa, sem precisar ser designer: regras de design como hierarquia, teoria da cor, tipografia, grids, espaço em branco e sustentabilidade, com exemplos do dia a dia. Quando falar de criar com IA, mostre que conhecer esses conceitos ajuda a pedir melhor e a fazer um trabalho de mais qualidade."
+        },
+        {
+          "id": "figma",
+          "title": "Figma do zero ao avançado",
+          "sub": "Do primeiro frame ao site completo",
+          "art": "F",
+          "icon": "pen-tool",
+          "pat": "grid",
+          "g": [
+            "#34ca6b",
+            "#44948e"
+          ],
+          "ctx": "Use o Figma no plano gratuito (Starter). Aulas práticas e passo a passo, com atalhos de teclado, boas práticas profissionais e um mini-exercício no Figma em toda aula. O objetivo final é desenhar sites e depois transformá-los em HTML/CSS com ajuda da IA.",
+          "lessons": [
+            "Interface, arquivos e atalhos essenciais",
+            "Frames, formas e grids de layout",
+            "Texto e tipografia na prática",
+            "Cores, estilos e efeitos",
+            "Auto Layout I: o básico que muda tudo",
+            "Auto Layout II: layouts responsivos",
+            "Componentes e instâncias",
+            "Variantes e propriedades de componentes",
+            "Variáveis e modos (claro e escuro)",
+            "Montando um design system do zero",
+            "Imagens, ícones e recursos grátis",
+            "Prototipagem e interações",
+            "Smart Animate e microinterações",
+            "Desenhando uma landing page completa",
+            "Versão mobile e breakpoints",
+            "Plugins e IA dentro do Figma",
+            "Dev Mode e handoff",
+            "Do Figma para HTML/CSS com o Claude",
+            "Apresentando designs para clientes",
+            "Projeto final: site do Figma ao ar"
+          ]
+        },
+        {
+          "id": "loja",
+          "title": "Loja virtual sem gastar",
+          "sub": "E-commerce para você e para clientes",
+          "art": "$",
+          "icon": "shopping-bag",
+          "pat": "blob",
+          "g": [
+            "#aae845",
+            "#3b967c"
+          ],
+          "ctx": "Método principal: a 'Loja Modelo' (template grátis no GitHub: github.com/emillydesign/loja-modelo). É um site de vendas em HTML/CSS/JS publicado no GitHub Pages: produtos em produtos.json, configuração em loja.json (nome, cores, WhatsApp, frete), carrinho, e finalização do pedido pelo WhatsApp ou link de pagamento por produto (Mercado Pago, InfinitePay, PagBank ou Stripe Payment Links: todos sem mensalidade, só taxa por venda). Para duplicar para um cliente: 'Use this template' no GitHub. Para editar: GitHub no navegador + Claude grátis (copiar arquivo, pedir a mudança, colar de volta). Alternativa sem código: plataformas com plano grátis (como Nuvemshop, se ainda tiver plano grátis: confira). Ensine também a parte de negócio: precificação de sites para clientes, contrato simples, manutenção mensal.",
+          "lessons": [
+            "Como funciona uma loja online",
+            "Caminhos grátis: plataforma pronta x site próprio",
+            "Duplicando a Loja Modelo no seu GitHub",
+            "Cadastrando produtos, preços e fotos",
+            "A identidade da loja com a ajuda do Claude",
+            "Pagamentos: links do Mercado Pago, InfinitePay e Stripe",
+            "Pedido pelo WhatsApp, frete e retirada",
+            "Fotos de produto bonitas com celular e IA",
+            "Domínio próprio e aparecer no Google",
+            "Políticas: trocas, privacidade e direitos do consumidor",
+            "Quanto cobrar por uma loja para cliente",
+            "Proposta, contrato e manutenção mensal",
+            "Projeto final: loja de um cliente real"
+          ]
+        },
+        {
+          "id": "criatividade",
+          "title": "Criatividade e pensar fora da caixa",
+          "sub": "Ideias que ninguém teve",
+          "art": "?!",
+          "icon": "lightbulb",
+          "pat": "waves",
+          "g": [
+            "#fad028",
+            "#489c68"
+          ],
+          "lessons": [
+            "Mitos da criatividade",
+            "Observar como designer",
+            "Técnicas para gerar ideias (SCAMPER, Crazy 8s)",
+            "Restrições criativas: menos é mais",
+            "Referências sem copiar",
+            "Co-criação com IA",
+            "Vencendo o bloqueio criativo",
+            "Ideias ruins de propósito",
+            "Do rabisco ao conceito",
+            "Projeto: 30 ideias em 30 minutos"
+          ]
+        },
+        {
+          "id": "projetos",
+          "title": "Projetos criativos com ferramentas grátis",
+          "sub": "Um projeto novo por aula, passo a passo",
+          "art": "✦",
+          "icon": "rocket",
+          "pat": "rings",
+          "g": [
+            "#23bf8b",
+            "#4393a8"
+          ],
+          "ctx": "Cada aula é UM projeto completo, do zero ao ar, usando só ferramentas grátis: Claude grátis (para gerar e editar código), HTML/CSS/JS, Figma grátis, GitHub Pages, Canva grátis quando fizer sentido. Estrutura: ideia e referência → desenho rápido → prompt pronto para o Claude → ajustes de design → publicar → como mostrar no portfólio. Projetos simples e bonitos, que dão para fazer em 1 a 2 horas.",
+          "lessons": [
+            "Cartão de visita digital interativo",
+            "Seu link na bio próprio",
+            "Portfólio de uma página",
+            "Convite de evento animado",
+            "Cardápio digital para restaurante",
+            "Mini-game no navegador",
+            "Gerador de paletas de cor",
+            "Moodboard interativo",
+            "Página 'em breve' com contagem regressiva",
+            "Currículo web que impressiona",
+            "Quiz interativo para redes sociais",
+            "Galeria de fotos com efeitos",
+            "Landing page de produto",
+            "Mini site de casamento ou aniversário"
+          ]
+        },
+        {
+          "id": "branding",
+          "title": "Branding e identidade visual",
+          "sub": "Marcas com personalidade",
+          "art": "®",
+          "icon": "gem",
+          "pat": "blob",
+          "g": [
+            "#58e18a",
+            "#477572"
+          ],
+          "lessons": [
+            "O que é uma marca (além do logo)",
+            "Briefing e pesquisa",
+            "Posicionamento e personalidade",
+            "Naming",
+            "Logo: conceitos e esboços",
+            "Paleta e tipografia da marca",
+            "Elementos gráficos e padrões",
+            "Manual de marca simples",
+            "Aplicações: redes, site e embalagem",
+            "Projeto: identidade completa"
+          ]
+        },
+        {
+          "id": "ux-ia",
+          "title": "UX com IA",
+          "sub": "Design mais rápido e melhor",
+          "art": "UX",
+          "icon": "compass",
+          "pat": "grid",
+          "g": [
+            "#44d7a1",
+            "#5065a4"
+          ],
+          "lessons": [
+            "Pesquisa com usuários assistida por IA",
+            "Personas e jornadas com dados reais",
+            "Wireframes rápidos com IA",
+            "Design systems e consistência",
+            "Acessibilidade na prática",
+            "UX writing e microcopy",
+            "Testes de usabilidade",
+            "Métricas de produto para designers",
+            "Prototipagem com IA e código",
+            "Portfólio que impressiona"
+          ]
+        },
+        {
+          "id": "freela",
+          "title": "Design como negócio",
+          "sub": "Clientes, preço e freelas",
+          "art": "₢",
+          "icon": "handshake",
+          "pat": "dots",
+          "g": [
+            "#ecb91c",
+            "#3d826f"
+          ],
+          "lessons": [
+            "Portfólio que vende",
+            "Encontrando os primeiros clientes",
+            "Briefing que evita retrabalho",
+            "Precificação sem medo",
+            "Proposta comercial",
+            "Contrato simples",
+            "Entregas e revisões",
+            "Clientes recorrentes e manutenção",
+            "Redes sociais para designers",
+            "Plano: primeiro cliente em 30 dias"
+          ]
+        }
+      ],
+      "area": true,
+      "icon": "palette",
+      "g": [
+        "#5eead4",
+        "#0ea5e9"
+      ]
     },
-    {
-     "id": "vendas",
-     "title": "Vendas e atendimento",
-     "sub": "Vender com naturalidade",
-     "art": "🤝",
-     "icon": "message-circle",
-     "pat": "rings",
-     "g": [
-      "#5eead4",
-      "#ea580c"
-     ],
-     "lessons": [
-      "O que faz alguém comprar",
-      "Atendimento pelo WhatsApp",
-      "Entendendo a necessidade",
-      "Apresentando a solução",
-      "Objeções",
-      "Fechamento",
-      "Pós-venda e indicação",
-      "Seu roteiro de vendas"
-     ]
+    "saude": {
+      "area": true,
+      "name": "Saúde, Treino & Nutrição",
+      "icon": "heart-pulse",
+      "g": [
+        "#86efac",
+        "#0ea5e9"
+      ],
+      "intro": "Organize a alimentação, treine com segurança e tenha mais energia no dia a dia.",
+      "courses": [
+        {
+          "id": "nutricao",
+          "title": "Nutrição sem neura",
+          "sub": "Organize sua alimentação de verdade",
+          "art": "🥗",
+          "icon": "salad",
+          "pat": "rings",
+          "g": [
+            "#4ade80",
+            "#0d9488"
+          ],
+          "lessons": [
+            "Como a alimentação funciona (sem dieta da moda)",
+            "Macronutrientes: proteína, carboidrato e gordura",
+            "Montando um prato equilibrado",
+            "Planejando as refeições da semana",
+            "Lendo rótulos",
+            "Comer bem gastando pouco",
+            "Hidratação e energia",
+            "Alimentação para quem treina",
+            "Lanches práticos para o trabalho",
+            "Seu plano alimentar simples"
+          ],
+          "ctx": "Conteúdo educativo e geral, sem substituir profissionais. Sempre inclua cuidados de segurança. Recomende nutricionista para dietas específicas, doenças ou restrições."
+        },
+        {
+          "id": "musculacao",
+          "title": "Musculação do zero",
+          "sub": "Treinar com técnica e segurança",
+          "art": "🏋",
+          "icon": "dumbbell",
+          "pat": "blob",
+          "g": [
+            "#34d399",
+            "#2563eb"
+          ],
+          "lessons": [
+            "Benefícios da musculação (além da estética)",
+            "Como funciona a hipertrofia",
+            "Aquecimento e mobilidade",
+            "Agachamento, terra e supino: técnica",
+            "Montando um treino A/B/C",
+            "Carga, séries e descanso",
+            "Treino em casa com pouco equipamento",
+            "Evitando lesões",
+            "Progressão e acompanhamento",
+            "Seu treino de 8 semanas"
+          ],
+          "ctx": "Conteúdo educativo e geral, sem substituir profissionais. Sempre inclua cuidados de segurança. Recomende avaliação médica e educador físico."
+        },
+        {
+          "id": "corrida",
+          "title": "Corrida para iniciantes",
+          "sub": "Do sofá aos 5 km",
+          "art": "🏃",
+          "icon": "footprints",
+          "pat": "dots",
+          "g": [
+            "#5eead4",
+            "#0369a1"
+          ],
+          "lessons": [
+            "Benefícios da corrida para corpo e mente",
+            "Tênis, roupa e o básico",
+            "Técnica de passada e respiração",
+            "Plano caminhada + corrida",
+            "Ritmo, zonas e como não se cansar cedo",
+            "Fortalecimento para corredores",
+            "Prevenindo dores e lesões",
+            "Seu primeiro 5 km"
+          ],
+          "ctx": "Conteúdo educativo e geral, sem substituir profissionais. Sempre inclua cuidados de segurança."
+        },
+        {
+          "id": "sono-energia",
+          "title": "Sono, estresse e energia",
+          "sub": "Mais disposição no dia a dia",
+          "art": "🌙",
+          "icon": "moon-star",
+          "pat": "dots",
+          "g": [
+            "#a5b4fc",
+            "#0f766e"
+          ],
+          "lessons": [
+            "Como o sono funciona",
+            "Rotina para dormir melhor",
+            "Estresse: o que acontece no corpo",
+            "Respiração e pausas",
+            "Energia ao longo do dia",
+            "Seu plano de bem-estar"
+          ],
+          "ctx": "Conteúdo educativo e geral, sem substituir profissionais. Sempre inclua cuidados de segurança."
+        },
+        {
+          "id": "postura",
+          "title": "Mobilidade e postura no home office",
+          "sub": "Menos dor, mais conforto",
+          "art": "🧘",
+          "icon": "person-standing",
+          "pat": "dots",
+          "g": [
+            "#99f6e4",
+            "#4f46e5"
+          ],
+          "lessons": [
+            "Ergonomia da mesa ao monitor",
+            "Alongamentos de 5 minutos",
+            "Mobilidade para quadril e coluna",
+            "Fortalecimento do core",
+            "Pausas ativas",
+            "Sua rotina diária"
+          ],
+          "ctx": "Conteúdo educativo e geral, sem substituir profissionais. Sempre inclua cuidados de segurança."
+        }
+      ]
     },
-    {
-     "id": "conteudo",
-     "title": "Criação de conteúdo",
-     "sub": "Foto, vídeo e texto com o celular",
-     "art": "🎬",
-     "icon": "clapperboard",
-     "pat": "diag",
-     "g": [
-      "#67e8f9",
-      "#16a34a"
-     ],
-     "lessons": [
-      "Encontrando seu nicho",
-      "Fotografia com celular",
-      "Vídeos curtos: roteiro e gravação",
-      "Edição grátis (CapCut, Canva)",
-      "Copywriting para legendas",
-      "Constância sem burnout",
-      "Monetização",
-      "Seu primeiro mês de conteúdo"
-     ]
+    "negocios": {
+      "area": true,
+      "name": "Negócios & Marketing",
+      "icon": "trending-up",
+      "g": [
+        "#5eead4",
+        "#f59e0b"
+      ],
+      "intro": "Empreender, vender e divulgar o seu trabalho (ou o de clientes).",
+      "courses": [
+        {
+          "id": "empreender",
+          "title": "Empreender do zero",
+          "sub": "Da ideia ao primeiro cliente",
+          "art": "💡",
+          "icon": "rocket",
+          "pat": "blob",
+          "g": [
+            "#2dd4bf",
+            "#0284c7"
+          ],
+          "lessons": [
+            "Encontrando uma boa ideia",
+            "Validando antes de investir",
+            "Modelo de negócio simples",
+            "MEI e formalização",
+            "Precificação",
+            "Primeiros clientes",
+            "Organização financeira do negócio",
+            "Seu plano de 90 dias"
+          ]
+        },
+        {
+          "id": "marketing",
+          "title": "Marketing digital",
+          "sub": "Ser encontrado e lembrado",
+          "art": "📣",
+          "icon": "megaphone",
+          "pat": "rings",
+          "g": [
+            "#34d399",
+            "#7c3aed"
+          ],
+          "lessons": [
+            "Público e posicionamento",
+            "Funil: atrair, converter, fidelizar",
+            "Instagram e TikTok para negócios",
+            "Conteúdo que vende sem parecer venda",
+            "Google Meu Negócio e SEO local",
+            "Anúncios: o básico",
+            "Métricas que importam",
+            "Calendário de conteúdo"
+          ]
+        },
+        {
+          "id": "vendas",
+          "title": "Vendas e atendimento",
+          "sub": "Vender com naturalidade",
+          "art": "🤝",
+          "icon": "message-circle",
+          "pat": "rings",
+          "g": [
+            "#5eead4",
+            "#ea580c"
+          ],
+          "lessons": [
+            "O que faz alguém comprar",
+            "Atendimento pelo WhatsApp",
+            "Entendendo a necessidade",
+            "Apresentando a solução",
+            "Objeções",
+            "Fechamento",
+            "Pós-venda e indicação",
+            "Seu roteiro de vendas"
+          ]
+        },
+        {
+          "id": "conteudo",
+          "title": "Criação de conteúdo",
+          "sub": "Foto, vídeo e texto com o celular",
+          "art": "🎬",
+          "icon": "clapperboard",
+          "pat": "diag",
+          "g": [
+            "#67e8f9",
+            "#16a34a"
+          ],
+          "lessons": [
+            "Encontrando seu nicho",
+            "Fotografia com celular",
+            "Vídeos curtos: roteiro e gravação",
+            "Edição grátis (CapCut, Canva)",
+            "Copywriting para legendas",
+            "Constância sem burnout",
+            "Monetização",
+            "Seu primeiro mês de conteúdo"
+          ]
+        }
+      ]
+    },
+    "engenharia": {
+      "area": true,
+      "name": "Engenharia & Elétrica",
+      "icon": "zap",
+      "g": [
+        "#7dd3fc",
+        "#0d9488"
+      ],
+      "intro": "Fundamentos de eletricidade, eletrônica e automação, com segurança em primeiro lugar.",
+      "courses": [
+        {
+          "id": "eletricidade",
+          "title": "Eletricidade básica",
+          "sub": "Tensão, corrente e segurança",
+          "art": "⚡",
+          "icon": "zap",
+          "pat": "grid",
+          "g": [
+            "#38bdf8",
+            "#0f766e"
+          ],
+          "lessons": [
+            "Tensão, corrente e resistência",
+            "Lei de Ohm na prática",
+            "Potência e consumo de energia",
+            "Corrente alternada x contínua",
+            "Segurança elétrica e NR-10 (noções)",
+            "Multímetro: como medir",
+            "Lendo esquemas elétricos",
+            "Projeto: calculando a conta de luz"
+          ],
+          "ctx": "Conteúdo educativo e geral, sem substituir profissionais. Sempre inclua cuidados de segurança. Deixe claro que instalações elétricas reais devem ser feitas por profissional habilitado."
+        },
+        {
+          "id": "eletronica",
+          "title": "Eletrônica e Arduino",
+          "sub": "Seus primeiros circuitos",
+          "art": "🔌",
+          "icon": "cpu",
+          "pat": "dots",
+          "g": [
+            "#5eead4",
+            "#1d4ed8"
+          ],
+          "lessons": [
+            "Componentes: resistores, LEDs, capacitores",
+            "Protoboard e primeiros circuitos",
+            "Arduino: o que é e como programar",
+            "Sensores",
+            "Motores e relés (com segurança)",
+            "Simulando grátis no Tinkercad/Wokwi",
+            "Projeto: luz automática",
+            "Projeto: estação de clima"
+          ],
+          "ctx": "Conteúdo educativo e geral, sem substituir profissionais. Sempre inclua cuidados de segurança."
+        },
+        {
+          "id": "solar",
+          "title": "Energia solar",
+          "sub": "Como funciona e quando vale a pena",
+          "art": "☀",
+          "icon": "sun",
+          "pat": "dots",
+          "g": [
+            "#fde68a",
+            "#0d9488"
+          ],
+          "lessons": [
+            "Como funciona um sistema fotovoltaico",
+            "Componentes do sistema",
+            "Dimensionamento básico",
+            "Custos, economia e retorno",
+            "Regras de geração distribuída no Brasil",
+            "Carreira no setor solar"
+          ],
+          "ctx": "Conteúdo educativo e geral, sem substituir profissionais. Sempre inclua cuidados de segurança."
+        },
+        {
+          "id": "automacao",
+          "title": "Automação residencial",
+          "sub": "Casa inteligente sem complicação",
+          "art": "🏠",
+          "icon": "house",
+          "pat": "dots",
+          "g": [
+            "#99f6e4",
+            "#4338ca"
+          ],
+          "lessons": [
+            "O que é automação residencial",
+            "Assistentes de voz e tomadas inteligentes",
+            "Sensores e rotinas",
+            "Iluminação inteligente",
+            "Segurança e privacidade",
+            "Projeto: sua primeira rotina"
+          ],
+          "ctx": "Conteúdo educativo e geral, sem substituir profissionais. Sempre inclua cuidados de segurança."
+        }
+      ]
+    },
+    "financas": {
+      "area": true,
+      "name": "Finanças & Investimentos",
+      "icon": "wallet",
+      "g": [
+        "#86efac",
+        "#1d4ed8"
+      ],
+      "intro": "Organizar o dinheiro, sair das dívidas e começar a investir com segurança.",
+      "courses": [
+        {
+          "id": "organizacao",
+          "title": "Dinheiro organizado",
+          "sub": "Orçamento que funciona",
+          "art": "📒",
+          "icon": "notebook-pen",
+          "pat": "dots",
+          "g": [
+            "#4ade80",
+            "#0e7490"
+          ],
+          "lessons": [
+            "Para onde vai seu dinheiro",
+            "Orçamento 50/30/20",
+            "Reserva de emergência",
+            "Saindo das dívidas",
+            "Cartão de crédito sem medo",
+            "Metas: viagem, mudança, sonhos",
+            "Seu plano financeiro"
+          ]
+        },
+        {
+          "id": "investir",
+          "title": "Investir do zero",
+          "sub": "Renda fixa, variável e cuidados",
+          "art": "📈",
+          "icon": "trending-up",
+          "pat": "dots",
+          "g": [
+            "#5eead4",
+            "#4f46e5"
+          ],
+          "lessons": [
+            "Por que investir",
+            "Tesouro Direto e CDB",
+            "Fundos e ETFs",
+            "Ações: o básico",
+            "Risco e diversificação",
+            "Golpes de investimento: como evitar",
+            "Imposto de renda dos investimentos",
+            "Sua carteira inicial"
+          ],
+          "ctx": "Educativo; não é recomendação de investimento. Ensine a avaliar riscos."
+        },
+        {
+          "id": "exterior",
+          "title": "Dinheiro no exterior",
+          "sub": "Câmbio, contas e viagens",
+          "art": "🌍",
+          "icon": "globe",
+          "pat": "blob",
+          "g": [
+            "#67e8f9",
+            "#15803d"
+          ],
+          "lessons": [
+            "Câmbio: como funciona",
+            "Contas e cartões internacionais",
+            "Receber em dólar trabalhando do Brasil",
+            "Impostos de quem recebe de fora",
+            "Planejando a mudança de país"
+          ]
+        }
+      ]
+    },
+    "bemestar": {
+      "area": true,
+      "name": "Mente & Bem-estar",
+      "icon": "flower-2",
+      "g": [
+        "#a7f3d0",
+        "#818cf8"
+      ],
+      "intro": "Inteligência emocional, foco e hábitos para crescer com equilíbrio.",
+      "courses": [
+        {
+          "id": "ie",
+          "title": "Inteligência emocional",
+          "sub": "Entenda e gerencie emoções",
+          "art": "♥",
+          "icon": "heart",
+          "pat": "dots",
+          "g": [
+            "#fda4af",
+            "#0f766e"
+          ],
+          "lessons": [
+            "O que é inteligência emocional",
+            "Autoconhecimento",
+            "Nomeando emoções",
+            "Autocontrole",
+            "Empatia",
+            "Conversas difíceis",
+            "Resiliência",
+            "Emoções no trabalho"
+          ],
+          "ctx": "Educativo; recomende psicólogo quando necessário."
+        },
+        {
+          "id": "produtividade",
+          "title": "Produtividade e foco",
+          "sub": "Faça mais com menos esforço",
+          "art": "⏱",
+          "icon": "target",
+          "pat": "diag",
+          "g": [
+            "#5eead4",
+            "#4d7c0f"
+          ],
+          "lessons": [
+            "Energia, não só tempo",
+            "Priorização: o que importa",
+            "Blocos de foco",
+            "Hábitos que ficam",
+            "Vencendo a procrastinação",
+            "Organização pessoal",
+            "Descanso e performance",
+            "Seu sistema semanal"
+          ]
+        },
+        {
+          "id": "aprender",
+          "title": "Aprender a aprender",
+          "sub": "Memória e estudo eficiente",
+          "art": "∞",
+          "icon": "brain",
+          "pat": "diag",
+          "g": [
+            "#a5b4fc",
+            "#0f766e"
+          ],
+          "lessons": [
+            "Como a memória funciona",
+            "Repetição espaçada",
+            "Prática ativa",
+            "Aprendendo idiomas como adulto",
+            "Imersão em casa",
+            "Constância: o poder do pouco todo dia",
+            "Lidando com platôs",
+            "Seu método pessoal"
+          ]
+        }
+      ]
     }
-   ]
-  },
-  "engenharia": {
-   "area": true,
-   "name": "Engenharia & Elétrica",
-   "icon": "zap",
-   "g": [
-    "#7dd3fc",
-    "#0d9488"
-   ],
-   "intro": "Fundamentos de eletricidade, eletrônica e automação, com segurança em primeiro lugar.",
-   "courses": [
-    {
-     "id": "eletricidade",
-     "title": "Eletricidade básica",
-     "sub": "Tensão, corrente e segurança",
-     "art": "⚡",
-     "icon": "zap",
-     "pat": "grid",
-     "g": [
-      "#38bdf8",
-      "#0f766e"
-     ],
-     "lessons": [
-      "Tensão, corrente e resistência",
-      "Lei de Ohm na prática",
-      "Potência e consumo de energia",
-      "Corrente alternada x contínua",
-      "Segurança elétrica e NR-10 (noções)",
-      "Multímetro: como medir",
-      "Lendo esquemas elétricos",
-      "Projeto: calculando a conta de luz"
-     ],
-     "ctx": "Conteúdo educativo e geral, sem substituir profissionais. Sempre inclua cuidados de segurança. Deixe claro que instalações elétricas reais devem ser feitas por profissional habilitado."
-    },
-    {
-     "id": "eletronica",
-     "title": "Eletrônica e Arduino",
-     "sub": "Seus primeiros circuitos",
-     "art": "🔌",
-     "icon": "cpu",
-     "pat": "dots",
-     "g": [
-      "#5eead4",
-      "#1d4ed8"
-     ],
-     "lessons": [
-      "Componentes: resistores, LEDs, capacitores",
-      "Protoboard e primeiros circuitos",
-      "Arduino: o que é e como programar",
-      "Sensores",
-      "Motores e relés (com segurança)",
-      "Simulando grátis no Tinkercad/Wokwi",
-      "Projeto: luz automática",
-      "Projeto: estação de clima"
-     ],
-     "ctx": "Conteúdo educativo e geral, sem substituir profissionais. Sempre inclua cuidados de segurança."
-    },
-    {
-     "id": "solar",
-     "title": "Energia solar",
-     "sub": "Como funciona e quando vale a pena",
-     "art": "☀",
-     "icon": "sun",
-     "pat": "dots",
-     "g": [
-      "#fde68a",
-      "#0d9488"
-     ],
-     "lessons": [
-      "Como funciona um sistema fotovoltaico",
-      "Componentes do sistema",
-      "Dimensionamento básico",
-      "Custos, economia e retorno",
-      "Regras de geração distribuída no Brasil",
-      "Carreira no setor solar"
-     ],
-     "ctx": "Conteúdo educativo e geral, sem substituir profissionais. Sempre inclua cuidados de segurança."
-    },
-    {
-     "id": "automacao",
-     "title": "Automação residencial",
-     "sub": "Casa inteligente sem complicação",
-     "art": "🏠",
-     "icon": "house",
-     "pat": "dots",
-     "g": [
-      "#99f6e4",
-      "#4338ca"
-     ],
-     "lessons": [
-      "O que é automação residencial",
-      "Assistentes de voz e tomadas inteligentes",
-      "Sensores e rotinas",
-      "Iluminação inteligente",
-      "Segurança e privacidade",
-      "Projeto: sua primeira rotina"
-     ],
-     "ctx": "Conteúdo educativo e geral, sem substituir profissionais. Sempre inclua cuidados de segurança."
-    }
-   ]
-  },
-  "financas": {
-   "area": true,
-   "name": "Finanças & Investimentos",
-   "icon": "wallet",
-   "g": [
-    "#86efac",
-    "#1d4ed8"
-   ],
-   "intro": "Organizar o dinheiro, sair das dívidas e começar a investir com segurança.",
-   "courses": [
-    {
-     "id": "organizacao",
-     "title": "Dinheiro organizado",
-     "sub": "Orçamento que funciona",
-     "art": "📒",
-     "icon": "notebook-pen",
-     "pat": "dots",
-     "g": [
-      "#4ade80",
-      "#0e7490"
-     ],
-     "lessons": [
-      "Para onde vai seu dinheiro",
-      "Orçamento 50/30/20",
-      "Reserva de emergência",
-      "Saindo das dívidas",
-      "Cartão de crédito sem medo",
-      "Metas: viagem, mudança, sonhos",
-      "Seu plano financeiro"
-     ]
-    },
-    {
-     "id": "investir",
-     "title": "Investir do zero",
-     "sub": "Renda fixa, variável e cuidados",
-     "art": "📈",
-     "icon": "trending-up",
-     "pat": "dots",
-     "g": [
-      "#5eead4",
-      "#4f46e5"
-     ],
-     "lessons": [
-      "Por que investir",
-      "Tesouro Direto e CDB",
-      "Fundos e ETFs",
-      "Ações: o básico",
-      "Risco e diversificação",
-      "Golpes de investimento: como evitar",
-      "Imposto de renda dos investimentos",
-      "Sua carteira inicial"
-     ],
-     "ctx": "Educativo; não é recomendação de investimento. Ensine a avaliar riscos."
-    },
-    {
-     "id": "exterior",
-     "title": "Dinheiro no exterior",
-     "sub": "Câmbio, contas e viagens",
-     "art": "🌍",
-     "icon": "globe",
-     "pat": "blob",
-     "g": [
-      "#67e8f9",
-      "#15803d"
-     ],
-     "lessons": [
-      "Câmbio: como funciona",
-      "Contas e cartões internacionais",
-      "Receber em dólar trabalhando do Brasil",
-      "Impostos de quem recebe de fora",
-      "Planejando a mudança de país"
-     ]
-    }
-   ]
-  },
-  "bemestar": {
-   "area": true,
-   "name": "Mente & Bem-estar",
-   "icon": "flower-2",
-   "g": [
-    "#a7f3d0",
-    "#818cf8"
-   ],
-   "intro": "Inteligência emocional, foco e hábitos para crescer com equilíbrio.",
-   "courses": [
-    {
-     "id": "ie",
-     "title": "Inteligência emocional",
-     "sub": "Entenda e gerencie emoções",
-     "art": "♥",
-     "icon": "heart",
-     "pat": "dots",
-     "g": [
-      "#fda4af",
-      "#0f766e"
-     ],
-     "lessons": [
-      "O que é inteligência emocional",
-      "Autoconhecimento",
-      "Nomeando emoções",
-      "Autocontrole",
-      "Empatia",
-      "Conversas difíceis",
-      "Resiliência",
-      "Emoções no trabalho"
-     ],
-     "ctx": "Educativo; recomende psicólogo quando necessário."
-    },
-    {
-     "id": "produtividade",
-     "title": "Produtividade e foco",
-     "sub": "Faça mais com menos esforço",
-     "art": "⏱",
-     "icon": "target",
-     "pat": "diag",
-     "g": [
-      "#5eead4",
-      "#4d7c0f"
-     ],
-     "lessons": [
-      "Energia, não só tempo",
-      "Priorização: o que importa",
-      "Blocos de foco",
-      "Hábitos que ficam",
-      "Vencendo a procrastinação",
-      "Organização pessoal",
-      "Descanso e performance",
-      "Seu sistema semanal"
-     ]
-    },
-    {
-     "id": "aprender",
-     "title": "Aprender a aprender",
-     "sub": "Memória e estudo eficiente",
-     "art": "∞",
-     "icon": "brain",
-     "pat": "diag",
-     "g": [
-      "#a5b4fc",
-      "#0f766e"
-     ],
-     "lessons": [
-      "Como a memória funciona",
-      "Repetição espaçada",
-      "Prática ativa",
-      "Aprendendo idiomas como adulto",
-      "Imersão em casa",
-      "Constância: o poder do pouco todo dia",
-      "Lidando com platôs",
-      "Seu método pessoal"
-     ]
-    }
-   ]
   }
- }
 }
