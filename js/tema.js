@@ -7,19 +7,22 @@
   var KEY = 'ia_tema';
   var HEX = /^#[0-9a-f]{6}$/i;
   var CAMPOS = ['a', 'b', 'c', 'text', 'accent', 'sky'];
-  var ORDEM = ['sunrise', 'morning', 'noon', 'afternoon', 'evening', 'night', 'dusk', 'twilight', 'midnight'];
+  var ORDEM = ['sunrise', 'morning', 'noon', 'afternoon', 'evening', 'night', 'dusk', 'twilight', 'midnight', 'predawn', 'sunset', 'goldenhour'];
 
   // a, b, c = três cores do degradê do fundo · text = texto · accent/sky = destaques (verde-menta e azul no Morning)
   var PRESETS = {
     sunrise:   { nome: 'Sunrise',   c: { a: '#0e292f', b: '#4f331c', c: '#245060', text: '#f4eee1', accent: '#edb66e', sky: '#8cd0d9' } },
     morning:   { nome: 'Morning',   c: { a: '#0a2b2d', b: '#175244', c: '#1d5b7b', text: '#DCEEE8', accent: '#76B89A', sky: '#82B0C3' } },
     noon:      { nome: 'Noon',      c: { a: '#052742', b: '#0b5260', c: '#186253', text: '#e6f2f4', accent: '#71d6b4', sky: '#7bd6f4' } },
-    afternoon: { nome: 'Afternoon', c: { a: '#35140d', b: '#652f10', c: '#614215', text: '#f8efe2', accent: '#f8bc62', sky: '#f4977b' } },
+    afternoon: { nome: 'Afternoon', c: { a: '#3a170a', b: '#7a3a0e', c: '#74480f', text: '#f8efe2', accent: '#fbb350', sky: '#f58a62' } },
     evening:   { nome: 'Evening',   c: { a: '#251132', b: '#491f51', c: '#5d2849', text: '#f5eaf5', accent: '#e892c2', sky: '#c7a8e6' } },
-    night:     { nome: 'Night',     c: { a: '#100e39', b: '#1f1f5c', c: '#212c73', text: '#ebecfa', accent: '#949df9', sky: '#91baf3' } },
-    dusk:      { nome: 'Dusk',      c: { a: '#1b1434', b: '#3c2853', c: '#5b2f5b', text: '#f0eaf5', accent: '#e3a0d8', sky: '#f5b6a3' } },
+    night:     { nome: 'Night',     c: { a: '#140d3a', b: '#2c1f66', c: '#33307f', text: '#ebecfa', accent: '#a094f9', sky: '#9fb4f3' } },
+    dusk:      { nome: 'Dusk',      c: { a: '#241238', b: '#53285a', c: '#7a2f62', text: '#f0eaf5', accent: '#ee9ccd', sky: '#f7b3a8' } },
     twilight:  { nome: 'Twilight',  c: { a: '#0e2539', b: '#1f3b5c', c: '#2c3168', text: '#e9f1f7', accent: '#89c1e6', sky: '#efbeca' } },
-    midnight:  { nome: 'Midnight',  c: { a: '#03112a', b: '#0c2855', c: '#143f71', text: '#e8f0f7', accent: '#79abec', sky: '#94d4f0' } }
+    midnight:  { nome: 'Midnight',  c: { a: '#03112a', b: '#0c2855', c: '#143f71', text: '#e8f0f7', accent: '#79abec', sky: '#94d4f0' } },
+    predawn:    { nome: 'Predawn',     c: { a: '#02040c', b: '#071330', c: '#0d2250', text: '#e6edf9', accent: '#7fa6f0', sky: '#9cc2f5' } },
+    sunset:     { nome: 'Sunset',      c: { a: '#2a0508', b: '#6b0f12', c: '#8a2410', text: '#fbeceb', accent: '#ffb27a', sky: '#ff8a6b' } },
+    goldenhour: { nome: 'Golden Hour', c: { a: '#2e1c04', b: '#5c4008', c: '#74500f', text: '#fbf3dc', accent: '#ffd25e', sky: '#ffb84a' } }
   };
 
   var VARS = ['--bg-a', '--bg-b', '--bg-c', '--bg', '--bg2', '--bg-rgb', '--text-rgb', '--modal-rgb', '--text', '--muted', '--dim',
