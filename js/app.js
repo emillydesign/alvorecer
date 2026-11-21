@@ -1,8 +1,8 @@
 import { $, $$, esc, md, uid, today, ym, weekday, fmtDay, fmtShort, fmtMonth, holiday, isRestDay, prevStudyDay, weekStart, addDays, daysBetween, norm, schedule, isDue, shuffle } from './util.js';
-import { DemoStore, SupabaseStore, defaultState } from './store.js?v=54';
-import { ic, icoOf, initFx } from './fx.js?v=54';
+import { DemoStore, SupabaseStore, defaultState } from './store.js?v=55';
+import { ic, icoOf, initFx } from './fx.js?v=55';
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=54';
+import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=55';
 let sb = null;
 const authStorage = {
   _s: () => { try { return localStorage.getItem('pg_remember') === '0' ? sessionStorage : localStorage; } catch { return null; } },
@@ -10,10 +10,10 @@ const authStorage = {
   setItem(k, v) { try { this._s()?.setItem(k, v); } catch { } },
   removeItem(k) { try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch { } }
 };
-import { makeAI, NoKeyError } from './ai.js?v=54';
-import { speak, stopSpeaking, listen, canListen, canSpeak } from './speech.js?v=54';
-import { initSaude, cuidar, startAgua } from './saude.js?v=54';
-import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=54';
+import { makeAI, NoKeyError } from './ai.js?v=55';
+import { speak, stopSpeaking, listen, canListen, canSpeak } from './speech.js?v=55';
+import { initSaude, cuidar, startAgua } from './saude.js?v=55';
+import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=55';
 
 let C, S, AI;
 const app = $('#app');
@@ -801,6 +801,7 @@ async function historico(tab = 'linha') {
 }
 
 // ---------- AJUSTES ----------
+function temaNome() { const T = window.IATema; if (!T) return 'Morning'; const a = T.atual(); return a.id === 'custom' ? 'Personalizado' : T.PRESETS[a.id].nome; }
 async function ajustes() {
   const st = S.state, cf = S.config;
   const langOpts = sel => C.languages.map(l => `<option value="${l.id}" ${l.id === sel ? 'selected' : ''}>${l.name}</option>`).join('');
@@ -811,6 +812,7 @@ async function ajustes() {
   <div class="panel" style="margin-bottom:18px"><h3 style="margin-bottom:14px">Perfil</h3>
     <div class="grid g2"><div class="field"><label>Seu nome</label><input id="nm" value="${esc(st.profile.name)}"></div><div class="field"><label>Sua área profissional</label><input id="ar" value="${esc(st.profile.area)}"></div></div>
     <div class="field"><label>Idioma das aulas (Tecnologia, áreas de interesse e Seu Alvorecer) e do IAlvorecer</label><select id="cl">${[['pt', 'Português'], ['en', 'Inglês (English)'], ['es', 'Espanhol (Español)']].map(([v, l]) => `<option value="${v}" ${(st.profile.prefs?.contentLang || 'pt') === v ? 'selected' : ''}>${l}</option>`).join('')}</select><div class="help">Dá pra mudar só de um curso no topo da página dele (PT / EN / ES). Os cursos de idiomas seguem o seu nível.</div></div></div>
+  <div class="panel" style="margin-bottom:18px"><h3 style="margin-bottom:6px">Aparência</h3><p class="small muted" style="margin-bottom:14px">Escolha as cores do site: paletas prontas (Sunrise, Morning, Noon e outras) ou as suas. Fica salvo só neste aparelho.</p><div class="row" style="gap:14px;align-items:center"><button type="button" class="btn btn-ghost" data-tema-open><i data-lucide="palette"></i> Personalizar cores</button><span class="small muted">Tema atual: <b data-tema-nome>${esc(temaNome())}</b></span></div></div>
   <div class="panel" style="margin-bottom:18px"><h3 style="margin-bottom:6px">Plano de estudos</h3><p class="small muted" style="margin-bottom:14px">O e-mail da manhã e a tela inicial seguem isto. Nos dias marcados, a aula do dia é do idioma secundário.</p>
     <div class="grid g2"><div class="field"><label>Idioma principal</label><select id="pm">${langOpts(st.plan.main)}</select></div>
     <div class="field"><label>Idioma secundário</label><select id="ps"><option value="">Nenhum</option>${langOpts(st.plan.second)}</select></div></div>
@@ -1150,6 +1152,17 @@ function openInfo(html) {
   const ov = document.querySelector('.modal-ov');
   ov.onclick = e => { if (e.target === ov || e.target.closest('.x') || e.target.closest('[data-close]')) ov.remove(); };
   return ov;
+}
+function comoEntrar() {
+  const dentro = !$('#topbar').hidden;
+  openInfo(`<div class="eyebrow">Como entrar</div><h2 style="margin:10px 0 8px">Seu primeiro acesso ao IAlvorecer</h2><p class="muted">Você escolhe o jeito que preferir. Não precisa instalar nada.</p>
+    <div class="msteps">
+      <div class="mstep"><b>1</b><div><strong>Só quer conhecer?</strong><div class="small muted">Toque em Visitar o IAlvorecer e explore sem criar conta.</div></div></div>
+      <div class="mstep"><b>2</b><div><strong>Criar conta grátis</strong><div class="small muted">Use um e-mail e uma senha (mínimo 8 caracteres). Depois, abra o link de confirmação que chega no seu e-mail (veja também o spam).</div></div></div>
+      <div class="mstep"><b>3</b><div><strong>Já tem conta?</strong><div class="small muted">Toque em Entrar com e-mail e use o mesmo e-mail e senha. Esqueceu a senha? Use "Esqueci minha senha".</div></div></div>
+    </div>
+    <p class="small dim">O passo a passo completo, com fotos, está no Guia.</p>
+    <div class="row" style="margin-top:20px"><a class="btn btn-pink" href="${dentro ? '#/guia' : '?visita=1#/guia'}" data-close>Abrir o guia completo</a></div>`);
 }
 function seuInfo() {
   const ov = openInfo(`<div class="eyebrow">Seu Alvorecer</div><h2 style="margin:10px 0 8px">Cursos feitos sob medida para você</h2><p class="muted">Não achou o que queria aprender? O IAlvorecer cria um curso completo só para você.</p>
@@ -1518,6 +1531,7 @@ function login(msg, mode = 'inicio') {
         ${GOOGLE_ENABLED ? `<button class="btn btn-ghost" id="gg" style="justify-content:center"><b style="color:#8ab4ff">G</b> Entrar com Google</button>` : ''}
         <button class="btn btn-ghost" data-mode="entrar" style="justify-content:center">Entrar com e-mail</button>
         <button class="btn btn-ghost" data-mode="criar" style="justify-content:center">Criar conta grátis</button>
+        <button class="btn btn-ghost" data-comoentrar style="justify-content:center"><i data-lucide="circle-help"></i> Como entrar</button>
       </div>
       <p class="small dim" style="max-width:560px;margin:34px auto 0;line-height:1.6">O IAlvorecer é feito por uma única designer com utilização de IA: podem ocorrer erros e ele não substitui profissionais qualificados. Problemas técnicos? Reporte em Ajustes → "Reportar erro".</p>
     </div>`;
@@ -1575,13 +1589,13 @@ function newPasswordScreen() {
 // ---------- INÍCIO DO APP ----------
 async function boot() {
   initFx();
-  document.addEventListener('click', e => { const b = e.target.closest('[data-fb]'); if (b) { e.preventDefault(); openFeedback(b.dataset.fb); } if (e.target.closest('[data-reload]')) location.reload(); if (e.target.closest('[data-back]')) history.back(); const cp = e.target.closest('[data-copy]'); if (cp) { navigator.clipboard.writeText(cp.dataset.copy); cp.textContent = 'Copiado ✓'; } const ag = e.target.closest('[data-agenda]'); if (ag) { e.preventDefault(); openAgendaConversa(ag.dataset.agenda || ''); } const ii = e.target.closest('[data-iainfo]'); if (ii) { e.preventDefault(); iaInfo(ii.dataset.iainfo); } });
+  document.addEventListener('click', e => { const b = e.target.closest('[data-fb]'); if (b) { e.preventDefault(); openFeedback(b.dataset.fb); } if (e.target.closest('[data-reload]')) location.reload(); if (e.target.closest('[data-back]')) history.back(); const cp = e.target.closest('[data-copy]'); if (cp) { navigator.clipboard.writeText(cp.dataset.copy); cp.textContent = 'Copiado ✓'; } const ag = e.target.closest('[data-agenda]'); if (ag) { e.preventDefault(); openAgendaConversa(ag.dataset.agenda || ''); } const ii = e.target.closest('[data-iainfo]'); if (ii) { e.preventDefault(); iaInfo(ii.dataset.iainfo); } if (e.target.closest('[data-comoentrar]')) { e.preventDefault(); comoEntrar(); } });
   window.addEventListener('ia-uso', () => document.querySelectorAll('.ia-meter').forEach(el => el.outerHTML = iaMeterHTML()));
   C = await (await fetch('data/catalog.json', { cache: 'no-cache' })).json();
   const qs = new URLSearchParams(location.search);
   const demo = qs.has('demo') || qs.has('visita');
   if (demo) {
-    const { demoData, demoAI } = await import('./demo.js?v=54');
+    const { demoData, demoAI } = await import('./demo.js?v=55');
     S = new DemoStore(() => demoData(C)); S.demoAI = demoAI;
     if (qs.has('visita')) S.readonly = true;
     document.body.insertAdjacentHTML('beforeend', S.readonly ? '<a class="demo-badge" href="./">👁 Modo visitante · Criar conta</a>' : '<div class="demo-badge">DEMONSTRAÇÃO</div>');

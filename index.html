@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>IAlvorecer</title>
 <meta name="theme-color" content="#0a2b2d">
+<script src="js/tema.js?v=1"></script>
 <link rel="icon" type="image/svg+xml" href="img/logo-ia.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="img/logo-ia-32.png">
 <link rel="icon" type="image/png" sizes="48x48" href="img/logo-ia-48.png">
@@ -14,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/app.css?v=57">
+<link rel="stylesheet" href="css/app.css?v=58">
 </head>
 <body>
 <header class="topbar" id="topbar" hidden>
@@ -29,8 +30,9 @@
     <button class="areasbtn" id="areasBtn" title="Áreas de interesse e Seu Alvorecer">▦ <span>Áreas</span></button>
   </nav>
   <div class="topright">
-    <a href="#/guia" class="iconbtn" title="Guia">?</a>
-    <a href="#/ajustes" class="avatar" id="avatar" title="Ajustes">E</a>
+    <button type="button" class="iconbtn" data-comoentrar title="Como entrar" aria-label="Como entrar"><i data-lucide="circle-help"></i></button>
+    <button type="button" class="iconbtn" data-tema-open title="Cores do site" aria-label="Cores do site"><i data-lucide="palette"></i></button>
+    <a href="#/ajustes" class="avatar" id="avatar" title="Ajustes" aria-label="Ajustes">E</a>
   </div>
 </header>
 <main id="app"><div class="loading">Carregando…</div></main>
@@ -44,6 +46,7 @@
 </nav>
 <div id="toast" class="toast" hidden></div>
 <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
-<script type="module" src="js/app.js?v=54"></script>
+<script type="module" src="js/tema-ui.js?v=1"></script>
+<script type="module" src="js/app.js?v=55"></script>
 </body>
 </html>
