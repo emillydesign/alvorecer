@@ -108,7 +108,8 @@ ${ALMA}`;
 {"type":"mcq","q":"pergunta","options":["a","b","c","d"],"answer":0,"explain":"por que (PT)"}
 {"type":"fill","q":"frase com ___ no lugar da lacuna","answer":"resposta","accept":["outras respostas aceitas"],"explain":"(PT)"}
 {"type":"translate","q":"frase em português","answer":"tradução modelo","explain":"(PT)"}
-{"type":"write","q":"tarefa curta de produção (2 a 4 frases)"}`;
+{"type":"write","q":"tarefa curta de produção (2 a 4 frases)"}
+REGRAS DOS EXERCÍCIOS (obrigatórias): todo exercício tem "q" com o enunciado COMPLETO, preenchido e que se entende sozinho (nunca vazio, nunca só um número). Em múltipla escolha, "q" é uma pergunta direta (ex.: "Qual tecla usamos para...?") e as 4 opções são respostas possíveis a ELA, plausíveis, com apenas uma correta ("answer" = posição dela, começando em 0); nada de "todas as anteriores". Pergunte só sobre o que a PRÓPRIA aula ensinou, com as mesmas palavras e exemplos dela, em linguagem simples e fácil de entender. Confira, antes de responder, se cada pergunta faz sentido sem olhar mais nada.`;
 
   return {
     gen,

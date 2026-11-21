@@ -1,8 +1,8 @@
 import { $, $$, esc, md, uid, today, ym, weekday, fmtDay, fmtShort, fmtMonth, holiday, isRestDay, prevStudyDay, weekStart, addDays, daysBetween, norm, schedule, isDue, shuffle } from './util.js';
-import { DemoStore, SupabaseStore, defaultState } from './store.js?v=60';
-import { ic, icoOf, initFx } from './fx.js?v=60';
+import { DemoStore, SupabaseStore, defaultState } from './store.js?v=61';
+import { ic, icoOf, initFx } from './fx.js?v=61';
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=60';
+import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=61';
 let sb = null;
 const authStorage = {
   _s: () => { try { return localStorage.getItem('pg_remember') === '0' ? sessionStorage : localStorage; } catch { return null; } },
@@ -10,10 +10,10 @@ const authStorage = {
   setItem(k, v) { try { this._s()?.setItem(k, v); } catch { } },
   removeItem(k) { try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch { } }
 };
-import { makeAI, NoKeyError } from './ai.js?v=60';
-import { speak, stopSpeaking, pauseSpeaking, resumeSpeaking, onSpeechState, speechState, listen, canListen, canSpeak } from './speech.js?v=60';
-import { initSaude, cuidar, startAgua } from './saude.js?v=60';
-import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=60';
+import { makeAI, NoKeyError } from './ai.js?v=61';
+import { speak, stopSpeaking, pauseSpeaking, resumeSpeaking, onSpeechState, speechState, listen, canListen, canSpeak } from './speech.js?v=61';
+import { initSaude, cuidar, startAgua } from './saude.js?v=61';
+import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=61';
 
 let C, S, AI;
 const app = $('#app');
@@ -432,7 +432,7 @@ async function cachedLesson(key, L) { // aula pronta (memória ou arquivo salvo)
   if (lesson) lessonMem[mk] = lesson;
   return lesson;
 }
-let preparoMod; const preparo = () => preparoMod ||= import('./preparo.js?v=60'); // arquivo à parte: só carrega quando uma aula ou curso abre
+let preparoMod; const preparo = () => preparoMod ||= import('./preparo.js?v=61'); // arquivo à parte: só carrega quando uma aula ou curso abre
 function lessonFor(key, L) { // cria a aula (uma só vez, mesmo que peçam duas vezes) e salva
   const d = course(key), s = cs(key), id = L.cacheId || L.id, mk = key + '|' + id;
   if (!lessonJobs[mk]) {
@@ -440,7 +440,7 @@ function lessonFor(key, L) { // cria a aula (uma só vez, mesmo que peçam duas 
     lessonJobs[mk] = preparo().then(P => {
       const ls = lessonsOf(key) || [], shared = P.aberto(d); // curso pronto = aula igual para todos, criada uma vez só e compartilhada
       const c = P.continuidade(ls, ls.findIndex(l => l.id === L.id), { shared, mem: lessonMem, key });
-      return AI.lesson({ kind: d.kind, course: d, outline: L.outline, level: s.level, lang: d.lang, errors: recentErrors(key), contentLang: d.contentLang, shared, before: c.before, next: c.next, cacheKey: shared ? key + '|' + id + '|c1' : null });
+      return AI.lesson({ kind: d.kind, course: d, outline: L.outline, level: s.level, lang: d.lang, errors: recentErrors(key), contentLang: d.contentLang, shared, before: c.before, next: c.next, cacheKey: shared ? key + '|' + id + '|c2' : null });
     })
       .then(x => { x.generated = today(); x.v = 2; lessonMem[mk] = x; S.putLesson(key, id, x); return x; })
       .finally(() => { delete lessonJobs[mk]; });
@@ -525,7 +525,7 @@ async function aula(key, id) {
         <div class="vocab">${(lesson.vocab || []).map((v, i) => `<div class="vcard"><b>${esc(v.term)}</b> ${d.contentLang !== 'pt' ? sayBtn(v.term) : ''}<div class="muted small" style="margin-top:4px">${esc(v.meaning)}</div>${v.example ? `<div class="small" style="margin-top:8px;font-style:italic">${esc(v.example)}</div>` : ''}<button class="btn btn-ghost btn-sm" data-more="${i}" style="margin-top:12px">Saiba mais</button></div>`).join('')}</div>
         <div class="row" style="margin-top:26px"><button class="btn btn-pink" data-step="2">${tabs[2][1]}</button></div>`;
     } else if (tab === 'ex') {
-      exercisesUI(body, lesson.exercises || [], { langName: d.lang.name, onDone: res => finish(res) });
+      exercisesUI(body, limparExercicios(lesson.exercises), { langName: d.lang.name, onDone: res => finish(res) });
     } else if (tab === 'mais') {
       body.innerHTML = extraHTML(lesson, d);
     } else {
@@ -564,6 +564,19 @@ async function aula(key, id) {
       </div></div>`;
   }
   render();
+}
+
+// Garante que todo exercício tenha enunciado e alternativas válidas (protege também aulas antigas já salvas)
+function limparExercicios(list) {
+  return (Array.isArray(list) ? list : []).map(q => {
+    const txt = String(q.q ?? q.question ?? q.pergunta ?? q.enunciado ?? q.prompt ?? '').trim();
+    return { ...q, q: txt };
+  }).filter(q => {
+    if (q.q.replace(/^\d+[.)]?\s*/, '').length < 8) return false;
+    if (q.type !== 'mcq') return true;
+    const o = q.options || [];
+    return o.length >= 2 && Number.isInteger(q.answer) && q.answer >= 0 && q.answer < o.length;
+  });
 }
 
 // Exercícios (usado nas aulas e nos testes)
@@ -802,7 +815,7 @@ async function teste(kind = 'semana', key) {
   let qs;
   try {
     const r = await AI.test({ title, langName: d.lang.name, level: d.kind === 'lang' ? s.level : null, n, cards, errors: errs, scope: isLevel ? `Prova de proficiência do nível ${s.level}: cubra a gramática e o vocabulário típicos de ${s.level} (QECR), não só o que ela estudou.` : '' });
-    qs = r.questions || [];
+    qs = limparExercicios(r.questions);
   } catch (er) {
     if (isLevel || cards.length < 4) throw er;
     qs = shuffle(cards).slice(0, n).map(c => { const wrong = shuffle(S.srs.filter(x => x.id !== c.id && x.back !== c.back)).slice(0, 3).map(x => x.back); const options = shuffle([c.back, ...wrong]); return { type: 'mcq', q: c.front, options, answer: options.indexOf(c.back), explain: c.note }; });
@@ -1516,7 +1529,7 @@ async function runPlacement(box, L, onLevel) {
   box.innerHTML = spinner(`Montando o teste de ${L.name}…`);
   try {
     const r = await AI.placement({ lang: L });
-    const qs = (r.questions || []).filter(q => q.type === 'mcq' || q.type === 'fill');
+    const qs = limparExercicios(r.questions).filter(q => q.type === 'mcq' || q.type === 'fill');
     box.innerHTML = `<p class="muted" style="margin-bottom:14px">Responda sem consultar nada. Se não souber, deixe em branco: isso também ajuda a achar o seu nível.</p><div id="pq"></div>`;
     exercisesUI($('#pq', box), qs, { langName: L.name, doneLabel: 'Ver meu nível', onDone: res => onLevel(placeLevel(qs, res.results), res.score) });
   } catch (e) { box.innerHTML = errBox(e); }
@@ -1696,7 +1709,7 @@ async function boot() {
   const qs = new URLSearchParams(location.search);
   const demo = qs.has('demo') || qs.has('visita');
   if (demo) {
-    const { demoData, demoAI } = await import('./demo.js?v=60');
+    const { demoData, demoAI } = await import('./demo.js?v=61');
     S = new DemoStore(() => demoData(C)); S.demoAI = demoAI;
     if (qs.has('visita')) S.readonly = true;
     document.body.insertAdjacentHTML('beforeend', S.readonly ? '<a class="demo-badge" href="./">👁 Modo visitante · Criar conta</a>' : '<div class="demo-badge">DEMONSTRAÇÃO</div>');
