@@ -1,8 +1,8 @@
 import { $, $$, esc, md, uid, today, ym, weekday, fmtDay, fmtShort, fmtMonth, holiday, isRestDay, prevStudyDay, weekStart, addDays, daysBetween, norm, schedule, isDue, shuffle } from './util.js';
-import { DemoStore, SupabaseStore, defaultState } from './store.js?v=55';
-import { ic, icoOf, initFx } from './fx.js?v=55';
+import { DemoStore, SupabaseStore, defaultState } from './store.js?v=56';
+import { ic, icoOf, initFx } from './fx.js?v=56';
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=55';
+import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=56';
 let sb = null;
 const authStorage = {
   _s: () => { try { return localStorage.getItem('pg_remember') === '0' ? sessionStorage : localStorage; } catch { return null; } },
@@ -10,10 +10,10 @@ const authStorage = {
   setItem(k, v) { try { this._s()?.setItem(k, v); } catch { } },
   removeItem(k) { try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch { } }
 };
-import { makeAI, NoKeyError } from './ai.js?v=55';
-import { speak, stopSpeaking, listen, canListen, canSpeak } from './speech.js?v=55';
-import { initSaude, cuidar, startAgua } from './saude.js?v=55';
-import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=55';
+import { makeAI, NoKeyError } from './ai.js?v=56';
+import { speak, stopSpeaking, listen, canListen, canSpeak } from './speech.js?v=56';
+import { initSaude, cuidar, startAgua } from './saude.js?v=56';
+import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=56';
 
 let C, S, AI;
 const app = $('#app');
@@ -801,7 +801,7 @@ async function historico(tab = 'linha') {
 }
 
 // ---------- AJUSTES ----------
-function temaNome() { const T = window.IATema; if (!T) return 'Morning'; const a = T.atual(); return a.id === 'custom' ? 'Personalizado' : T.PRESETS[a.id].nome; }
+function temaNome() { const T = window.IATema; if (!T) return 'Manhã'; return T.nome(T.atual().id); }
 async function ajustes() {
   const st = S.state, cf = S.config;
   const langOpts = sel => C.languages.map(l => `<option value="${l.id}" ${l.id === sel ? 'selected' : ''}>${l.name}</option>`).join('');
@@ -812,7 +812,7 @@ async function ajustes() {
   <div class="panel" style="margin-bottom:18px"><h3 style="margin-bottom:14px">Perfil</h3>
     <div class="grid g2"><div class="field"><label>Seu nome</label><input id="nm" value="${esc(st.profile.name)}"></div><div class="field"><label>Sua área profissional</label><input id="ar" value="${esc(st.profile.area)}"></div></div>
     <div class="field"><label>Idioma das aulas (Tecnologia, áreas de interesse e Seu Alvorecer) e do IAlvorecer</label><select id="cl">${[['pt', 'Português'], ['en', 'Inglês (English)'], ['es', 'Espanhol (Español)']].map(([v, l]) => `<option value="${v}" ${(st.profile.prefs?.contentLang || 'pt') === v ? 'selected' : ''}>${l}</option>`).join('')}</select><div class="help">Dá pra mudar só de um curso no topo da página dele (PT / EN / ES). Os cursos de idiomas seguem o seu nível.</div></div></div>
-  <div class="panel" style="margin-bottom:18px"><h3 style="margin-bottom:6px">Aparência</h3><p class="small muted" style="margin-bottom:14px">Escolha as cores do site: paletas prontas (Sunrise, Morning, Noon e outras) ou as suas. Fica salvo só neste aparelho.</p><div class="row" style="gap:14px;align-items:center"><button type="button" class="btn btn-ghost" data-tema-open><i data-lucide="palette"></i> Personalizar cores</button><span class="small muted">Tema atual: <b data-tema-nome>${esc(temaNome())}</b></span></div></div>
+  <div class="panel" style="margin-bottom:18px"><h3 style="margin-bottom:6px">Aparência</h3><p class="small muted" style="margin-bottom:14px">Escolha as cores do site: paletas prontas (Nascer do sol, Manhã, Meio-dia e outras) ou as suas. Fica salvo só neste aparelho.</p><div class="row" style="gap:14px;align-items:center"><button type="button" class="btn btn-ghost" data-tema-open><i data-lucide="palette"></i> Personalizar cores</button><span class="small muted">Tema atual: <b data-tema-nome>${esc(temaNome())}</b></span></div></div>
   <div class="panel" style="margin-bottom:18px"><h3 style="margin-bottom:6px">Plano de estudos</h3><p class="small muted" style="margin-bottom:14px">O e-mail da manhã e a tela inicial seguem isto. Nos dias marcados, a aula do dia é do idioma secundário.</p>
     <div class="grid g2"><div class="field"><label>Idioma principal</label><select id="pm">${langOpts(st.plan.main)}</select></div>
     <div class="field"><label>Idioma secundário</label><select id="ps"><option value="">Nenhum</option>${langOpts(st.plan.second)}</select></div></div>
@@ -1595,7 +1595,7 @@ async function boot() {
   const qs = new URLSearchParams(location.search);
   const demo = qs.has('demo') || qs.has('visita');
   if (demo) {
-    const { demoData, demoAI } = await import('./demo.js?v=55');
+    const { demoData, demoAI } = await import('./demo.js?v=56');
     S = new DemoStore(() => demoData(C)); S.demoAI = demoAI;
     if (qs.has('visita')) S.readonly = true;
     document.body.insertAdjacentHTML('beforeend', S.readonly ? '<a class="demo-badge" href="./">👁 Modo visitante · Criar conta</a>' : '<div class="demo-badge">DEMONSTRAÇÃO</div>');

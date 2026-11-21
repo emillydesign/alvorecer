@@ -9,6 +9,10 @@ const GRUPOS = {
   cmyk: { campos: ['c', 'm', 'y', 'k'], max: [100, 100, 100, 100], de: hex => T.rgbToCmyk(...T.hexToRgb(hex)), para: v => T.rgbToHex(...T.cmykToRgb(v[0], v[1], v[2], v[3])) }
 };
 
+function hsvDe(hex) { const [r, g, b] = T.hexToRgb(hex).map(v => v / 255), mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn; let h = 0; if (d) { if (mx === r) h = ((g - b) / d + (g < b ? 6 : 0)); else if (mx === g) h = (b - r) / d + 2; else h = (r - g) / d + 4; h *= 60; } return [h, mx ? d / mx : 0, mx]; }
+function hexDeHsv(h, s, v) { const f = n => { const k = (n + h / 60) % 6; return v - v * s * Math.max(0, Math.min(k, 4 - k, 1)); }; return T.rgbToHex(f(5) * 255, f(3) * 255, f(1) * 255); }
+let hsv = [0, 0, 1];
+
 let ov = null, foco = null, slot = 'a', cores = null, quadro = 0;
 
 if (T) {
@@ -16,7 +20,7 @@ if (T) {
   window.addEventListener('ia-tema', rotular);
 }
 
-function nomeAtual() { const a = T.atual(); return a.id === 'custom' ? 'Personalizado' : T.PRESETS[a.id].nome; }
+function nomeAtual() { return T.nome(T.atual().id); }
 function rotular() { document.querySelectorAll('[data-tema-nome]').forEach(el => { el.textContent = nomeAtual(); }); }
 function normHex(s) {
   s = String(s).trim().replace(/^#?/, '#');
@@ -30,7 +34,7 @@ function abrir() {
   foco = document.activeElement;
   cores = { ...T.coresAtuais() };
   slot = 'a';
-  const cards = T.ORDEM.map(id => `<button type="button" class="tm-card" data-tid="${id}" aria-pressed="false"><img src="img/temas/${id}.webp" alt="" width="84" height="84" loading="lazy"><span class="tm-nome">${T.PRESETS[id].nome}</span>${id === 'morning' ? '<small>padrão</small>' : ''}<i class="tm-ok" data-lucide="check"></i></button>`).join('');
+  const cards = T.ORDEM.map(id => `<button type="button" class="tm-card" data-tid="${id}" aria-pressed="false"><img src="img/temas/${id}.webp" alt="" width="84" height="84" loading="lazy"><span class="tm-nome">${T.nome(id)}</span>${id === 'morning' ? '<small>padrão</small>' : ''}<i class="tm-ok" data-lucide="check"></i></button>`).join('');
   const slots = CAMPOS.map(([k, nome]) => `<button type="button" class="tm-slot" data-slot="${k}" aria-pressed="false"><span class="tm-dot"></span>${nome}</button>`).join('');
   const grp = (g, nome) => `<div class="tm-grp"><span>${nome}</span>${GRUPOS[g].campos.map((f, i) => `<input type="number" inputmode="numeric" data-g="${g}" data-f="${f}" min="0" max="${GRUPOS[g].max[i]}" step="1" aria-label="${nome} ${f.toUpperCase()}">`).join('')}</div>`;
   ov = document.createElement('div');
@@ -41,11 +45,11 @@ function abrir() {
     <h2 id="tmTitulo" style="margin:10px 0 6px">Cores do site</h2>
     <p class="muted small">Escolha uma paleta pronta ou crie a sua. A escolha fica salva só neste aparelho.</p>
     <div class="tm-grid">${cards}</div>
-    <button type="button" class="btn btn-ghost btn-sm" data-tm-toggle aria-expanded="false"><i data-lucide="sliders-horizontal"></i> Personalizar cores</button>
+    <button type="button" class="tm-custom" data-tm-toggle aria-expanded="false"><span class="tm-custom-ic"><i data-lucide="palette"></i></span><span class="tm-custom-tx"><b>Personalizar cores</b><small>Crie a sua própria paleta</small></span></button>
     <div class="tm-ed" hidden>
       <div class="tm-slots">${slots}</div>
       <div class="tm-edrow">
-        <label class="tm-wheel" title="Círculo cromático"><input type="color" id="tmPick" aria-label="Círculo cromático"></label>
+        <div class="tm-picker"><div class="tm-wheel" id="tmWheel" tabindex="0" role="application" aria-label="Círculo cromático: setas mudam matiz e intensidade"><span class="tm-shade"></span><span class="tm-thumb"></span></div><input type="range" id="tmVal" class="tm-val" min="0" max="100" step="1" aria-label="Brilho"></div>
         <div class="tm-fields">
           <label><span>HEX</span><input id="tmHex" maxlength="7" spellcheck="false" autocomplete="off" aria-label="Código HEX"></label>
           ${grp('rgb', 'RGB')}${grp('hsl', 'HSL')}${grp('cmyk', 'CMYK')}
@@ -60,6 +64,15 @@ function abrir() {
   ov.addEventListener('click', clique);
   ov.addEventListener('input', digitou);
   ov.addEventListener('keydown', teclado);
+  const wh = ov.querySelector('#tmWheel'); let arr = false;
+  wh.addEventListener('pointerdown', e => { arr = true; wh.setPointerCapture(e.pointerId); daRoda(e); });
+  wh.addEventListener('pointermove', e => { if (arr) daRoda(e); });
+  wh.addEventListener('pointerup', () => { arr = false; });
+  wh.addEventListener('pointercancel', () => { arr = false; });
+  wh.addEventListener('keydown', e => {
+    const m = { ArrowLeft: [-5, 0], ArrowRight: [5, 0], ArrowUp: [0, 0.04], ArrowDown: [0, -0.04] }[e.key]; if (!m) return;
+    e.preventDefault(); hsv[0] = (hsv[0] + m[0] + 360) % 360; hsv[1] = Math.max(0, Math.min(1, hsv[1] + m[1])); mudou(hexDeHsv(...hsv), 'roda');
+  });
   document.addEventListener('keydown', esc);
   marcarCards(); pintarEditor();
   (ov.querySelector('.tm-card.on') || ov.querySelector('.tm-card'))?.focus();
@@ -107,8 +120,13 @@ function pintarEditor(exceto) {
     b.classList.toggle('on', b.dataset.slot === slot); b.setAttribute('aria-pressed', String(b.dataset.slot === slot));
     b.querySelector('.tm-dot').style.background = cores[b.dataset.slot];
   });
-  const pick = ov.querySelector('#tmPick'), hexIn = ov.querySelector('#tmHex');
-  pick.value = hex; pick.parentElement.style.setProperty('--tm-cor', hex);
+  const hexIn = ov.querySelector('#tmHex');
+  if (exceto !== 'roda') hsv = hsvDe(hex);
+  const wh = ov.querySelector('#tmWheel'), rad = hsv[1] * 50, ang = hsv[0] * Math.PI / 180;
+  wh.style.setProperty('--tm-cor', hex); wh.style.setProperty('--tm-esc', String(1 - hsv[2]));
+  wh.style.setProperty('--tm-x', (50 + rad * Math.cos(ang)) + '%'); wh.style.setProperty('--tm-y', (50 + rad * Math.sin(ang)) + '%');
+  const vl = ov.querySelector('#tmVal'); if (exceto !== 'val') vl.value = Math.round(hsv[2] * 100);
+  vl.style.background = `linear-gradient(90deg,#000,${hexDeHsv(hsv[0], hsv[1], 1)})`;
   if (exceto !== 'hex') { hexIn.value = hex.toUpperCase(); hexIn.removeAttribute('aria-invalid'); }
   for (const g in GRUPOS) {
     if (g === exceto) continue;
@@ -122,7 +140,7 @@ function pintarEditor(exceto) {
 
 function digitou(e) {
   const el = e.target;
-  if (el.id === 'tmPick') return mudou(el.value, null);
+  if (el.id === 'tmVal') { hsv[2] = Number(el.value) / 100; return mudou(hexDeHsv(...hsv), 'val'); }
   if (el.id === 'tmHex') {
     const h = normHex(el.value);
     if (h) { el.removeAttribute('aria-invalid'); mudou(h, 'hex'); } else el.setAttribute('aria-invalid', String(el.value.replace('#', '').length >= 6));
@@ -137,6 +155,12 @@ function digitou(e) {
   if (ok) mudou(G.para(n), g);
 }
 
+function daRoda(e) {
+  const wh = ov.querySelector('#tmWheel'), r = wh.getBoundingClientRect(), R = r.width / 2;
+  const dx = e.clientX - (r.left + R), dy = e.clientY - (r.top + R);
+  hsv[0] = (Math.atan2(dy, dx) * 180 / Math.PI + 360) % 360; hsv[1] = Math.min(1, Math.hypot(dx, dy) / R);
+  mudou(hexDeHsv(...hsv), 'roda');
+}
 function mudou(hex, de) {
   hex = normHex(hex); if (!hex) return;
   cores[slot] = hex;

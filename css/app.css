@@ -445,7 +445,7 @@ svg.lucide{width:1.1em;height:1.1em;stroke-width:1.7;vertical-align:-.17em;flex:
 .iconbtn{background:rgba(255,255,255,.05);border-color:var(--line2);color:var(--text)}
 .avatar{background:linear-gradient(135deg,var(--mint),var(--sky));color:#06202a}
 /* botão de conta = ícone "IA." (a inicial do nome fica só para leitores de tela) */
-#avatar{font-size:0;color:transparent;background:url(../img/logo-ia.svg) center/cover no-repeat;border:1px solid var(--line2);overflow:hidden}
+#avatar{font-size:0;color:transparent;background:var(--logo-ia,url(../img/logo-ia.svg)) center/cover no-repeat;border:1px solid var(--line2);overflow:hidden}
 .iconbtn svg{width:18px;height:18px;stroke-width:1.8}
 .iconbtn:hover{border-color:rgba(var(--mint-rgb),.5);color:#fff}
 
@@ -606,10 +606,23 @@ select option{background:var(--bg2);color:var(--text)}
 .tm-slot{display:inline-flex;align-items:center;gap:8px;padding:7px 12px 7px 8px;border-radius:999px;border:1px solid var(--line2);background:rgba(255,255,255,.04);color:var(--text);font-size:13px;font-weight:500;cursor:pointer;transition:border-color .3s,background .3s}
 .tm-slot .tm-dot{width:20px;height:20px;border-radius:50%;border:1px solid rgba(255,255,255,.45);display:block}
 .tm-slot.on{border-color:var(--sun);background:rgba(var(--mint-rgb),.12)}
-.tm-edrow{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
-.tm-wheel{position:relative;width:96px;height:96px;border-radius:50%;flex:none;cursor:pointer;display:block;background:conic-gradient(#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00);border:2px solid var(--line2)}
-.tm-wheel::after{content:"";position:absolute;inset:28%;border-radius:50%;background:var(--tm-cor,#76b89a);border:2px solid rgba(255,255,255,.75);pointer-events:none}
-.tm-wheel input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:0;padding:0}
+.tm-edrow{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;justify-content:center}
+.tm-picker{display:flex;flex-direction:column;align-items:center;gap:14px;flex:none}
+.tm-wheel{position:relative;width:176px;height:176px;border-radius:50%;flex:none;cursor:crosshair;touch-action:none;background:radial-gradient(circle closest-side,#fff,rgba(255,255,255,0)),conic-gradient(from 90deg,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00);box-shadow:0 8px 28px rgba(0,0,0,.35)}
+.tm-wheel:focus-visible{outline:2px solid var(--sun);outline-offset:4px}
+.tm-shade{position:absolute;inset:0;border-radius:50%;background:#000;opacity:var(--tm-esc,0);pointer-events:none}
+.tm-thumb{position:absolute;left:var(--tm-x,50%);top:var(--tm-y,50%);width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50%;background:var(--tm-cor,#76b89a);border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.5);pointer-events:none}
+.tm-val{-webkit-appearance:none;appearance:none;width:176px;height:14px;padding:0;border:0;border-radius:99px;cursor:pointer}
+.tm-val::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;border:0;box-shadow:0 2px 6px rgba(0,0,0,.5)}
+.tm-val::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#fff;border:0;box-shadow:0 2px 6px rgba(0,0,0,.5)}
+.tm-custom{display:flex;align-items:center;gap:14px;width:100%;padding:16px 18px;border-radius:20px;border:1.5px solid rgba(var(--mint-rgb),.6);background:linear-gradient(135deg,rgba(var(--mint-rgb),.22),rgba(var(--sky-rgb),.16));color:var(--text);text-align:left;cursor:pointer;transition:transform .3s var(--ease),box-shadow .3s,border-color .3s}
+.tm-custom:hover{transform:translateY(-2px);border-color:var(--mint);box-shadow:0 10px 28px rgba(var(--mint-rgb),.22)}
+.tm-custom[aria-expanded="true"]{border-color:var(--sun)}
+.tm-custom-ic{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;flex:none;background:conic-gradient(from 90deg,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)}
+.tm-custom-ic svg{width:22px;height:22px;stroke:#fff;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6))}
+.tm-custom-tx{display:flex;flex-direction:column;gap:2px}
+.tm-custom-tx b{font-size:16px;font-weight:700}
+.tm-custom-tx small{font-size:12.5px;color:var(--muted)}
 .tm-fields{flex:1;min-width:230px;display:grid;gap:10px}
 .tm-fields label,.tm-grp{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
 .tm-fields span{width:48px;flex:none;font-weight:600;letter-spacing:.04em}

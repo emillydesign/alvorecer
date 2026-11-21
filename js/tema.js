@@ -11,18 +11,18 @@
 
   // a, b, c = três cores do degradê do fundo · text = texto · accent/sky = destaques (verde-menta e azul no Morning)
   var PRESETS = {
-    sunrise:   { nome: 'Sunrise',   c: { a: '#0e292f', b: '#4f331c', c: '#245060', text: '#f4eee1', accent: '#edb66e', sky: '#8cd0d9' } },
-    morning:   { nome: 'Morning',   c: { a: '#0a2b2d', b: '#175244', c: '#1d5b7b', text: '#DCEEE8', accent: '#76B89A', sky: '#82B0C3' } },
-    noon:      { nome: 'Noon',      c: { a: '#052742', b: '#0b5260', c: '#186253', text: '#e6f2f4', accent: '#71d6b4', sky: '#7bd6f4' } },
-    afternoon: { nome: 'Afternoon', c: { a: '#3a170a', b: '#7a3a0e', c: '#74480f', text: '#f8efe2', accent: '#fbb350', sky: '#f58a62' } },
-    evening:   { nome: 'Evening',   c: { a: '#251132', b: '#491f51', c: '#5d2849', text: '#f5eaf5', accent: '#e892c2', sky: '#c7a8e6' } },
-    night:     { nome: 'Night',     c: { a: '#140d3a', b: '#2c1f66', c: '#33307f', text: '#ebecfa', accent: '#a094f9', sky: '#9fb4f3' } },
-    dusk:      { nome: 'Dusk',      c: { a: '#241238', b: '#53285a', c: '#7a2f62', text: '#f0eaf5', accent: '#ee9ccd', sky: '#f7b3a8' } },
-    twilight:  { nome: 'Twilight',  c: { a: '#0e2539', b: '#1f3b5c', c: '#2c3168', text: '#e9f1f7', accent: '#89c1e6', sky: '#efbeca' } },
-    midnight:  { nome: 'Midnight',  c: { a: '#03112a', b: '#0c2855', c: '#143f71', text: '#e8f0f7', accent: '#79abec', sky: '#94d4f0' } },
-    predawn:    { nome: 'Predawn',     c: { a: '#02040c', b: '#071330', c: '#0d2250', text: '#e6edf9', accent: '#7fa6f0', sky: '#9cc2f5' } },
-    sunset:     { nome: 'Sunset',      c: { a: '#2a0508', b: '#6b0f12', c: '#8a2410', text: '#fbeceb', accent: '#ffb27a', sky: '#ff8a6b' } },
-    goldenhour: { nome: 'Golden Hour', c: { a: '#2e1c04', b: '#5c4008', c: '#74500f', text: '#fbf3dc', accent: '#ffd25e', sky: '#ffb84a' } }
+    sunrise:   { nome: 'Nascer do sol', en: 'Sunrise',   c: { a: '#0e292f', b: '#4f331c', c: '#245060', text: '#f4eee1', accent: '#edb66e', sky: '#8cd0d9' } },
+    morning:   { nome: 'Manhã', en: 'Morning',   c: { a: '#0a2b2d', b: '#175244', c: '#1d5b7b', text: '#DCEEE8', accent: '#76B89A', sky: '#82B0C3' } },
+    noon:      { nome: 'Meio-dia', en: 'Noon',      c: { a: '#052742', b: '#0b5260', c: '#186253', text: '#e6f2f4', accent: '#71d6b4', sky: '#7bd6f4' } },
+    afternoon: { nome: 'Tarde', en: 'Afternoon', c: { a: '#3a170a', b: '#7a3a0e', c: '#74480f', text: '#f8efe2', accent: '#fbb350', sky: '#f58a62' } },
+    evening:   { nome: 'Entardecer', en: 'Evening',   c: { a: '#251132', b: '#491f51', c: '#5d2849', text: '#f5eaf5', accent: '#e892c2', sky: '#c7a8e6' } },
+    night:     { nome: 'Noite', en: 'Night',     c: { a: '#140d3a', b: '#2c1f66', c: '#33307f', text: '#ebecfa', accent: '#a094f9', sky: '#9fb4f3' } },
+    dusk:      { nome: 'Crepúsculo', en: 'Dusk',      c: { a: '#241238', b: '#53285a', c: '#7a2f62', text: '#f0eaf5', accent: '#ee9ccd', sky: '#f7b3a8' } },
+    twilight:  { nome: 'Lusco-fusco', en: 'Twilight',  c: { a: '#0e2539', b: '#1f3b5c', c: '#2c3168', text: '#e9f1f7', accent: '#89c1e6', sky: '#efbeca' } },
+    midnight:  { nome: 'Meia-noite', en: 'Midnight',  c: { a: '#03112a', b: '#0c2855', c: '#143f71', text: '#e8f0f7', accent: '#79abec', sky: '#94d4f0' } },
+    predawn:    { nome: 'Madrugada', en: 'Predawn',     c: { a: '#02040c', b: '#071330', c: '#0d2250', text: '#e6edf9', accent: '#7fa6f0', sky: '#9cc2f5' } },
+    sunset:     { nome: 'Pôr do sol', en: 'Sunset',      c: { a: '#2a0508', b: '#6b0f12', c: '#8a2410', text: '#fbeceb', accent: '#ffb27a', sky: '#ff8a6b' } },
+    goldenhour: { nome: 'Hora dourada', en: 'Golden Hour', c: { a: '#2e1c04', b: '#5c4008', c: '#74500f', text: '#fbf3dc', accent: '#ffd25e', sky: '#ffb84a' } }
   };
 
   var VARS = ['--bg-a', '--bg-b', '--bg-c', '--bg', '--bg2', '--bg-rgb', '--text-rgb', '--modal-rgb', '--text', '--muted', '--dim',
@@ -68,6 +68,55 @@
   }
   function mix(x, y, t) { return [0, 1, 2].map(function (i) { return Math.round(x[i] * (1 - t) + y[i] * t); }); }
   function skyDe(hex) { var c = rgbToHsl.apply(null, hexToRgb(hex)), r = hslToRgb(c[0] + 30, Math.round(c[1] * 0.9), Math.min(88, c[2] + 5)); return rgbToHex(r[0], r[1], r[2]); }
+
+  /* nome da paleta no idioma do site (português por padrão; inglês se <html lang="en...">) */
+  function nome(id) {
+    var en = typeof document !== 'undefined' && /^en/i.test(document.documentElement.getAttribute('lang') || '');
+    if (id === 'custom') return en ? 'Custom' : 'Personalizado';
+    var p = PRESETS[id]; return p ? (en ? p.en : p.nome) : '';
+  }
+
+  /* ---------- logo "IA." nas cores do tema ---------- */
+  function logoSvg(c) {
+    var C = hexToRgb(c.c), S = hexToRgb(c.sky), az = rgbToHex.apply(null, mix(C, S, 0.45));
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512"><defs>' +
+      '<linearGradient id="f" gradientUnits="userSpaceOnUse" x1="150" y1="0" x2="362" y2="512"><stop offset="0" stop-color="' + c.a + '"/><stop offset=".48" stop-color="' + c.b + '"/><stop offset="1" stop-color="' + c.c + '"/></linearGradient>' +
+      '<radialGradient id="v" cx="16%" cy="14%" r="60%"><stop offset="0" stop-color="' + c.accent + '" stop-opacity=".30"/><stop offset="1" stop-color="' + c.accent + '" stop-opacity="0"/></radialGradient>' +
+      '<radialGradient id="e" cx="86%" cy="8%" r="55%"><stop offset="0" stop-color="' + c.sky + '" stop-opacity=".28"/><stop offset="1" stop-color="' + c.sky + '" stop-opacity="0"/></radialGradient>' +
+      '<radialGradient id="z" cx="62%" cy="96%" r="55%"><stop offset="0" stop-color="' + az + '" stop-opacity=".30"/><stop offset="1" stop-color="' + az + '" stop-opacity="0"/></radialGradient>' +
+      '<linearGradient id="l" gradientUnits="userSpaceOnUse" x1="97.3" y1="0" x2="363.1" y2="0"><stop offset="0" stop-color="' + c.accent + '"/><stop offset="1" stop-color="' + c.sky + '"/></linearGradient>' +
+      '<clipPath id="k"><rect width="512" height="512" rx="116"/></clipPath></defs>' +
+      '<g clip-path="url(#k)"><rect width="512" height="512" fill="url(#f)"/><rect width="512" height="512" fill="url(#v)"/><rect width="512" height="512" fill="url(#e)"/><rect width="512" height="512" fill="url(#z)"/></g>' +
+      '<path d="M97.28 353.04V158.96H140.88V353.04Z M158.69 353.04 222.77 158.96H293.22L359.69 353.04H314.49L298.80 304.92H217.72L202.30 353.04ZM229.15 268.76H286.84L262.65 194.59H252.81Z" fill="url(#l)"/>' +
+      '<path d="M367.93 353.04V305.45H414.72V353.04Z" fill="#ffd58a"/></svg>';
+  }
+  var ORIG = null, tok = 0;
+  function aplicarLogo(spec) {
+    if (typeof document === 'undefined') return;
+    var el = document.documentElement, links = document.querySelectorAll('link[rel="icon"], link[rel="apple-touch-icon"]');
+    if (!ORIG) { ORIG = []; links.forEach(function (l) { ORIG.push([l, l.getAttribute('href')]); }); }
+    var meu = ++tok;
+    if (!spec) {
+      el.style.removeProperty('--logo-ia');
+      ORIG.forEach(function (p) { p[0].setAttribute('href', p[1]); });
+      return;
+    }
+    var uri = 'data:image/svg+xml,' + encodeURIComponent(logoSvg(spec));
+    el.style.setProperty('--logo-ia', 'url("' + uri + '")');
+    ORIG.forEach(function (p) {
+      var l = p[0], t = l.getAttribute('type'), sz = parseInt((l.getAttribute('sizes') || '').split('x')[0], 10) || (l.getAttribute('rel') === 'apple-touch-icon' ? 180 : 0);
+      if (t === 'image/svg+xml') { l.setAttribute('href', uri); return; }
+      if (!sz) return;
+      try {
+        var im = new root.Image();
+        im.onload = function () {
+          if (meu !== tok) return;
+          try { var cv = document.createElement('canvas'); cv.width = cv.height = sz; cv.getContext('2d').drawImage(im, 0, 0, sz, sz); l.setAttribute('href', cv.toDataURL('image/png')); } catch (e) { }
+        };
+        im.src = uri;
+      } catch (e) { }
+    });
+  }
 
   /* ---------- validação ---------- */
   function limpar(c) {
@@ -116,6 +165,7 @@
     if (spec) { var d = derivar(spec); for (var k in d) if (Object.prototype.hasOwnProperty.call(d, k)) st.setProperty(k, d[k]); }
     var meta = document.querySelector('meta[name="theme-color"]');
     if (meta) meta.setAttribute('content', (spec || PRESETS.morning.c).a);
+    aplicarLogo(spec);
     el.setAttribute('data-tema', spec ? id : 'morning');
     return spec;
   }
@@ -147,7 +197,7 @@
   function restaurar() { return usarPreset('morning'); }
 
   var API = {
-    PRESETS: PRESETS, ORDEM: ORDEM, CAMPOS: CAMPOS, HEX: HEX,
+    nome: nome, logoSvg: logoSvg, PRESETS: PRESETS, ORDEM: ORDEM, CAMPOS: CAMPOS, HEX: HEX,
     hexToRgb: hexToRgb, rgbToHex: rgbToHex, rgbToHsl: rgbToHsl, hslToRgb: hslToRgb, rgbToCmyk: rgbToCmyk, cmykToRgb: cmykToRgb,
     contraste: contraste, legibilidade: legibilidade, skyDe: skyDe, limpar: limpar, derivar: derivar,
     aplicar: aplicar, atual: atual, coresAtuais: coresAtuais, usarPreset: usarPreset, usarPersonalizado: usarPersonalizado, restaurar: restaurar
