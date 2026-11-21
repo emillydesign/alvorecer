@@ -74,7 +74,10 @@ export function makeAI(store) {
       const s = text.replace(/```(json)?/gi, '').trim();
       const a = s.indexOf('{'), b = s.lastIndexOf('}');
       return JSON.parse(a >= 0 && b > a ? s.slice(a, b + 1) : s);
-    } catch { if (_retry < 1) return gen(args, _retry + 1); throw new Error('A IA respondeu num formato inesperado. Tente de novo.'); }
+    } catch { // resposta quebrada: tenta de novo e, se veio do cache compartilhado, pula o cache para não repetir a mesma aula ruim
+      if (_retry < 1) return gen(args.cache ? { ...args, cache: null } : args, _retry + 1);
+      throw new Error('A IA respondeu num formato inesperado. Tente de novo.');
+    }
   }
 
   const prefs = () => store.state.profile?.prefs || {};
@@ -198,20 +201,25 @@ Responda JSON: {"lessons":[{"title":"título curto e atraente em português","ta
       });
     },
 
-    async lesson({ kind, course, outline, level, lang, errors, contentLang = 'pt', cacheKey = null }) {
+    // shared = curso aberto a todos: o pedido NÃO leva nada da pessoa (nome, interesses, erros, estilo), então é idêntico para qualquer aluno
+    // e a aula é criada uma vez só e servida pronta para os outros (cache do proxy). before/next = continuidade entre as aulas do curso.
+    async lesson({ kind, course, outline, level, lang, errors, contentLang = 'pt', cacheKey = null, shared = false, before = '', next = '' }) {
       const isLang = kind === 'lang' || kind === 'comp';
       const inEnglish = contentLang === 'en';
       const lessonLang = isLang ? `${lang.name} (${lang.native})` : contentLang === 'pt' ? 'português do Brasil' : `${CLN[contentLang]} (a aula INTEIRA nesse idioma, inclusive títulos, explicações e exercícios)`;
-      const z = size();
+      const z = shared ? { sec: '3 a 4', ex: 9, voc: '10 a 12' } : size();
+      const errs = shared ? [] : errors;
+      const link = [before ? `CONTINUIDADE DO CURSO (isto é uma sequência de aulas, não uma aula solta): ${before} Comece retomando em UMA frase o que a aula anterior deixou, sem repetir o conteúdo, e avance a partir dali.` : '', next ? `A próxima aula será "${next}": feche a aula deixando esse gancho em uma frase.` : ''].filter(Boolean).join('\n');
       return gen({
-        prompt: `${BACKGROUND()}
-Crie uma AULA COMPLETA e envolvente (${prefs().minutes || 30} min) ${isLang ? `de ${lang.name}, nível ${level}` : `do curso "${course.title}" (${course.sub || ''}), escrita em ${lessonLang}`}.
+        prompt: `${shared ? ALMA + '\nALUNO(A): qualquer pessoa interessada no tema.' : BACKGROUND()}
+${link}
+Crie uma AULA COMPLETA e envolvente (${shared ? 30 : prefs().minutes || 30} min) ${isLang ? `de ${lang.name}, nível ${level}` : `do curso "${course.title}" (${course.sub || ''}), escrita em ${lessonLang}`}.
 ${course.ctx ? `CONTEXTO DO CURSO (siga à risca): ${course.ctx}` : ''}
 ${isLang ? `Tema: ${outline.title}${outline.target ? ` (${outline.target})` : ''}. Gramática/estrutura: ${outline.grammar || 'a mais útil para o tema'}. Vocabulário: ${outline.vocab || 'do tema'}. Objetivo: ${outline.can || ''}${outline.notes ? `\nPEDIDO DO ALUNO PARA ESTA AULA: ${outline.notes}` : ''}
 Regra de idioma: ${langRule(level)}
 Inclua dicas de pronúncia quando fizer sentido e diferenças com o português (falsos amigos, interferências).` : `Aula: ${outline.title}. Seja prático, com passo a passo, exemplos reais e uma tarefa aplicável hoje.`}
-Erros recentes dela para reciclar de forma natural: ${errors.slice(0, 10).join(' ; ') || 'nenhum'}.
-${styleRule()}
+${shared ? '' : `Erros recentes dela para reciclar de forma natural: ${errs.slice(0, 10).join(' ; ') || 'nenhum'}.`}
+${shared ? 'ESTILO: equilibrado — um pouco de teoria, bastante prática, exercícios e conversa.' : styleRule()}
 ${EX_SCHEMA}
 Responda JSON:
 {"title":"...","subtitle":"uma linha","goal":"o que ela vai conseguir fazer (PT)","warmup":"pergunta curta de aquecimento",

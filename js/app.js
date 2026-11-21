@@ -1,8 +1,8 @@
 import { $, $$, esc, md, uid, today, ym, weekday, fmtDay, fmtShort, fmtMonth, holiday, isRestDay, prevStudyDay, weekStart, addDays, daysBetween, norm, schedule, isDue, shuffle } from './util.js';
-import { DemoStore, SupabaseStore, defaultState } from './store.js?v=58';
-import { ic, icoOf, initFx } from './fx.js?v=58';
+import { DemoStore, SupabaseStore, defaultState } from './store.js?v=59';
+import { ic, icoOf, initFx } from './fx.js?v=59';
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=58';
+import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=59';
 let sb = null;
 const authStorage = {
   _s: () => { try { return localStorage.getItem('pg_remember') === '0' ? sessionStorage : localStorage; } catch { return null; } },
@@ -10,10 +10,10 @@ const authStorage = {
   setItem(k, v) { try { this._s()?.setItem(k, v); } catch { } },
   removeItem(k) { try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch { } }
 };
-import { makeAI, NoKeyError } from './ai.js?v=58';
-import { speak, stopSpeaking, pauseSpeaking, resumeSpeaking, onSpeechState, speechState, listen, canListen, canSpeak } from './speech.js?v=58';
-import { initSaude, cuidar, startAgua } from './saude.js?v=58';
-import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=58';
+import { makeAI, NoKeyError } from './ai.js?v=59';
+import { speak, stopSpeaking, pauseSpeaking, resumeSpeaking, onSpeechState, speechState, listen, canListen, canSpeak } from './speech.js?v=59';
+import { initSaude, cuidar, startAgua } from './saude.js?v=59';
+import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=59';
 
 let C, S, AI;
 const app = $('#app');
@@ -169,6 +169,7 @@ async function home() {
   const h = new Date().getHours();
   const hello = h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite';
   const did = type => todayEv.some(e => e.type === type);
+  if (nx && !did('lesson')) setTimeout(() => prefetchNext(key), 2500); // a aula do dia já vai sendo preparada enquanto a pessoa olha o início
   const rest = isRestDay(t), hol = holiday(t);
   const name = S.state.profile.name || '';
   const last = evs.filter(e => e.course && e.type === 'lesson').sort((a, b) => b.ts.localeCompare(a.ts))[0];
@@ -390,7 +391,7 @@ async function curso(key) {
   $('#mkmain')?.addEventListener('click', () => { if (S.state.plan.main !== d.id) { if (S.state.plan.second === d.id) S.state.plan.second = S.state.plan.main; S.state.plan.main = d.id; S.saveState(); toast(`${d.title} agora é seu curso principal.`); curso(key); } });
   $$('[data-cl]').forEach(b => b.onclick = () => { s.contentLang = b.dataset.cl; delete s.inEnglish; S.saveState(); toast({ pt: 'As aulas deste curso agora vêm em português.', en: 'As aulas deste curso agora vêm em inglês.', es: 'As aulas deste curso agora vêm em espanhol.' }[b.dataset.cl]); curso(key); });
   $('#delCus') && ($('#delCus').onclick = () => deleteCustom(key));
-  if (ls && nx) setTimeout(() => prefetchNext(key), 1500); // prepara a próxima aula enquanto a pessoa olha o curso
+  if (ls && nx) setTimeout(() => prefetchNext(key), 400); // prepara a próxima aula enquanto a pessoa olha o curso
   $('#lvgo')?.addEventListener('click', () => { const v = $('#lvsel').value; if (v !== s.level) { s.level = v; s.cycle = 1; S.saveState(); S.addEvent({ type: 'level', course: key, title: `Nível ajustado para ${v}`, level: v, manual: true }); curso(key); } });
 }
 async function makePlan(key, wishes) {
@@ -429,11 +430,16 @@ async function cachedLesson(key, L) { // aula pronta (memória ou arquivo salvo)
   if (lesson) lessonMem[mk] = lesson;
   return lesson;
 }
+let preparoMod; const preparo = () => preparoMod ||= import('./preparo.js?v=59'); // arquivo à parte: só carrega quando uma aula ou curso abre
 function lessonFor(key, L) { // cria a aula (uma só vez, mesmo que peçam duas vezes) e salva
   const d = course(key), s = cs(key), id = L.cacheId || L.id, mk = key + '|' + id;
   if (!lessonJobs[mk]) {
     L.outline.opened = true; // o plano não troca mais o tema desta aula
-    lessonJobs[mk] = AI.lesson({ kind: d.kind, course: d, outline: L.outline, level: s.level, lang: d.lang, errors: recentErrors(key), contentLang: d.contentLang, cacheKey: d.kind === 'trk' || d.kind === 'comp' ? key + '|' + id + (d.kind === 'trk' ? '|v2' : '') : null })
+    lessonJobs[mk] = preparo().then(P => {
+      const ls = lessonsOf(key) || [], shared = P.aberto(d); // curso pronto = aula igual para todos, criada uma vez só e compartilhada
+      const c = P.continuidade(ls, ls.findIndex(l => l.id === L.id), { shared, mem: lessonMem, key });
+      return AI.lesson({ kind: d.kind, course: d, outline: L.outline, level: s.level, lang: d.lang, errors: recentErrors(key), contentLang: d.contentLang, shared, before: c.before, next: c.next, cacheKey: shared ? key + '|' + id + '|c1' : null });
+    })
       .then(x => { x.generated = today(); x.v = 2; lessonMem[mk] = x; S.putLesson(key, id, x); return x; })
       .finally(() => { delete lessonJobs[mk]; });
   }
@@ -441,7 +447,7 @@ function lessonFor(key, L) { // cria a aula (uma só vez, mesmo que peçam duas 
 }
 async function prefetchNext(key, after) { // deixa pronta a aula seguinte, em silêncio (se falhar, ela é criada na hora de abrir)
   try {
-    if (S.isDemo || !navigator.onLine) return;
+    if (!(await preparo()).podePreparar(S, LIMITE_IA)) return;
     const ls = lessonsOf(key); if (!ls) return;
     const s = cs(key), i = after ? ls.findIndex(l => l.id === after.id) + 1 : ls.findIndex(l => !s.done[l.id]);
     const nx = i > 0 || !after ? ls[i] : null; if (!nx || s.done[nx.id]) return;
@@ -1679,7 +1685,7 @@ async function boot() {
   const qs = new URLSearchParams(location.search);
   const demo = qs.has('demo') || qs.has('visita');
   if (demo) {
-    const { demoData, demoAI } = await import('./demo.js?v=58');
+    const { demoData, demoAI } = await import('./demo.js?v=59');
     S = new DemoStore(() => demoData(C)); S.demoAI = demoAI;
     if (qs.has('visita')) S.readonly = true;
     document.body.insertAdjacentHTML('beforeend', S.readonly ? '<a class="demo-badge" href="./">👁 Modo visitante · Criar conta</a>' : '<div class="demo-badge">DEMONSTRAÇÃO</div>');
