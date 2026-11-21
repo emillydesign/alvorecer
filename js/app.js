@@ -1,8 +1,8 @@
 import { $, $$, esc, md, uid, today, ym, weekday, fmtDay, fmtShort, fmtMonth, holiday, isRestDay, prevStudyDay, weekStart, addDays, daysBetween, norm, schedule, isDue, shuffle } from './util.js';
-import { DemoStore, SupabaseStore, defaultState } from './store.js?v=57';
-import { ic, icoOf, initFx } from './fx.js?v=57';
+import { DemoStore, SupabaseStore, defaultState } from './store.js?v=58';
+import { ic, icoOf, initFx } from './fx.js?v=58';
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=57';
+import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=58';
 let sb = null;
 const authStorage = {
   _s: () => { try { return localStorage.getItem('pg_remember') === '0' ? sessionStorage : localStorage; } catch { return null; } },
@@ -10,10 +10,10 @@ const authStorage = {
   setItem(k, v) { try { this._s()?.setItem(k, v); } catch { } },
   removeItem(k) { try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch { } }
 };
-import { makeAI, NoKeyError } from './ai.js?v=57';
-import { speak, stopSpeaking, pauseSpeaking, resumeSpeaking, onSpeechState, speechState, listen, canListen, canSpeak } from './speech.js?v=57';
-import { initSaude, cuidar, startAgua } from './saude.js?v=57';
-import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=57';
+import { makeAI, NoKeyError } from './ai.js?v=58';
+import { speak, stopSpeaking, pauseSpeaking, resumeSpeaking, onSpeechState, speechState, listen, canListen, canSpeak } from './speech.js?v=58';
+import { initSaude, cuidar, startAgua } from './saude.js?v=58';
+import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=58';
 
 let C, S, AI;
 const app = $('#app');
@@ -372,7 +372,7 @@ async function curso(key) {
       ${d.kind === 'trk' || d.kind === 'cus' ? `<div class="langsel" title="Idioma das aulas deste curso">${[['pt', 'PT'], ['en', 'EN'], ['es', 'ES']].map(([v, l]) => `<button data-cl="${v}" class="${d.contentLang === v ? 'on' : ''}">${l}</button>`).join('')}</div>` : ''}${d.kind === 'cus' ? '<button class="btn btn-ghost" id="delCus">🗑 Excluir curso</button>' : ''}
     </div>
   </div>
-  ${isLang && !ls ? `<div class="panel section"><h3>Vamos montar seu plano do nível ${s.level} (${esc(lvName(s.level))})</h3><p class="muted" style="margin-top:8px">O IAlvorecer monta 20 aulas personalizadas para este nível, com base no que você já sabe e nos seus erros. Leva uns 20 segundos.</p><button class="btn btn-pink" id="plan">Montar meu plano</button></div>` : ''}
+  ${isLang && !ls ? `<div class="panel section"><h3>Vamos montar seu plano do nível ${s.level} (${esc(lvName(s.level))})</h3><p class="muted" style="margin-top:8px">O IAlvorecer monta 20 aulas para este nível e vai ajustando cada uma ao que você já sabe e aos seus erros. É na hora.</p><button class="btn btn-pink" id="plan">Montar meu plano</button></div>` : ''}
   ${allDone ? `<div class="panel section">${isLang ? `<h3>Você terminou as aulas do nível ${s.level}! 🎉</h3><p class="muted" style="margin-top:8px">Faça a prova de nível. Com 70% ou mais você sobe de nível, e tudo o que fez continua no histórico.</p><a class="btn btn-pink" href="#/teste/nivel/${key}">Fazer prova do nível ${s.level}</a>` : `<h3>Curso concluído! 🎉</h3><p class="muted" style="margin-top:8px">Quer continuar? O IAlvorecer cria mais 8 aulas, mais avançadas, a partir do que você já fez.</p><button class="btn btn-pink" id="more">Gerar mais aulas</button>`}</div>` : ''}
   ${ls ? `<div class="section"><div class="section-head"><h2>Aulas${isLang ? ` do nível ${s.level}` : ''}</h2>${isLang ? `<a class="small muted" href="#/teste/nivel/${key}">já sei isso? fazer prova de nível →</a>` : ''}</div>
     <div class="lessons">${ls.map(l => { const dn = s.done[l.id]; const cur = nx && nx.id === l.id; return `<a class="lesson ${cur ? 'current' : ''}" href="#/aula/${key}/${l.id}"><span class="n">Aula ${l.n}</span><span class="ti">${esc(l.title)}${l.sub ? `<small>${esc(l.sub)}</small>` : ''}</span>${dn ? `<span class="st ok">✓ ${dn.score ?? ''}%</span>` : cur ? '<span class="st next">Próxima</span>' : ''}</a>`; }).join('')}</div></div>` : ''}
@@ -390,14 +390,26 @@ async function curso(key) {
   $('#mkmain')?.addEventListener('click', () => { if (S.state.plan.main !== d.id) { if (S.state.plan.second === d.id) S.state.plan.second = S.state.plan.main; S.state.plan.main = d.id; S.saveState(); toast(`${d.title} agora é seu curso principal.`); curso(key); } });
   $$('[data-cl]').forEach(b => b.onclick = () => { s.contentLang = b.dataset.cl; delete s.inEnglish; S.saveState(); toast({ pt: 'As aulas deste curso agora vêm em português.', en: 'As aulas deste curso agora vêm em inglês.', es: 'As aulas deste curso agora vêm em espanhol.' }[b.dataset.cl]); curso(key); });
   $('#delCus') && ($('#delCus').onclick = () => deleteCustom(key));
+  if (ls && nx) setTimeout(() => prefetchNext(key), 1500); // prepara a próxima aula enquanto a pessoa olha o curso
   $('#lvgo')?.addEventListener('click', () => { const v = $('#lvsel').value; if (v !== s.level) { s.level = v; s.cycle = 1; S.saveState(); S.addEvent({ type: 'level', course: key, title: `Nível ajustado para ${v}`, level: v, manual: true }); curso(key); } });
 }
 async function makePlan(key, wishes) {
-  const d = course(key), s = cs(key);
+  const d = course(key), s = cs(key), pk = planKey(key);
   const covered = Object.values(s.plans).flatMap(p => p.lessons.map(l => l.grammar));
-  const r = await AI.planLevel({ lang: d.lang, level: s.level, themes: C.levelThemes[s.level], cycle: s.cycle, errors: recentErrors(key), covered, wishes });
+  const ask = () => AI.planLevel({ lang: d.lang, level: s.level, themes: C.levelThemes[s.level], cycle: s.cycle, errors: recentErrors(key), covered, wishes });
+  if (!wishes) { // plano instantâneo (temas do catálogo); a IA refina em segundo plano, sem a pessoa esperar
+    const base = { created: today(), lessons: C.levelThemes[s.level].slice(0, C.lessonsPerLevel).map(t => ({ title: t })) };
+    s.plans[pk] = base; S.saveState();
+    if (!S.isDemo) ask().then(r => {
+      if (s.plans[pk] !== base || !r?.lessons?.length) return;
+      base.lessons = base.lessons.map((o, i) => s.done[`${pk}-${i}`.replace('#', '_')] || o.opened || !r.lessons[i] ? o : r.lessons[i]);
+      S.saveState();
+    }).catch(() => { });
+    return;
+  }
+  const r = await ask();
   if (!r.lessons?.length) throw new Error('O plano veio vazio. Tente de novo.');
-  s.plans[planKey(key)] = { created: today(), lessons: r.lessons.slice(0, C.lessonsPerLevel) };
+  s.plans[pk] = { created: today(), lessons: r.lessons.slice(0, C.lessonsPerLevel) };
   S.saveState();
 }
 async function replanLevel(key, wishes) {
@@ -409,20 +421,46 @@ async function replanLevel(key, wishes) {
 }
 
 // ---------- AULA ----------
+const lessonMem = {}, lessonJobs = {}; // aulas já lidas nesta visita e aulas sendo criadas agora
+async function cachedLesson(key, L) { // aula pronta (memória ou arquivo salvo); null se ainda precisa ser criada
+  const d = course(key), s = cs(key), isLangC = d.kind === 'lang' || d.kind === 'comp', id = L.cacheId || L.id, mk = key + '|' + id;
+  let lesson = lessonMem[mk] || await S.getLesson(key, id);
+  if (lesson && !isLangC && !lesson.v && !s.done[L.id]) lesson = null; // aula no formato antigo (ainda não feita): refaz com Termos e texto novo
+  if (lesson) lessonMem[mk] = lesson;
+  return lesson;
+}
+function lessonFor(key, L) { // cria a aula (uma só vez, mesmo que peçam duas vezes) e salva
+  const d = course(key), s = cs(key), id = L.cacheId || L.id, mk = key + '|' + id;
+  if (!lessonJobs[mk]) {
+    L.outline.opened = true; // o plano não troca mais o tema desta aula
+    lessonJobs[mk] = AI.lesson({ kind: d.kind, course: d, outline: L.outline, level: s.level, lang: d.lang, errors: recentErrors(key), contentLang: d.contentLang, cacheKey: d.kind === 'trk' || d.kind === 'comp' ? key + '|' + id + (d.kind === 'trk' ? '|v2' : '') : null })
+      .then(x => { x.generated = today(); x.v = 2; lessonMem[mk] = x; S.putLesson(key, id, x); return x; })
+      .finally(() => { delete lessonJobs[mk]; });
+  }
+  return lessonJobs[mk];
+}
+async function prefetchNext(key, after) { // deixa pronta a aula seguinte, em silêncio (se falhar, ela é criada na hora de abrir)
+  try {
+    if (S.isDemo || !navigator.onLine) return;
+    const ls = lessonsOf(key); if (!ls) return;
+    const s = cs(key), i = after ? ls.findIndex(l => l.id === after.id) + 1 : ls.findIndex(l => !s.done[l.id]);
+    const nx = i > 0 || !after ? ls[i] : null; if (!nx || s.done[nx.id]) return;
+    if (await cachedLesson(key, nx)) return;
+    await lessonFor(key, nx);
+  } catch { }
+}
 async function aula(key, id) {
   const d = course(key), s = cs(key);
   let ls = lessonsOf(key);
-  if (!ls) { app.innerHTML = spinner('Montando seu plano do nível…'); await makePlan(key); ls = lessonsOf(key); }
+  if (!ls) { await makePlan(key); ls = lessonsOf(key); }
   const L = ls.find(l => l.id === id) || nextLesson(key) || ls[0];
   const isLangC = d.kind === 'lang' || d.kind === 'comp';
-  let lesson = await S.getLesson(key, L.cacheId || L.id);
-  if (lesson && !isLangC && !lesson.v && !s.done[L.id]) lesson = null; // aula no formato antigo (ainda não feita): refaz com Termos e texto novo
+  let lesson = await cachedLesson(key, L);
   if (!lesson) {
-    app.innerHTML = spinner('Preparando sua aula… (uns 20 segundos)');
-    lesson = await AI.lesson({ kind: d.kind, course: d, outline: L.outline, level: s.level, lang: d.lang, errors: recentErrors(key), contentLang: d.contentLang, cacheKey: d.kind === 'trk' || d.kind === 'comp' ? key + '|' + (L.cacheId || L.id) + (d.kind === 'trk' ? '|v2' : '') : null });
-    lesson.generated = today(); lesson.v = 2;
-    S.putLesson(key, L.cacheId || L.id, lesson);
+    app.innerHTML = spinner(lessonJobs[key + '|' + (L.cacheId || L.id)] ? 'Sua aula já está quase pronta…' : 'Preparando sua aula…');
+    lesson = await lessonFor(key, L);
   }
+  prefetchNext(key, L); // já deixa a próxima aula pronta enquanto a pessoa estuda esta
   const loc = d.locale;
   const sayBtn = t => canSpeak ? `<button class="say" data-say="${esc(t)}" title="Ouvir">🔊</button>` : '';
   let step = 0;
@@ -1641,7 +1679,7 @@ async function boot() {
   const qs = new URLSearchParams(location.search);
   const demo = qs.has('demo') || qs.has('visita');
   if (demo) {
-    const { demoData, demoAI } = await import('./demo.js?v=57');
+    const { demoData, demoAI } = await import('./demo.js?v=58');
     S = new DemoStore(() => demoData(C)); S.demoAI = demoAI;
     if (qs.has('visita')) S.readonly = true;
     document.body.insertAdjacentHTML('beforeend', S.readonly ? '<a class="demo-badge" href="./">👁 Modo visitante · Criar conta</a>' : '<div class="demo-badge">DEMONSTRAÇÃO</div>');
