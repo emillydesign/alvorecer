@@ -1,8 +1,8 @@
-import { $, $$, esc, md, uid, today, ym, weekday, fmtDay, fmtShort, fmtMonth, holiday, isRestDay, prevStudyDay, weekStart, addDays, daysBetween, norm, schedule, isDue, shuffle } from './util.js';
-import { DemoStore, SupabaseStore, defaultState } from './store.js?v=62';
-import { ic, icoOf, initFx } from './fx.js?v=62';
+import { $, $$, esc, md, uid, today, ym, weekday, fmtDay, fmtShort, fmtMonth, holiday, isRestDay, setStudyDays, getStudyDays, prevStudyDay, weekStart, addDays, daysBetween, norm, schedule, isDue, shuffle } from './util.js';
+import { DemoStore, SupabaseStore, defaultState } from './store.js?v=63';
+import { ic, icoOf, initFx } from './fx.js?v=63';
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=62';
+import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=63';
 let sb = null;
 const authStorage = {
   _s: () => { try { return localStorage.getItem('pg_remember') === '0' ? sessionStorage : localStorage; } catch { return null; } },
@@ -10,10 +10,10 @@ const authStorage = {
   setItem(k, v) { try { this._s()?.setItem(k, v); } catch { } },
   removeItem(k) { try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch { } }
 };
-import { makeAI, NoKeyError } from './ai.js?v=62';
-import { speak, stopSpeaking, pauseSpeaking, resumeSpeaking, onSpeechState, speechState, listen, canListen, canSpeak } from './speech.js?v=62';
-import { initSaude, cuidar, startAgua } from './saude.js?v=62';
-import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=62';
+import { makeAI, NoKeyError } from './ai.js?v=63';
+import { speak, stopSpeaking, pauseSpeaking, resumeSpeaking, onSpeechState, speechState, listen, canListen, canSpeak } from './speech.js?v=63';
+import { initSaude, cuidar, startAgua } from './saude.js?v=63';
+import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=63';
 
 let C, S, AI;
 const app = $('#app');
@@ -123,7 +123,7 @@ function addCards(list, key, source) {
 const routes = { 'boas-vindas': boasVindas, nivelamento, cronograma, mentoria, seu, cuidar: (s) => cuidar(s), sobre, apoiar, '': home, idiomas, cursos, trilha, curso, aula, conversa, memorizacao, revisao, teste, historico, ajustes, guia };
 let cleanup = null;
 async function router() {
-  cleanup?.(); cleanup = null; stopSpeaking(); closeAreas();
+  cleanup?.(); cleanup = null; stopSpeaking(); closeAreas(); aplicarDias();
   const parts = location.hash.replace(/^#\/?/, '').split('/').map(decodeURIComponent);
   const fn = routes[parts[0]] || home;
   let navKey = parts[0] || 'home';
@@ -174,9 +174,6 @@ async function home() {
   if (nx && !did('lesson')) setTimeout(() => prefetchNext(key), 2500); // a aula do dia já vai sendo preparada enquanto a pessoa olha o início
   const rest = isRestDay(t), hol = holiday(t);
   const name = S.state.profile.name || '';
-  const last = evs.filter(e => e.course && e.type === 'lesson').sort((a, b) => b.ts.localeCompare(a.ts))[0];
-  let cont = nx ? `#/aula/${key}/${nx.id}` : `#/curso/${key}`;
-  if (did('lesson') && last) { const n2 = nextLesson(last.course); cont = n2 ? `#/aula/${last.course}/${n2.id}` : `#/curso/${last.course}`; }
   const nCourses = C.languages.length + C.complementary.length + Object.values(C.tracks).reduce((a, x) => a + x.courses.length, 0);
   const areaId = C.tracks[S.state.area]?.area ? S.state.area : 'design';
   const A = C.tracks[areaId];
@@ -189,10 +186,10 @@ async function home() {
   const noLang = S.state.profile.prefs?.noLang;
   app.innerHTML = `
   <section class="hero-home">
-    <div class="eyebrow">${esc(fmtDay(t))}${rest ? ` · ${esc(hol || 'fim de semana')}: dia de descanso` : ''}</div>
+    <div class="eyebrow">${esc(fmtDay(t))}${rest ? ` · ${hol ? esc(hol) + ': ' : ''}dia de descanso` : ''}</div>
     <h1 style="margin-top:16px">${hello}${name ? ', ' + esc(name) : ''}.<br><span class="grad">Todo dia é um novo começo.</span></h1>
     <p class="lead" style="font-size:18px;max-width:600px;margin:18px 0 30px">Idiomas, tecnologia, carreira e o que mais você quiser aprender. Um pouco por dia, no seu ritmo, com o IAlvorecer do seu lado: uma IA que faz de tudo para as coisas darem certo.</p>
-    <div class="row"><a class="btn btn-pink" href="${cont}">Continuar de onde parei</a><a class="btn btn-ghost" href="#/cronograma">📅 Meu cronograma</a></div>
+    <div class="row"><button class="btn btn-pink" id="homeStart">Começar</button><a class="btn btn-ghost" href="#/cronograma">📅 Meu cronograma</a></div>
     <div class="today-strip" style="margin-top:28px">
       <a href="${nx ? `#/aula/${key}/${nx.id}` : `#/curso/${key}`}" class="${did('lesson') ? 'done' : ''}" style="${noLang ? 'display:none' : ''}">📘 ${nx ? `Aula ${nx.n} de ${esc(d.title)}` : `Plano de ${esc(d.title)}`}</a>
       <a href="#/revisao" class="${!due || did('review') ? 'done' : ''}">◎ ${due} cartões</a>
@@ -253,6 +250,7 @@ async function home() {
     <div class="stat"><b>${S.srs.length}</b><span>palavras na memória</span></div>
     <div class="stat"><b>${S.state.streak.best || 0}</b><span>recorde de dias seguidos</span></div>
   </div></section>`;
+  $('#homeStart').onclick = () => abrirComecar();
   $('#homeAsst').onclick = () => openAssistant();
   $('#homeAreas').onclick = () => openAreas();
   $('#homeAsk').onclick = () => openAssistant('Quero um curso de ');
@@ -432,7 +430,14 @@ async function cachedLesson(key, L) { // aula pronta (memória ou arquivo salvo)
   if (lesson) lessonMem[mk] = lesson;
   return lesson;
 }
-let preparoMod; const preparo = () => preparoMod ||= import('./preparo.js?v=62'); // arquivo à parte: só carrega quando uma aula ou curso abre
+let diasMod; const dias = () => diasMod ||= import('./dias.js?v=63'); // arquivo à parte: só carrega ao escolher os dias
+let comecarMod; const comecar = () => comecarMod ||= import('./comecar.js?v=63'); // arquivo à parte: só carrega ao clicar em Começar
+const DIAS_ABR = [[1, 'seg'], [2, 'ter'], [3, 'qua'], [4, 'qui'], [5, 'sex'], [6, 'sáb'], [0, 'dom']];
+function diasResumo(c = S?.state?.profile?.prefs?.studyDays) { const d = (c?.days || [1, 2, 3, 4, 5]).map(Number), h = !!c?.holidays; return DIAS_ABR.filter(([n]) => d.includes(n)).map(([, l]) => l).join(', ') + (h ? ' e feriados' : d.includes(0) || d.includes(6) ? '' : ' (fins de semana e feriados: descanso)'); }
+function aplicarDias() { setStudyDays(S?.state?.profile?.prefs?.studyDays); }
+async function abrirDiasEstudo(aoSalvar) { const D = await dias(); D.abrirDias({ S, openInfo, toast, aplicar: setStudyDays, aoSalvar }); }
+async function abrirComecar() { const M = await comecar(); M.abrirComecar({ C, S, openInfo, esc, icoOf, grad, onDias: () => abrirDiasEstudo(), onPedir: () => openAssistant('Quero um curso de ') }); }
+let preparoMod; const preparo = () => preparoMod ||= import('./preparo.js?v=63'); // arquivo à parte: só carrega quando uma aula ou curso abre
 function lessonFor(key, L) { // cria a aula (uma só vez, mesmo que peçam duas vezes) e salva
   const d = course(key), s = cs(key), id = L.cacheId || L.id, mk = key + '|' + id;
   if (!lessonJobs[mk]) {
@@ -533,7 +538,7 @@ async function aula(key, id) {
       exercisesUI(body, limparExercicios(lesson.exercises), { langName: d.lang.name, onDone: res => finish(res) });
     } else if (tab === 'valor') {
       body.innerHTML = '<span class="spin"></span>';
-      import('./valor.js?v=62').then(V => { if (body.isConnected) body.innerHTML = V.valorHTML(d.track) + `<div class="row" style="margin-top:26px"><button class="btn btn-pink" data-step="${tabs.length - 1}">${tabs[tabs.length - 1][1]}</button></div>`; $$('[data-step]').forEach(b => b.onclick = () => { step = +b.dataset.step; render(); window.scrollTo(0, 0); }); }).catch(() => { if (body.isConnected) body.innerHTML = '<p class="muted">Não consegui abrir agora. Tente de novo.</p>'; });
+      import('./valor.js?v=63').then(V => { if (body.isConnected) body.innerHTML = V.valorHTML(d.track) + `<div class="row" style="margin-top:26px"><button class="btn btn-pink" data-step="${tabs.length - 1}">${tabs[tabs.length - 1][1]}</button></div>`; $$('[data-step]').forEach(b => b.onclick = () => { step = +b.dataset.step; render(); window.scrollTo(0, 0); }); }).catch(() => { if (body.isConnected) body.innerHTML = '<p class="muted">Não consegui abrir agora. Tente de novo.</p>'; });
     } else if (tab === 'mais') {
       body.innerHTML = extraHTML(lesson, d);
     } else {
@@ -912,7 +917,7 @@ function temaNome() { const T = window.IATema; if (!T) return 'Manhã'; return T
 async function ajustes() {
   const st = S.state, cf = S.config;
   const langOpts = sel => C.languages.map(l => `<option value="${l.id}" ${l.id === sel ? 'selected' : ''}>${l.name}</option>`).join('');
-  const days = [[1, 'Seg'], [2, 'Ter'], [3, 'Qua'], [4, 'Qui'], [5, 'Sex']];
+  const days = [[1, 'Seg'], [2, 'Ter'], [3, 'Qua'], [4, 'Qui'], [5, 'Sex'], [6, 'Sáb'], [0, 'Dom']].filter(([n]) => getStudyDays().days.includes(n) || (st.plan.secondDays || []).includes(n));
   app.innerHTML = `<div style="max-width:760px">
   <div class="eyebrow">Ajustes</div><h1 style="margin:6px 0 22px">Seu curso, do seu jeito</h1>
   ${S.isDemo ? '<div class="notice" style="margin-bottom:18px">Modo demonstração: nada é salvo.</div>' : ''}
@@ -920,6 +925,7 @@ async function ajustes() {
     <div class="grid g2"><div class="field"><label>Seu nome</label><input id="nm" value="${esc(st.profile.name)}"></div><div class="field"><label>Sua área profissional</label><input id="ar" value="${esc(st.profile.area)}"></div></div>
     <div class="field"><label>Idioma das aulas (Tecnologia, áreas de interesse e Seu Alvorecer) e do IAlvorecer</label><select id="cl">${[['pt', 'Português'], ['en', 'Inglês (English)'], ['es', 'Espanhol (Español)']].map(([v, l]) => `<option value="${v}" ${(st.profile.prefs?.contentLang || 'pt') === v ? 'selected' : ''}>${l}</option>`).join('')}</select><div class="help">Dá pra mudar só de um curso no topo da página dele (PT / EN / ES). Os cursos de idiomas seguem o seu nível.</div></div></div>
   <div class="panel" style="margin-bottom:18px"><h3 style="margin-bottom:6px">Aparência</h3><p class="small muted" style="margin-bottom:14px">Escolha as cores do site: paletas prontas (Nascer do sol, Manhã, Meio-dia e outras) ou as suas. Fica salvo só neste aparelho.</p><div class="row" style="gap:14px;align-items:center"><button type="button" class="btn btn-ghost" data-tema-open><i data-lucide="palette"></i> Personalizar cores</button><span class="small muted">Tema atual: <b data-tema-nome>${esc(temaNome())}</b></span></div></div>
+  <div class="panel" style="margin-bottom:18px"><h3 style="margin-bottom:6px">Dias de estudo</h3><p class="small muted" style="margin-bottom:14px">Fins de semana e feriados são de descanso por padrão. Quem trabalha muito pode escolher só os dias que cabem na rotina. Lembre: ter pelo menos 1 dia de descanso do trabalho e/ou dos estudos ajuda o conteúdo a fixar melhor.</p><div class="row" style="gap:14px;align-items:center"><button type="button" class="btn btn-ghost" id="diasOpen">Escolher dias de estudo</button><span class="small muted" id="diasRes">${esc(diasResumo())}</span></div></div>
   <div class="panel" style="margin-bottom:18px"><h3 style="margin-bottom:6px">Plano de estudos</h3><p class="small muted" style="margin-bottom:14px">O e-mail da manhã e a tela inicial seguem isto. Nos dias marcados, a aula do dia é do idioma secundário.</p>
     <div class="grid g2"><div class="field"><label>Idioma principal</label><select id="pm">${langOpts(st.plan.main)}</select></div>
     <div class="field"><label>Idioma secundário</label><select id="ps"><option value="">Nenhum</option>${langOpts(st.plan.second)}</select></div></div>
@@ -942,6 +948,7 @@ async function ajustes() {
   <div class="panel" style="margin-top:22px"><h3 style="margin-bottom:6px">Sua conta</h3><p class="small muted" style="margin-bottom:14px">${S.isDemo ? 'Demonstração (nada é salvo).' : `Conectada como <b>${esc(S.user?.email || '')}</b>. Seus dados ficam guardados na sua conta e só você tem acesso.`}</p>
     <div class="row"><button class="btn btn-ghost btn-sm" id="wipe">🧹 Apagar todos os meus dados</button><button class="btn btn-ghost btn-sm" id="delAcc" style="color:#c0353a">⚠️ Excluir minha conta</button></div>
     <p class="help" style="margin-top:10px">"Apagar dados" zera tudo e recomeça do zero, mas mantém o login. "Excluir conta" apaga os dados e o seu e-mail do IAlvorecer para sempre.</p></div></div>`;
+  $('#diasOpen').onclick = () => abrirDiasEstudo(() => router());
   $('#save').onclick = async () => {
     if (S.readonly) return toast('Modo visitante: crie sua conta para salvar seus ajustes.');
     st.profile.name = $('#nm').value.trim() || st.profile.name; st.profile.area = $('#ar').value.trim();
@@ -994,7 +1001,7 @@ async function cronograma() {
     info[k] = { level: s.level, left: Q[k].length, planned: !!ls };
   }
   const secondDays = plan.second ? (plan.secondDays || []) : [];
-  const perWeek = { ['lang:' + plan.main]: 5 - secondDays.length };
+  const nEst = getStudyDays().days.length, perWeek = { ['lang:' + plan.main]: Math.max(1, nEst - secondDays.length) };
   if (plan.second) perWeek['lang:' + plan.second] = secondDays.length;
   const weeks = {};
   for (let i = 0; i < 28; i++) {
@@ -1413,25 +1420,26 @@ function convLangs() {
   return { meus, outros };
 }
 const convLangName = id => lang(id)?.name || id;
-function convCfg() { const c = S?.config?.conversa || {}; const l0 = (lang(c.lang) && c.lang) || S?.state?.plan?.main || 'en'; return { modo: c.modo || 'livre', hora: c.hora ?? 19, lang: l0, agenda: (c.agenda || []).filter(x => x.d >= today()).sort(convOrd).filter((x, i, arr) => arr.findIndex(y => y.d === x.d) === i).slice(0, 60).map(x => ({ ...x, l: (lang(x.l) && x.l) || l0 })), lembrete: !!c.lembrete }; }
+function convCfg() { const c = S?.config?.conversa || {}; const l0 = (lang(c.lang) && c.lang) || S?.state?.plan?.main || 'en'; return { modo: c.modo || 'livre', hora: c.hora ?? 19, lang: l0, agenda: (c.agenda || []).filter(x => x.d >= today()).sort(convOrd).filter((x, i, arr) => arr.findIndex(y => y.d === x.d) === i).slice(0, 60).map(x => ({ ...x, l: (lang(x.l) && x.l) || l0 })), lembrete: !!c.lembrete, dias: Array.isArray(c.dias) ? c.dias : [1, 2, 3, 4, 5], feriados: !!c.feriados }; }
 function convResumo() {
   const c = convCfg(), av = c.lembrete && S.config.emailsOn !== false ? ', com e-mail de lembrete' : ', sem e-mail de lembrete';
   if (c.modo === 'nenhuma') return 'Sem conversação por enquanto';
-  if (c.modo === 'diario') return `${convLangName(c.lang)}, segunda a sexta às ${c.hora}h${av}`;
+  if (c.modo === 'diario') return `${convLangName(c.lang)}, ${diasResumo({ days: c.dias, holidays: c.feriados })} às ${c.hora}h${av}`;
   if (c.modo === 'agendada') return c.agenda.length ? `Próxima: ${convLangName(c.agenda[0].l)}, ${fmtShort(c.agenda[0].d)} às ${c.agenda[0].h}h${c.agenda.length > 1 ? ` (e mais ${c.agenda.length - 1})` : ''}${av}` : 'Nenhum dia marcado ainda';
   return `${convLangName(c.lang)}, quando você quiser, sem lembrete`;
 }
-function openAgendaConversa(pre = '') {
+async function openAgendaConversa(pre = '') {
+  const D = await dias();
   const c = convCfg(); if (pre && lang(pre)) c.lang = pre; const agenda = [...c.agenda];
   const horas = sel => Array.from({ length: 18 }, (_, i) => i + 6).map(h => `<option value="${h}" ${sel === h ? 'selected' : ''}>${h}h</option>`).join('');
   const op = (v, t, d) => `<label class="check" style="align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;cursor:pointer"><input type="radio" name="cm" value="${v}" style="width:auto;margin-top:3px" ${c.modo === v ? 'checked' : ''}><span><b>${t}</b><br><span class="small muted">${d}</span></span></label>`;
   const ov = openInfo(`<div class="eyebrow">Conversação</div><h2 style="margin:10px 0 8px">Marcar conversação com o IAlvorecer</h2><p class="muted" style="margin-bottom:16px">Escolha o que combina com a sua rotina. Mesmo com horário marcado, você pode conversar a qualquer hora.</p>
     ${op('livre', 'Iniciar quando eu estiver disponível', 'Sem dia nem horário marcado e sem e-mail de lembrete.')}
-    ${op('diario', 'Mesmo horário em todos os dias de semana', 'De segunda a sexta, fora feriados.')}
+    ${op('diario', 'Mesmo horário nos dias que eu escolher', 'Por padrão, de segunda a sexta. Fins de semana e feriados só se você marcar.')}
     ${op('agendada', 'Dia e horário específicos', 'Uma conversação por dia. Marque um ou mais dias.')}
     ${op('nenhuma', 'Não quero fazer conversação agora', 'Ela sai do seu e-mail do dia. Dá para voltar quando quiser.')}
     <div id="cmI" class="field" style="margin-top:12px"><label>Idioma da conversação</label><select id="cmLang" style="max-width:260px">${(() => { const { meus, outros } = convLangs(); const o = l => `<option value="${esc(l.id)}" ${l.id === c.lang ? 'selected' : ''}>${esc(l.name)}</option>`; return (meus.length ? `<optgroup label="Seus idiomas">${meus.map(o).join('')}</optgroup>` : '') + (outros.length ? `<optgroup label="Outros idiomas do site">${outros.map(o).join('')}</optgroup>` : ''); })()}</select><div class="help">Pode ser diferente do idioma das suas aulas. No modo de dias específicos, cada dia guarda o idioma escolhido na hora de adicionar.</div></div>
-    <div id="cmD" class="field" style="margin-top:12px"><label>Horário (segunda a sexta)</label><select id="cmH" style="max-width:160px">${horas(c.hora)}</select></div>
+    <div id="cmD" class="field" style="margin-top:12px"><label>Dias da conversação</label>${D.caixinhas('cv', { days: c.dias, holidays: c.feriados })}<label style="margin-top:14px;display:block">Horário</label><select id="cmH" style="max-width:160px">${horas(c.hora)}</select></div>
     <div id="cmA" style="margin-top:12px"><div class="row" style="gap:8px;align-items:flex-end"><div class="field" style="margin:0"><label>Dia</label><input type="date" id="cmDia" min="${today()}" value="${today()}"></div><div class="field" style="margin:0"><label>Horário</label><select id="cmHA">${horas(19)}</select></div><button class="btn btn-ghost btn-sm" id="cmAdd">Adicionar</button></div><div id="cmList" style="margin-top:10px"></div></div>
     <label class="check" id="cmL" style="margin-top:14px;gap:10px"><input type="checkbox" id="cmLemb" style="width:auto" ${c.lembrete ? 'checked' : ''}> Quero receber um e-mail de lembrete no horário marcado</label>
     <p class="help" id="cmOff" style="margin-top:6px"></p><p class="help" style="margin-top:4px">Só dá para marcar uma conversação por dia. Se o horário passar e você não conseguir, pode remarcar para mais tarde no mesmo dia, mas o e-mail de lembrete é enviado só uma vez por dia (não chega de novo no novo horário).</p>
@@ -1446,7 +1454,7 @@ function openAgendaConversa(pre = '') {
     q('#cmD').hidden = m !== 'diario'; q('#cmI').hidden = m === 'nenhuma'; q('#cmA').hidden = m !== 'agendada'; q('#cmL').hidden = !marca;
     q('#cmOff').textContent = marca && S.config.emailsOn === false ? 'Seus e-mails estão desligados em Ajustes: o lembrete só chega se você ligar "Enviar e-mails".' : '';
   };
-  ov.querySelectorAll('[name=cm]').forEach(r => r.onchange = vis); vis(); lista();
+  ov.querySelectorAll('[name=cm]').forEach(r => r.onchange = vis); vis(); lista(); D.vigiar(ov, 'cv');
   q('#cmAdd').onclick = () => {
     const d = q('#cmDia').value, h = +q('#cmHA').value, l = q('#cmLang').value;
     if (!d || d < today()) return toast('Escolha um dia de hoje em diante.');
@@ -1457,7 +1465,8 @@ function openAgendaConversa(pre = '') {
     if (S.readonly) return toast('Modo visitante: crie sua conta para marcar a conversação.');
     const m = modo();
     if (m === 'agendada' && !agenda.length) return toast('Adicione pelo menos um dia, ou escolha outra opção.');
-    S.config.conversa = { modo: m, hora: +q('#cmH').value, lang: q('#cmLang').value, agenda, lembrete: ['diario', 'agendada'].includes(m) && q('#cmLemb').checked };
+    const dv = D.ler(ov, 'cv'); if (m === 'diario' && !dv.days.length) return toast('Marque pelo menos um dia para a conversação.');
+    S.config.conversa = { modo: m, hora: +q('#cmH').value, lang: q('#cmLang').value, dias: dv.days.length ? dv.days : [1, 2, 3, 4, 5], feriados: dv.holidays, agenda, lembrete: ['diario', 'agendada'].includes(m) && q('#cmLemb').checked };
     S.saveConfig(); if (S.flush) await S.flush();
     ov.remove(); const r = $('#convRes'); if (r) r.textContent = convResumo();
     toast('Conversação salva: ' + convResumo(), 5000);
@@ -1610,7 +1619,7 @@ async function boasVindas() {
   const finish = async () => {
     P.name = o.name || P.name || 'Aluno'; P.area = o.area;
     if (o.goals.includes('Cuidar de mim') && !o.langs.length && !o.goals.includes('Idiomas')) S.state.area = S.state.area || 'saude';
-    P.prefs = { goals: o.goals, noLang: o.noLang, styles: o.styles, other: o.other, learned: o.learned, style: o.style, explain: o.explain, minutes: o.minutes, convMinutes: o.convMinutes, interests: o.interests };
+    P.prefs = { ...(P.prefs?.studyDays ? { studyDays: P.prefs.studyDays } : {}), goals: o.goals, noLang: o.noLang, styles: o.styles, other: o.other, learned: o.learned, style: o.style, explain: o.explain, minutes: o.minutes, convMinutes: o.convMinutes, interests: o.interests };
     for (const id of o.langs) { const s = cs('lang:' + id); const lv = o.levels[id] || s.level; if (lv !== s.level) { s.level = lv; s.cycle = 1; } }
     if (o.langs.length) { S.state.plan.main = o.langs[0]; S.state.plan.second = o.langs[1] || ''; S.state.plan.secondDays = o.langs[1] ? [2, 4] : []; }
     S.state.onboarded = today(); S.isNew = false;
@@ -1718,7 +1727,7 @@ async function boot() {
   const qs = new URLSearchParams(location.search);
   const demo = qs.has('demo') || qs.has('visita');
   if (demo) {
-    const { demoData, demoAI } = await import('./demo.js?v=62');
+    const { demoData, demoAI } = await import('./demo.js?v=63');
     S = new DemoStore(() => demoData(C)); S.demoAI = demoAI;
     if (qs.has('visita')) S.readonly = true;
     document.body.insertAdjacentHTML('beforeend', S.readonly ? '<a class="demo-badge" href="./">👁 Modo visitante · Criar conta</a>' : '<div class="demo-badge">DEMONSTRAÇÃO</div>');

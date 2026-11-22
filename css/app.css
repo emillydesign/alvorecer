@@ -667,3 +667,10 @@ select option{background:var(--bg2);color:var(--text)}
 @keyframes esp-step{0%{opacity:0;transform:translateY(6px)}3%,22%{opacity:1;transform:none}25%,100%{opacity:0}}
 @keyframes esp-shine{to{background-position:-200% 0}}
 @media (prefers-reduced-motion:reduce){.espera-orb i,.espera-orb b,.espera-sk i{animation:none}.espera-steps span{animation:none}.espera-steps span:first-child{opacity:1}}
+
+/* Dias de estudo e pop-up Começar */
+.dias-grid{display:flex;flex-wrap:wrap;gap:8px}
+.dia-chk{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:var(--panel2);font-size:14px;font-weight:600;cursor:pointer}
+.dia-chk input{width:auto;accent-color:var(--mint)}
+.dia-chk:has(input:checked){border-color:rgba(var(--mint-rgb),.7);background:rgba(var(--mint-rgb),.14)}
+.dias-aviso.alerta{color:var(--sun)}

@@ -35,7 +35,14 @@ export function holiday(s) {
   if (s === addDays(e, 60)) return 'Corpus Christi';
   return null;
 }
-export const isRestDay = (s = today()) => { const w = weekday(s); return w === 0 || w === 6 || !!holiday(s); };
+// Dias em que a pessoa quer estudar (0 dom … 6 sáb). Padrão: segunda a sexta, sem feriados (fim de semana e feriado = descanso).
+let STUDY = { days: [1, 2, 3, 4, 5], holidays: false };
+export function setStudyDays(c) {
+  const days = Array.isArray(c?.days) ? [...new Set(c.days.map(Number).filter(n => n >= 0 && n <= 6))] : [1, 2, 3, 4, 5];
+  STUDY = { days: days.length ? days : [1, 2, 3, 4, 5], holidays: !!c?.holidays };
+}
+export const getStudyDays = () => STUDY;
+export const isRestDay = (s = today()) => !STUDY.days.includes(weekday(s)) || (!STUDY.holidays && !!holiday(s));
 export function prevStudyDay(s) { let d = addDays(s, -1); for (let i = 0; i < 20 && isRestDay(d); i++) d = addDays(d, -1); return d; }
 export function weekStart(s = today()) { const w = weekday(s); return addDays(s, -((w + 6) % 7)); } // segunda
 
