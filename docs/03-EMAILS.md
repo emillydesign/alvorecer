@@ -15,12 +15,21 @@ Arquivo: `scripts/email_diario.py`. Roda de hora em hora (das 6h às 23h de Bras
 ### O que ele manda
 | E-mail | Para quem | Quando |
 |---|---|---|
-| **E-mail do dia** (aula, expressão do dia, revisões, conversação) | alunos com "Enviar e-mails" ligado | seg a sex (fora feriados), no horário escolhido. **No máximo 1 por dia** |
+| **E-mail do dia** (aula, expressão do dia, revisões, conversação) | alunos com "Enviar e-mails" ligado | nos dias de estudo escolhidos (padrão: seg a sex, fora feriados), no horário escolhido. **No máximo 1 por dia** |
 | **Lembrete de conversação** | só quem marcou conversação (todo dia útil ou dia específico) **e** pediu o lembrete | no dia e hora marcados, no idioma escolhido para a conversação. **No máximo 1 por dia**, mesmo se a pessoa remarcar. Não vai se ela já conversou naquele dia |
 | `⚠️ [SITE · ERRO]`, `⭐ [SITE · AVALIAÇÃO]`, `💬 [SITE · CONTATO]` | só para iaalvorecer@gmail.com | um por mensagem, até 15 por hora |
 | `🌱 [SITE · NOVA CONTA]` | só para iaalvorecer@gmail.com | um resumo por hora |
 
 Ninguém recebe nada se desligou "Enviar e-mails" ou se está em pausa (férias). Quem escolheu não aprender idiomas não recebe o e-mail do dia.
+
+### Dias de envio escolhidos pela pessoa (fins de semana e feriados)
+O site já salva, na configuração de cada aluno (`config`, lida pelo robô):
+- `diasEstudo = { dias: [1,2,3,4,5], feriados: false }`: dias em que a pessoa quer estudar (0 = domingo … 6 = sábado). Padrão: segunda a sexta, sem feriados.
+- `conversa.dias` e `conversa.feriados`: o mesmo, só para a conversação no modo diário.
+
+Regra que o robô deve seguir: o **e-mail do dia** vai se o dia da semana de hoje (horário de Brasília) estiver em `diasEstudo.dias` e, se hoje for feriado, só se `diasEstudo.feriados` for verdadeiro. O **lembrete de conversação** (modo diário) usa `conversa.dias` / `conversa.feriados` do mesmo jeito. Se o campo não existir (conta antiga), vale o padrão: segunda a sexta, fora feriados. Todas as proteções abaixo continuam valendo: no máximo 1 por dia, só com "Enviar e-mails" ligado, nada em pausa (férias), `LIMITE_DIA`.
+
+**Situação:** o site já grava esses campos, mas `scripts/email_diario.py` (repositório `alvorecer-dados`) ainda precisa passar a ler. Até lá, o robô segue enviando só de segunda a sexta, fora feriados.
 
 ### Proteções (não remova)
 - **Sempre para o e-mail da própria conta.** O endereço vem da tabela `novas_contas` (o e-mail do login), não de algo que a pessoa digita. Assim ninguém consegue usar o site para mandar e-mail a outra pessoa.
