@@ -120,7 +120,7 @@ function addCards(list, key, source) {
 }
 
 // ---------- roteamento ----------
-const routes = { 'boas-vindas': boasVindas, nivelamento, cronograma, mentoria, seu, cuidar: (s) => cuidar(s), cuidados: async (s) => { const m = await import('./cuidados.js?v=64'); m.initCuidados({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.cuidados(s); }, sobre, apoiar, '': home, idiomas, cursos, trilha, curso, aula, conversa, memorizacao, revisao, teste, historico, ajustes, guia };
+const routes = { agenda: async (t) => { const m = await import('./agenda.js?v=65'); m.initAgenda({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.agenda(t); }, 'boas-vindas': boasVindas, nivelamento, cronograma, mentoria, seu, cuidar: (s) => cuidar(s), cuidados: async (s) => { const m = await import('./cuidados.js?v=64'); m.initCuidados({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.cuidados(s); }, sobre, apoiar, '': home, idiomas, cursos, trilha, curso, aula, conversa, memorizacao, revisao, teste, historico, ajustes, guia };
 let cleanup = null;
 async function router() {
   cleanup?.(); cleanup = null; stopSpeaking(); closeAreas(); aplicarDias();
@@ -132,7 +132,7 @@ async function router() {
   else if (['revisao', 'teste'].includes(parts[0])) navKey = 'memorizacao';
   else if (parts[0] === 'cronograma') navKey = 'idiomas';
   else if (parts[0] === 'mentoria') navKey = 'tech';
-  else if (parts[0] === 'cuidar' || parts[0] === 'cuidados') navKey = 'seu';
+  else if (parts[0] === 'cuidar' || parts[0] === 'cuidados' || parts[0] === 'agenda') navKey = 'seu';
   if (parts[0] === 'trilha' && parts[1] && parts[1] !== 'tech' && C.tracks[parts[1]]?.area && S.state.area !== parts[1]) { S.state.area = parts[1]; S.saveState(); }
   updateAreaTab();
   $$('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === navKey || (a.dataset.nav === 'cursos' && ['tech', 'area', 'seu'].includes(navKey))));
@@ -156,6 +156,7 @@ function openAreas() {
       <a class="atile pat-rings" href="#/seu" style="background:linear-gradient(150deg,#fcd34d,#14b8a6)"><i>✦</i><div><b>Seu Alvorecer</b><br><small>${nCus} ${nCus === 1 ? 'curso personalizado' : 'cursos personalizados'}</small></div></a>
       <a class="atile pat-waves" href="#/cuidar" style="background:linear-gradient(150deg,#86efac,#6366f1)"><i>${icoOf('heart-handshake')}</i><div><b>Cuidar de mim</b><br><small>desabafo, alimentação, treino</small></div></a>
       <a class="atile pat-dots" href="#/cuidados" style="background:linear-gradient(150deg,#fbcfe8,#14b8a6)"><i>${icoOf('sparkles')}</i><div><b>Cuidados</b><br><small>pele, unhas, cabelo, cheiro</small></div></a>
+      <a class="atile pat-grid" href="#/agenda" style="background:linear-gradient(150deg,#fde68a,#0ea5e9)"><i>${icoOf('calendar-check')}</i><div><b>Agenda</b><br><small>rotina e checklist do dia</small></div></a>
       <button class="atile pat-grid" id="apAsk" style="background:linear-gradient(150deg,#a5b4fc,#0ea5e9)"><i>＋</i><div><b>Pedir um curso</b><br><small>pelo IAlvorecer</small></div></button>
     </div></div>`);
   $('#apX').onclick = closeAreas; $('#popOv').onclick = closeAreas;
