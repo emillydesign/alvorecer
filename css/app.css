@@ -674,3 +674,7 @@ select option{background:var(--bg2);color:var(--text)}
 .dia-chk input{width:auto;accent-color:var(--mint)}
 .dia-chk:has(input:checked){border-color:rgba(var(--mint-rgb),.7);background:rgba(var(--mint-rgb),.14)}
 .dias-aviso.alerta{color:var(--sun)}
+
+/* Cuidados: termos com pesquisa científica */
+a.sci{color:var(--mint);text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;font-weight:600}
+a.sci:hover{color:var(--sun)}
