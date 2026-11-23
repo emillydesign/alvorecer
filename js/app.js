@@ -188,15 +188,22 @@ async function home() {
   const noLang = S.state.profile.prefs?.noLang;
   app.innerHTML = `
   <section class="hero-home">
-    <div class="eyebrow">${esc(fmtDay(t))}${rest ? ` · ${hol ? esc(hol) + ': ' : ''}dia de descanso` : ''}</div>
-    <h1 style="margin-top:16px">${hello}${name ? ', ' + esc(name) : ''}.<br><span class="grad">Todo dia é um novo começo.</span></h1>
-    <p class="lead" style="font-size:18px;max-width:600px;margin:18px 0 30px">Idiomas, tecnologia, carreira e o que mais você quiser aprender. Um pouco por dia, no seu ritmo, com o IAlvorecer do seu lado: uma IA que faz de tudo para as coisas darem certo.</p>
-    <div class="row"><button class="btn btn-pink" id="homeStart">Começar</button><a class="btn btn-ghost" href="#/cronograma">📅 Meu cronograma</a></div>
-    <div class="today-strip" style="margin-top:28px">
-      <a href="${nx ? `#/aula/${key}/${nx.id}` : `#/curso/${key}`}" class="${did('lesson') ? 'done' : ''}" style="${noLang ? 'display:none' : ''}">📘 ${nx ? `Aula ${nx.n} de ${esc(d.title)}` : `Plano de ${esc(d.title)}`}</a>
-      <a href="#/revisao" class="${!due || did('review') ? 'done' : ''}">◎ ${due} cartões</a>
-      <a href="#/conversa/${key}" class="${did('conversation') ? 'done' : ''}" style="${noLang ? 'display:none' : ''}">🎙 Conversa · ${convMin()} min</a>
-      <a href="#/historico">🔥 ${streakNow()} ${streakNow() === 1 ? 'dia' : 'dias'} seguidos</a>
+    <div class="hero-grid">
+      <div class="hero-main">
+        <div class="eyebrow">${esc(fmtDay(t))}${rest ? ` · ${hol ? esc(hol) + ': ' : ''}dia de descanso` : ''}</div>
+        <h1>${hello}${name ? ', ' + esc(name) : ''}.<br><span class="grad">Todo dia é um novo começo.</span></h1>
+        <p class="lead">Idiomas, tecnologia, carreira e o que mais você quiser aprender. Um pouco por dia, no seu ritmo, com uma IA que faz de tudo para as coisas darem certo.</p>
+        <div class="row hero-cta"><button class="btn btn-pink" id="homeStart">Começar</button><a class="btn btn-ghost" href="#/cronograma">Meu cronograma</a></div>
+      </div>
+      <aside class="hero-hoje" aria-label="Seu dia">
+        <a class="streak" href="#/historico"><span class="streak-n">${streakNow()}</span><span class="streak-t"><b>${streakNow() === 1 ? 'dia seguido' : 'dias seguidos'}</b><small>${streakNow() ? 'Continue, não quebre a sequência' : 'Comece hoje a sua sequência'}</small></span><i class="streak-ic">${ic('flame')}</i></a>
+        <div class="hoje-lista">
+          <div class="hoje-h">Hoje</div>
+          <a href="${nx ? `#/aula/${key}/${nx.id}` : `#/curso/${key}`}" class="${did('lesson') ? 'done' : ''}" style="${noLang ? 'display:none' : ''}"><i>${ic('book-open')}</i><span>${nx ? `Aula ${nx.n} de ${esc(d.title)}` : `Plano de ${esc(d.title)}`}</span></a>
+          <a href="#/revisao" class="${!due || did('review') ? 'done' : ''}"><i>${ic('repeat-2')}</i><span>${due} cartões para revisar</span></a>
+          <a href="#/conversa/${key}" class="${did('conversation') ? 'done' : ''}" style="${noLang ? 'display:none' : ''}"><i>${ic('mic')}</i><span>Conversa de ${convMin()} min</span></a>
+        </div>
+      </aside>
     </div>
   </section>
 
