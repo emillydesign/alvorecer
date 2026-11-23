@@ -23,39 +23,50 @@ export function tempoHTML({ C, esc }) {
     <div class="row" style="gap:10px;flex-wrap:wrap"><a class="btn btn-pink" href="#/tempo">Montar meu caminho para mais tempo livre</a><a class="btn btn-ghost" href="#/mentoria">Mentoria de carreira</a><a class="btn btn-ghost" href="#/agenda">Minha agenda</a></div></div>`;
 }
 
-// Início do site: UMA seção em quadrantes. Cursos essenciais nos cantos (com páginas), mentoria de carreira no centro
-// e, embaixo, uma faixa horizontal com os cuidados essenciais.
+// Início do site: UMA seção em quadrantes com carrossel. Cursos essenciais nos cantos (que "rolam" para os próximos),
+// diferencial no centro e, embaixo, a faixa dos cuidados essenciais.
 export function homeHTML({ C, S, esc, icoOf, grad, saudacao, dia }) {
   const E = C.essencial, CE = C.cuidadosEssenciais; if (!E) return '';
   const achar = k => { const id = k.replace(/^trk:/, ''); for (const t of Object.values(C.tracks)) { const c = t.courses.find(x => x.id === id); if (c) return c; } return null; };
   const feitas = k => Object.keys(S.state.courses?.[k]?.done || {}).length;
   const lista = E.itens.map((it, i) => ({ ...it, i, c: achar(it.k) })).filter(x => x.c);
-  const prog = x => { const f = feitas(x.k), n = (x.c.lessons || []).length; return f > 0 ? `${f}/${n} aulas` : 'Começar'; };
-  const card = (x, pos) => `<a class="qd-card qd-${pos}" href="#/curso/${esc(x.k)}" style="${grad(x.c.g)}"><span class="qd-n">${x.i + 1}</span><span class="qd-ic">${icoOf(x.c.icon)}</span><b>${esc(x.c.title)}</b><small>${esc(x.por)}</small><em>${esc(prog(x))}</em></a>`;
-  const todas = pos => `<button type="button" class="qd-card qd-${pos} qd-todas" id="homeStart3"><span class="qd-ic">${icoOf('layout-grid')}</span><b>Ver todas as áreas e cursos</b><small>Idiomas, tecnologia, saúde, finanças e muito mais</small><em>Explorar</em></button>`;
   const POS = ['tl', 'tr', 'bl', 'br'];
+  const curso = (x, pos) => { const f = feitas(x.k), n = (x.c.lessons || []).length, pct = n ? Math.round(f / n * 100) : 0;
+    return `<a class="hx-card hx-${pos}" href="#/curso/${esc(x.k)}" style="${grad(x.c.g)}"><span class="hx-wm">${icoOf(x.c.icon)}</span>
+      <span class="hx-tag">Essencial ${x.i + 1}</span><b>${esc(x.c.title)}</b><span class="hx-d">${esc(x.por)}</span>
+      <span class="hx-meta"><span>${n} aulas${f ? ' · ' + pct + '%' : ''}</span><i>${f ? 'Continuar' : 'Começar'}</i></span><span class="hx-bar" style="width:${pct}%"></span></a>`; };
+  const extra = (pos, ic, t, d, h) => `<a class="hx-card hx-${pos} hx-extra" href="${h}"><span class="hx-wm">${icoOf(ic)}</span><span class="hx-tag">E mais</span><b>${esc(t)}</b><span class="hx-d">${esc(d)}</span><span class="hx-meta"><span>&nbsp;</span><i>Abrir</i></span></a>`;
   const paginas = [];
-  for (let i = 0; i < lista.length; i += 4) paginas.push(lista.slice(i, i + 4));
-  const ult = paginas[paginas.length - 1];
-  if (ult.length < 4) ult.push({ todas: true });
-  const pg = paginas.map((p, n) => `<div class="qd-pag${n ? '' : ' on'}" data-pag="${n}">${p.map((x, k) => x.todas ? todas(POS[k]) : card(x, POS[k])).join('')}</div>`).join('');
-  const nomes = paginas.map((_, n) => n === 0 ? 'Os mais essenciais' : n === paginas.length - 1 ? 'E mais para aprender' : 'Continue depois');
+  for (let i = 0; i < lista.length; i += 4) paginas.push(lista.slice(i, i + 4).map((x, k) => curso(x, POS[k])));
+  const ult = paginas[paginas.length - 1], falt = 4 - ult.length;
+  const ex = [['layout-grid', 'Ver todas as áreas', 'Idiomas, tecnologia, saúde, finanças e muito mais para explorar.', '#/cursos'], ['languages', 'Idiomas', 'Do zero ao fluente, com conversação e correção.', '#/idiomas'], ['sparkles', 'Peça um curso', 'O IAlvorecer cria um curso do seu jeito.', '#/seu'], ['heart-handshake', 'Cuidar de mim', 'Desabafo, alimentação e treino.', '#/cuidar']];
+  for (let k = 0; k < falt; k++) { const e = ex[k]; ult.push(extra(POS[4 - falt + k], e[0], e[1], e[2], e[3])); }
+  const nomes = paginas.map((_, n) => n === 0 ? 'Os mais essenciais' : n === paginas.length - 1 ? 'E mais para explorar' : 'Continue depois');
+  const pg = paginas.map((p, n) => `<div class="hx-pag${n ? ' next' : ' on'}" data-pag="${n}">${p.join('')}</div>`).join('');
   return `
-  <div class="qd-top"><div class="eyebrow">${esc(dia)}</div><h1 class="qd-h">${esc(saudacao)}. <span class="grad">Comece por aqui.</span></h1></div>
-  <div class="qd-wrap">
-    <div class="qd-grid">${pg}
-      <div class="qd-centro"><div class="eyebrow">Nosso diferencial</div><h2>Encontre o trabalho ideal para você</h2><p>Mentoria de carreira gratuita: o IAlvorecer ajuda você a descobrir e conquistar um trabalho que combine com o seu tempo e os seus cuidados. Ele orienta, você decide.</p><div class="qd-btns"><a class="btn btn-pink btn-sm" href="#/tempo">Montar meu caminho</a><a class="btn btn-ghost btn-sm" href="#/mentoria">Mentoria</a></div></div>
-    </div>
-    <div class="qd-pager"><span class="qd-nome" id="qdNome" data-nomes="${esc(JSON.stringify(nomes))}">${esc(nomes[0])}</span><span class="qd-dots">${paginas.map((_, n) => `<button type="button" class="qd-dot${n ? '' : ' on'}" data-go="${n}" aria-label="Página ${n + 1}"></button>`).join('')}</span><button type="button" class="btn btn-ghost btn-sm" id="qdMais">Ver mais cursos essenciais</button></div>
-  </div>
-  <div class="cuid-faixa"><div class="cuid-faixa-t">${esc(CE.eyebrow)}<small>em ordem</small></div><div class="cuid-faixa-l">${CE.etapas.map((e, i) => `<a class="cf-item" href="${esc(e.h)}" title="${esc(e.por)}"><b>${i + 1}</b><span>${esc(e.t)}</span></a>`).join('')}</div></div>`;
+  <div class="hx-top"><div><div class="eyebrow">${esc(dia)}</div><h1 class="hx-h">${esc(saudacao)}. <span class="grad">Comece por aqui.</span></h1></div>
+    <div class="hx-nav"><span class="hx-nome" id="hxNome" data-nomes="${esc(JSON.stringify(nomes))}">${esc(nomes[0])}</span><span class="hx-dots">${paginas.map((_, n) => `<button type="button" class="hx-dot${n ? '' : ' on'}" data-go="${n}" aria-label="Página ${n + 1}"></button>`).join('')}</span><button type="button" class="btn btn-ghost btn-sm" id="hxPrev" hidden>Voltar</button><button type="button" class="btn btn-pink btn-sm hx-next" id="hxNext">Continuar<i>${icoOf('chevrons-right')}</i></button></div></div>
+  <div class="hx-stage"><div class="hx-grid">${pg}
+    <div class="hx-centro"><span class="hx-c-ic">${icoOf('compass')}</span><div class="hx-c-t">Nosso diferencial</div><h2>Encontre o trabalho ideal para você</h2><p>Mentoria de carreira gratuita: o IAlvorecer ajuda você a descobrir e conquistar um trabalho que combine com o seu tempo e os seus cuidados. Ele orienta, você decide.</p><a class="hx-c-b1" href="#/tempo">Montar meu caminho</a><a class="hx-c-b2" href="#/mentoria">Falar com a mentoria</a></div>
+  </div></div>
+  <div class="hx-cuid"><div class="hx-cuid-t"><b>${esc(CE.eyebrow)}</b><span>o básico, em ordem</span></div><div class="hx-cuid-l">${CE.etapas.map((e, i) => `<a class="hx-cu" href="${esc(e.h)}" title="${esc(e.por)}"><span class="hx-cu-i">${icoOf(e.i || 'circle')}</span><span class="hx-cu-n">${i + 1}</span><b>${esc(e.curto || e.t)}</b></a>`).join('')}</div></div>`;
 }
 
 export function ligarHome(root) {
-  const pags = [...root.querySelectorAll('.qd-pag')], dots = [...root.querySelectorAll('.qd-dot')], nome = root.querySelector('#qdNome');
+  const pags = [...root.querySelectorAll('.hx-pag')], dots = [...root.querySelectorAll('.hx-dot')], nome = root.querySelector('#hxNome');
   if (!pags.length) return;
   const nomes = JSON.parse(nome.dataset.nomes || '[]'); let at = 0;
-  const ir = n => { at = (n + pags.length) % pags.length; pags.forEach((p, i) => p.classList.toggle('on', i === at)); dots.forEach((d, i) => d.classList.toggle('on', i === at)); nome.textContent = nomes[at] || ''; };
+  const prev = root.querySelector('#hxPrev'), next = root.querySelector('#hxNext');
+  const ir = n => {
+    n = Math.max(0, Math.min(pags.length - 1, n)); at = n;
+    pags.forEach((p, i) => { p.classList.toggle('on', i === n); p.classList.toggle('prev', i < n); p.classList.toggle('next', i > n); });
+    dots.forEach((d, i) => d.classList.toggle('on', i === n)); nome.textContent = nomes[n] || '';
+    prev.hidden = n === 0; next.firstChild.textContent = n === pags.length - 1 ? 'Voltar ao início' : 'Continuar';
+  };
   dots.forEach(d => d.onclick = () => ir(+d.dataset.go));
-  const mais = root.querySelector('#qdMais'); if (mais) mais.onclick = () => ir(at + 1);
+  next.onclick = () => ir(at === pags.length - 1 ? 0 : at + 1);
+  prev.onclick = () => ir(at - 1);
+  let x0 = null; const st = root.querySelector('.hx-grid');
+  st.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
+  st.addEventListener('touchend', e => { if (x0 == null) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 50) ir(at + (dx < 0 ? 1 : -1)); x0 = null; });
 }
