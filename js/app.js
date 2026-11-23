@@ -242,7 +242,7 @@ async function home() {
     <div class="stat"><b>${S.srs.length}</b><span>palavras na memória</span></div>
     <div class="stat"><b>${S.state.streak.best || 0}</b><span>recorde de dias seguidos</span></div>
   </div></section>`;
-  import('./essencial.js?v=15').then(E => { const el = $('#homeTopo'); if (el) { el.innerHTML = E.homeHTML({ C, S, esc, icoOf, grad, saudacao: hello + (name ? ', ' + name : ''), dia: fmtDay(t) + (rest ? (hol ? ' · ' + hol + ': ' : ' · ') + 'dia de descanso' : '') }); const b = $('#homeStart3'); if (b) b.onclick = () => abrirComecar(); E.ligarHome(el); } }).catch(() => { });
+  import('./essencial.js?v=16').then(E => { const el = $('#homeTopo'); if (el) { el.innerHTML = E.homeHTML({ C, S, esc, icoOf, grad, saudacao: hello + (name ? ', ' + name : ''), dia: fmtDay(t) + (rest ? (hol ? ' · ' + hol + ': ' : ' · ') + 'dia de descanso' : '') }); const b = $('#homeStart3'); if (b) b.onclick = () => abrirComecar(); E.ligarHome(el); } }).catch(() => { });
   window.IAPers && IAPers.home();
   $('#homeAsst').onclick = () => openAssistant();
   $('#homeAreas').onclick = () => openAreas();
