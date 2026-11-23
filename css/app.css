@@ -777,3 +777,14 @@ a.sci:hover{color:var(--sun)}
 .eyebrow::before{width:7px;height:7px;border-radius:2px;background:linear-gradient(135deg,rgb(var(--mint-rgb)),rgb(var(--sky-rgb)));opacity:1;box-shadow:0 0 10px rgba(var(--mint-rgb),.55)}
 .back{border:0;background:none;padding:4px 0;color:var(--muted);font-weight:600;letter-spacing:.02em}
 .back:hover{background:none;color:var(--text);border:0}
+
+/* home: card de incentivo; Idiomas: dias seguidos no topo */
+.hero-cta-card{display:flex;flex-direction:column;gap:12px;align-items:flex-start;padding:26px;border-radius:var(--rq2);border:1px solid rgba(var(--mint-rgb),.35);background:linear-gradient(145deg,rgba(var(--mint-rgb),.16),rgba(var(--sky-rgb),.08) 65%,rgba(255,213,138,.08))}
+.hero-cta-card h3{margin:0;font-size:clamp(20px,2.4vw,26px);line-height:1.15}
+.hero-cta-card p{margin:0;color:var(--muted);font-size:15px}
+.hero-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.hero-tags span{font-size:12px;padding:4px 9px;border-radius:var(--rq);border:1px solid var(--line2);background:rgba(255,255,255,.04);color:var(--muted)}
+.idi-top{display:flex;gap:14px;flex-wrap:wrap;align-items:stretch;margin:0 0 22px}
+.idi-top .streak{flex:1;min-width:260px;max-width:420px}
+.idi-top .btn{align-self:center}
+.streak{display:flex;align-items:center;gap:16px;padding:20px 22px;border-radius:var(--rq2);border:1px solid rgba(255,213,138,.45);background:linear-gradient(135deg,rgba(255,213,138,.22),rgba(255,150,90,.10) 70%)}
