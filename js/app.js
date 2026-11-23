@@ -187,22 +187,7 @@ async function home() {
   const cr = S.state.career;
   const noLang = S.state.profile.prefs?.noLang;
   app.innerHTML = `
-  <section class="hero-home">
-    <div class="hero-grid">
-      <div class="hero-main">
-        <div class="eyebrow">${esc(fmtDay(t))}${rest ? ` · ${hol ? esc(hol) + ': ' : ''}dia de descanso` : ''}</div>
-        <h1>${hello}${name ? ', ' + esc(name) : ''}.<br><span class="grad">Todo dia é um novo começo.</span></h1>
-        <p class="lead">Idiomas, tecnologia, carreira e o que mais você quiser aprender. Um pouco por dia, no seu ritmo, com uma IA que faz de tudo para as coisas darem certo.</p>
-      </div>
-      <aside class="hero-cta-card" aria-label="Comece por onde quiser">
-        <div class="eyebrow">Sem ordem certa</div>
-        <h3>Comece por onde der mais vontade</h3>
-        <p>Idiomas, tecnologia, carreira, saúde, dinheiro e muito mais. Um passo pequeno já é começar.</p>
-        <button class="btn btn-pink" id="homeStart2">Ver todas as áreas e cursos</button>
-        <div class="hero-tags"><span>Idiomas</span><span>Tecnologia &amp; IA</span><span>Saúde</span><span>Finanças</span><span>Bem-estar</span><span>Negócios</span></div>
-      </aside>
-    </div>
-  </section>
+  <section class="home-topo" id="homeTopo"></section>
 
   <section class="section" data-bloco="ia"><div class="section-head"><div><div class="eyebrow">Sua IA</div><h2 style="margin-top:8px">Como funciona o seu limite de IA</h2></div><button class="btn btn-ghost btn-sm" data-iainfo>Entender tudo</button></div>
     <div class="grid g3">
@@ -211,10 +196,7 @@ async function home() {
       <div class="panel"><h3>Quer usar mais?</h3><p class="small muted" style="margin:10px 0 14px">Conecte a sua própria IA (Google Gemini, grátis) e use sem o limite do site. Leva 2 minutos e ela continua tão carinhosa e inteligente quanto aqui.</p><button class="btn btn-pink btn-sm" data-iainfo="conectar">Conectar minha IA</button></div>
     </div></section>
 
-  <section class="section" data-bloco="essencial" id="homeEssencial"></section>
-  <section class="section" data-bloco="cuidados" id="homeCuidados"></section>
-  <section class="section" data-bloco="tempo" id="homeTempo"></section>
-  <section class="section" data-bloco="explore"><div class="section-head"><div><div class="eyebrow">Explore</div><h2 style="margin-top:8px">O que você pode aprender aqui</h2></div><span class="small dim">${nCourses} cursos</span></div>
+        <section class="section" data-bloco="explore"><div class="section-head"><div><div class="eyebrow">Explore</div><h2 style="margin-top:8px">O que você pode aprender aqui</h2></div><span class="small dim">${nCourses} cursos</span></div>
     <div class="grid g3">${areas.map((a, i) => `<a class="area pat-${['rings', 'grid', 'dots'][i]}" href="${a.href}" style="${grad(a.g)}"><div><span class="aic">${icoOf(a.i)}</span><h3>${esc(a.t)}</h3><p>${esc(a.s)}</p><ul>${a.items.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div><span class="btn btn-pink btn-sm" style="align-self:flex-start;margin-top:18px">Explorar</span></a>`).join('')}</div></section>
 
   <section class="section" data-bloco="areas"><div class="section-head"><div><div class="eyebrow">Áreas de interesse</div><h2 style="margin-top:8px">Escolha o que faz sentido para você</h2></div><button class="btn btn-ghost btn-sm" id="homeAreas">▦ Todas as áreas</button></div>
@@ -259,8 +241,7 @@ async function home() {
     <div class="stat"><b>${S.srs.length}</b><span>palavras na memória</span></div>
     <div class="stat"><b>${S.state.streak.best || 0}</b><span>recorde de dias seguidos</span></div>
   </div></section>`;
-  $('#homeStart2').onclick = () => abrirComecar();
-  import('./essencial.js?v=2').then(E => { const el = $('#homeEssencial'); if (el) el.innerHTML = E.essencialHTML({ C, S, esc, icoOf, grad }); const c2 = $('#homeCuidados'); if (c2) c2.innerHTML = E.cuidadosHTML({ C, esc }); const t2 = $('#homeTempo'); if (t2) t2.innerHTML = E.tempoHTML({ C, esc }); }).catch(() => { });
+  import('./essencial.js?v=3').then(E => { const el = $('#homeTopo'); if (el) { el.innerHTML = E.homeHTML({ C, S, esc, icoOf, grad, saudacao: hello + (name ? ', ' + name : ''), dia: fmtDay(t) + (rest ? (hol ? ' · ' + hol + ': ' : ' · ') + 'dia de descanso' : '') }); const b = $('#homeStart3'); if (b) b.onclick = () => abrirComecar(); } }).catch(() => { });
   window.IAPers && IAPers.home();
   $('#homeAsst').onclick = () => openAssistant();
   $('#homeAreas').onclick = () => openAreas();
