@@ -551,6 +551,7 @@
       "courses": [
         {
           "id": "curriculo",
+          "ia": true,
           "title": "Currículo: ATS, IA e estrutura",
           "sub": "Passe pelos filtros e chame atenção",
           "art": "CV",
@@ -560,7 +561,7 @@
             "#34ca6b",
             "#5585ef"
           ],
-          "ctx": "Inclua modelos prontos, exemplos antes/depois e prompts para revisar o currículo com o Claude grátis. Considere vagas no Brasil e no exterior.",
+          "ctx": "Inclua modelos prontos, exemplos antes/depois e prompts para revisar o currículo com a IA de sua preferência (ex: Claude, ChatGPT, Gemini; todas têm plano grátis). Considere vagas no Brasil e no exterior.",
           "lessons": [
             "Como recrutadores e robôs (ATS) leem currículos",
             "A estrutura que funciona",
@@ -600,6 +601,7 @@
         },
         {
           "id": "portfolio",
+          "ia": true,
           "title": "Portfólio: case studies e IA",
           "sub": "Mostre o que você sabe fazer",
           "art": "★",
@@ -655,6 +657,7 @@
         },
         {
           "id": "ia-dia",
+          "ia": true,
           "title": "IA no dia a dia",
           "sub": "Do zero ao uso avançado",
           "art": "AI",
@@ -681,7 +684,8 @@
         },
         {
           "id": "claude-gratis",
-          "title": "Tirando o máximo do Claude grátis",
+          "ia": true,
+          "title": "Tirando o máximo da IA grátis",
           "sub": "Projetos grandes num plano gratuito",
           "art": "✳",
           "icon": "sparkles",
@@ -690,13 +694,13 @@
             "#dc821a",
             "#3d826f"
           ],
-          "ctx": "Ensine a usar o Claude no plano gratuito (claude.ai) para criar e editar sites e projetos: prompts bem estruturados, dividir tarefas grandes, economizar mensagens, guardar contexto em um documento de 'resumo do projeto', trabalhar com arquivos do GitHub (copiar e colar, github.dev), revisar o que a IA fez.",
+          "ctx": "Ensine a usar IAs em planos gratuitos (por exemplo Claude, ChatGPT e Gemini; a pessoa escolhe a que preferir, sem sugerir que uma seja obrigatória) para criar e editar sites e projetos: prompts bem estruturados, dividir tarefas grandes, economizar mensagens, guardar contexto em um documento de 'resumo do projeto', trabalhar com arquivos do GitHub (copiar e colar, github.dev), revisar o que a IA fez.",
           "lessons": [
             "Como o plano grátis funciona e seus limites",
             "A anatomia de um prompt perfeito",
             "Dividindo projetos grandes em pedidos pequenos",
             "O documento de contexto do projeto",
-            "Editando arquivos do GitHub com o Claude",
+            "Editando arquivos do GitHub com a IA",
             "Pedindo design: referências, cores e estilo",
             "Revisando e corrigindo o que a IA fez",
             "Quando usar outras IAs grátis junto"
@@ -807,6 +811,7 @@
       "courses": [
         {
           "id": "arte-ia",
+          "ia": true,
           "title": "Arte com IA: logos e posts",
           "sub": "Crie logos, posts e artes sem editar sites",
           "art": "✦",
@@ -832,6 +837,7 @@
         },
         {
           "id": "web",
+          "ia": true,
           "title": "IA, HTML e CSS",
           "sub": "Entenda como um site funciona e crie com a IA",
           "art": "</>",
@@ -841,14 +847,14 @@
             "#27bead",
             "#48795b"
           ],
-          "ctx": "Curso aberto a qualquer pessoa curiosa sobre como os sites são feitos, de qualquer profissão e sem precisar saber programar. Objetivo: explicar, do zero e em linguagem simples, como um site funciona (HTML, CSS e publicação) e como usar a IA (o Claude, plano grátis em claude.ai) para acelerar e facilitar a criação: a IA escreve e edita o código, e a pessoa entende o suficiente para pedir bem, conferir o resultado, ajustar detalhes e publicar. Estrutura: as primeiras aulas explicam os conceitos e a lógica (o que é HTML, o que é CSS, como as peças se encaixam) com analogias do dia a dia, sem pedir nada à IA ainda; a IA entra aos poucos, depois que o conceito foi entendido, sempre no ritmo entender → pedir à IA → conferir o resultado. Só na última aula o foco é escrever bons prompts. Ferramentas grátis: GitHub (editar arquivos pelo navegador, ou github.dev apertando a tecla . no repositório), GitHub Pages para publicar, Google Fonts, ícones grátis. Fluxo de edição: abrir o arquivo no GitHub, copiar, colar no Claude com um pedido claro, colar a resposta de volta e fazer Commit changes. Mostre prompts prontos para copiar apenas depois de explicar o conceito por trás. Primeira aula: comece explicando o que é um site e quais contas serão usadas (GitHub e Claude, grátis), com os passos de criar conta e entrar no campo \"start\". Ensine HTML e CSS com calma, para quem quiser usá-los também sem a IA.",
+          "ctx": "Curso aberto a qualquer pessoa curiosa sobre como os sites são feitos, de qualquer profissão e sem precisar saber programar. Objetivo: explicar, do zero e em linguagem simples, como um site funciona (HTML, CSS e publicação) e como usar a IA de sua preferência (como Claude, ChatGPT ou Gemini, todas com plano grátis) para acelerar e facilitar a criação: a IA escreve e edita o código, e a pessoa entende o suficiente para pedir bem, conferir o resultado, ajustar detalhes e publicar. Estrutura: as primeiras aulas explicam os conceitos e a lógica (o que é HTML, o que é CSS, como as peças se encaixam) com analogias do dia a dia, sem pedir nada à IA ainda; a IA entra aos poucos, depois que o conceito foi entendido, sempre no ritmo entender → pedir à IA → conferir o resultado. Só na última aula o foco é escrever bons prompts. Ferramentas grátis: GitHub (editar arquivos pelo navegador, ou github.dev apertando a tecla . no repositório), GitHub Pages para publicar, Google Fonts, ícones grátis. Fluxo de edição: abrir o arquivo no GitHub, copiar, colar na IA com um pedido claro, colar a resposta de volta e fazer Commit changes. Mostre prompts prontos para copiar apenas depois de explicar o conceito por trás. Primeira aula: comece explicando o que é um site e quais contas serão usadas (GitHub e uma IA de sua escolha, como Claude, ChatGPT ou Gemini, grátis), com os passos de criar conta e entrar no campo \"start\". Ensine HTML e CSS com calma, para quem quiser usá-los também sem a IA.",
           "lessons": [
             "Como um site funciona (sem mistério)",
             "Anatomia do HTML: o esqueleto da página",
             "CSS: cores, fontes e espaçamento",
             "Flexbox e Grid: montando layouts",
             "Responsivo: bonito no celular",
-            "Prompts que geram código bom no Claude grátis",
+            "Prompts que geram código bom em uma IA grátis",
             "Editando arquivos no GitHub pelo navegador",
             "Publicando de graça no GitHub Pages",
             "Fontes, ícones e imagens grátis",
@@ -889,6 +895,7 @@
         },
         {
           "id": "figma",
+          "ia": true,
           "title": "Figma do zero ao avançado",
           "sub": "Do primeiro frame ao site completo",
           "art": "F",
@@ -917,13 +924,14 @@
             "Versão mobile e breakpoints",
             "Plugins e IA dentro do Figma",
             "Dev Mode e handoff",
-            "Do Figma para HTML/CSS com o Claude",
+            "Do Figma para HTML/CSS com a IA",
             "Apresentando designs para clientes",
             "Projeto final: site do Figma ao ar"
           ]
         },
         {
           "id": "loja",
+          "ia": true,
           "title": "Loja virtual sem gastar",
           "sub": "E-commerce para você e para clientes",
           "art": "$",
@@ -933,13 +941,13 @@
             "#aae845",
             "#3b967c"
           ],
-          "ctx": "Método principal: a 'Loja Modelo' (template grátis no GitHub: github.com/emillydesign/loja-modelo). É um site de vendas em HTML/CSS/JS publicado no GitHub Pages: produtos em produtos.json, configuração em loja.json (nome, cores, WhatsApp, frete), carrinho, e finalização do pedido pelo WhatsApp ou link de pagamento por produto (Mercado Pago, InfinitePay, PagBank ou Stripe Payment Links: todos sem mensalidade, só taxa por venda). Para duplicar para um cliente: 'Use this template' no GitHub. Para editar: GitHub no navegador + Claude grátis (copiar arquivo, pedir a mudança, colar de volta). Alternativa sem código: plataformas com plano grátis (como Nuvemshop, se ainda tiver plano grátis: confira). Ensine também a parte de negócio: precificação de sites para clientes, contrato simples, manutenção mensal.",
+          "ctx": "Método principal: a 'Loja Modelo' (template grátis no GitHub: github.com/emillydesign/loja-modelo). É um site de vendas em HTML/CSS/JS publicado no GitHub Pages: produtos em produtos.json, configuração em loja.json (nome, cores, WhatsApp, frete), carrinho, e finalização do pedido pelo WhatsApp ou link de pagamento por produto (Mercado Pago, InfinitePay, PagBank ou Stripe Payment Links: todos sem mensalidade, só taxa por venda). Para duplicar para um cliente: 'Use this template' no GitHub. Para editar: GitHub no navegador + uma IA grátis (Claude, ChatGPT, Gemini; copiar arquivo, pedir a mudança, colar de volta). Alternativa sem código: plataformas com plano grátis (como Nuvemshop, se ainda tiver plano grátis: confira). Ensine também a parte de negócio: precificação de sites para clientes, contrato simples, manutenção mensal.",
           "lessons": [
             "Como funciona uma loja online",
             "Caminhos grátis: plataforma pronta x site próprio",
             "Duplicando a Loja Modelo no seu GitHub",
             "Cadastrando produtos, preços e fotos",
-            "A identidade da loja com a ajuda do Claude",
+            "A identidade da loja com a ajuda da IA",
             "Pagamentos: links do Mercado Pago, InfinitePay e Stripe",
             "Pedido pelo WhatsApp, frete e retirada",
             "Fotos de produto bonitas com celular e IA",
@@ -976,6 +984,7 @@
         },
         {
           "id": "projetos",
+          "ia": true,
           "title": "IA, HTML e CSS: projetos criativos",
           "sub": "Um projeto novo por aula, passo a passo",
           "art": "✦",
@@ -985,7 +994,7 @@
             "#23bf8b",
             "#4393a8"
           ],
-          "ctx": "Cada aula é UM projeto completo, do zero ao ar, usando só ferramentas grátis: Claude grátis (para gerar e editar código), HTML/CSS/JS, Figma grátis, GitHub Pages, Canva grátis quando fizer sentido. Estrutura: ideia e referência → desenho rápido → prompt pronto para o Claude → ajustes de design → publicar → como mostrar no portfólio. Projetos simples e bonitos, que dão para fazer em 1 a 2 horas.",
+          "ctx": "Cada aula é UM projeto completo, do zero ao ar, usando só ferramentas grátis: uma IA grátis à escolha (Claude, ChatGPT, Gemini; para gerar e editar código), HTML/CSS/JS, Figma grátis, GitHub Pages, Canva grátis quando fizer sentido. Estrutura: ideia e referência → desenho rápido → prompt pronto para a IA → ajustes de design → publicar → como mostrar no portfólio. Projetos simples e bonitos, que dão para fazer em 1 a 2 horas.",
           "lessons": [
             "Cartão de visita digital interativo",
             "Seu link na bio próprio",
@@ -1029,6 +1038,7 @@
         },
         {
           "id": "ux-ia",
+          "ia": true,
           "title": "IA e UX Design",
           "sub": "Pesquisa, wireframes e design mais rápido e melhor",
           "art": "UX",

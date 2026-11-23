@@ -10,7 +10,7 @@ const authStorage = {
   setItem(k, v) { try { this._s()?.setItem(k, v); } catch { } },
   removeItem(k) { try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch { } }
 };
-import { makeAI, NoKeyError } from './ai.js?v=63';
+import { makeAI, NoKeyError } from './ai.js?v=64';
 import { speak, stopSpeaking, pauseSpeaking, resumeSpeaking, onSpeechState, speechState, listen, canListen, canSpeak } from './speech.js?v=63';
 import { initSaude, cuidar, startAgua } from './saude.js?v=63';
 import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=63';
@@ -57,7 +57,7 @@ function course(key) {
   }
   const t = trk(id);
   if (!t) throw new Error('Curso não encontrado.');
-  return { key, kind, id, title: t.title, sub: t.sub, art: t.art, icon: t.icon, pat: t.pat, ctx: t.ctx, g: t.g, locale: CL.locale, lang: CL, contentLang: cl, base: t.lessons, track: t.track };
+  return { key, kind, id, title: t.title, sub: t.sub, art: t.art, icon: t.icon, pat: t.pat, ctx: t.ctx, g: t.g, locale: CL.locale, lang: CL, contentLang: cl, base: t.lessons, track: t.track, ia: !!t.ia };
 }
 function contentLangOf(key) { const s = S.state.courses[key]; return s?.contentLang || (s?.inEnglish ? 'en' : '') || S.state.profile?.prefs?.contentLang || 'pt'; }
 const visibleEv = e => { const st = S.state; return (!st.historyFrom || e.date >= st.historyFrom) && !(st.hiddenCourses || []).includes(e.course); };
@@ -181,7 +181,7 @@ async function home() {
   const A = C.tracks[areaId];
   const areas = [
     { t: 'Idiomas', s: `${C.languages.length} idiomas, do zero ao fluente`, i: 'languages', href: '#/idiomas', g: ['#2dd4bf', '#2563eb'], items: ['Aulas personalizadas do A1 ao C2', 'Conversação por voz com correção', 'Cronograma e prova de nível'] },
-    { t: 'Tecnologia & IA', s: 'Rumo ao trabalho dos sonhos', i: 'cpu', href: '#/trilha/tech', g: ['#38bdf8', '#4f46e5'], items: ['IA no dia a dia e Claude grátis', 'Currículo, entrevistas e portfólio', 'Mentoria de carreira'] },
+    { t: 'Tecnologia & IA', s: 'Rumo ao trabalho dos sonhos', i: 'cpu', href: '#/trilha/tech', g: ['#38bdf8', '#4f46e5'], items: ['IA no dia a dia e IAs grátis', 'Currículo, entrevistas e portfólio', 'Mentoria de carreira'] },
     { t: A.name, s: 'Sua área de interesse', i: A.icon, href: '#/trilha/' + areaId, g: A.g, items: A.courses.slice(0, 3).map(c => c.title) }
   ];
   const cr = S.state.career;
@@ -484,7 +484,7 @@ async function aula(key, id) {
     .then(c => { lesson.conversation = c; S.putLesson(key, L.cacheId || L.id, lesson); }).finally(() => { convJob = null; });
   if (isLangC && !lesson.conversation) setTimeout(() => { if (!lesson.conversation && location.hash.includes('/aula/')) preparo().then(P => P.podePreparar(S, LIMITE_IA) && convFor()).catch(() => { }); }, 2500); // já deixa a conversação pronta enquanto a pessoa lê a aula
   let step = 0;
-  const tabs = isLangC ? [['aula', 'Aula'], ['vocab', 'Vocabulário'], ['ex', 'Exercícios'], ['conv', 'Conversação'], ['mais', 'Para ir além']] : [['aula', 'Aula'], ['vocab', 'Termos'], ['ex', 'Exercícios'], ['valor', 'Seu valor'], ['mais', 'Para ir além']];
+  const tabs = isLangC ? [['aula', 'Aula'], ['vocab', 'Vocabulário'], ['ex', 'Exercícios'], ['conv', 'Conversação'], ['mais', 'Para ir além']] : [['aula', 'Aula'], ['vocab', 'Termos'], ['ex', 'Exercícios'], ['valor', 'Seu valor'], ...(d.ia ? [['economia', 'Economia de uso']] : []), ['mais', 'Para ir além']];
   const bodyLoc = !isLangC && d.contentLang && d.contentLang !== 'pt' ? loc : 'pt-BR';
   const plain = t => String(t || '').replace(/```[\s\S]*?```/g, ' ').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/^\s*(?:[-*•]|\d+[.)])\s+/gm, '').replace(/[`*_#>|]/g, '').replace(/\s+/g, ' ').trim();
   function lessonSegments() { // o que a IA lê quando a pessoa toca em "Ouvir a aula"
@@ -542,6 +542,9 @@ async function aula(key, id) {
     } else if (tab === 'valor') {
       body.innerHTML = '<span class="spin"></span>';
       import('./valor.js?v=63').then(V => { if (body.isConnected) body.innerHTML = V.valorHTML(d.track) + `<div class="row" style="margin-top:26px"><button class="btn btn-pink" data-step="${tabs.length - 1}">${tabs[tabs.length - 1][1]}</button></div>`; $$('[data-step]').forEach(b => b.onclick = () => { step = +b.dataset.step; render(); window.scrollTo(0, 0); }); }).catch(() => { if (body.isConnected) body.innerHTML = '<p class="muted">Não consegui abrir agora. Tente de novo.</p>'; });
+    } else if (tab === 'economia') { // arquivo à parte: só carrega quando a pessoa abre esta aba
+      body.innerHTML = '<span class="spin"></span>';
+      import('./economia.js?v=1').then(E => { if (body.isConnected) body.innerHTML = E.economiaHTML() + `<div class="row" style="margin-top:26px"><button class="btn btn-pink" data-step="${tabs.length - 1}">${tabs[tabs.length - 1][1]}</button></div>`; $$('[data-step]').forEach(b => b.onclick = () => { step = +b.dataset.step; render(); window.scrollTo(0, 0); }); }).catch(() => { if (body.isConnected) body.innerHTML = '<p class="muted">Não consegui abrir agora. Tente de novo.</p>'; });
     } else if (tab === 'mais') {
       body.innerHTML = extraHTML(lesson, d);
     } else {
