@@ -755,7 +755,7 @@
         {
           "id": "comunicacao",
           "title": "Comunicação e oratória",
-          "sub": "Fale com clareza e confiança",
+          "sub": "Aprenda a falar, ouvir e resolver conflitos com clareza.",
           "art": "Aa",
           "icon": "megaphone",
           "pat": "rings",
@@ -800,8 +800,8 @@
         },
         {
           "id": "pensamento-critico",
-          "title": "Pensamento crítico e segurança digital",
-          "sub": "Fake news, golpes online, privacidade e uso sábio da IA",
+          "title": "Segurança digital",
+          "sub": "Identifique golpes e notícias falsas e proteja os seus dados.",
           "art": "🛡",
           "icon": "shield-check",
           "pat": "grid",
@@ -1245,7 +1245,7 @@
         {
           "id": "primeiros-socorros",
           "title": "Primeiros socorros",
-          "sub": "O que fazer nos primeiros minutos de uma emergência",
+          "sub": "Saiba o que fazer nos primeiros minutos de uma emergência.",
           "art": "+",
           "icon": "heart-pulse",
           "pat": "rings",
@@ -1269,8 +1269,8 @@
         },
         {
           "id": "cozinhar-basico",
-          "title": "Cozinhar o básico e planejar a semana",
-          "sub": "Comida simples, barata e que nutre",
+          "title": "Cozinha simplificada",
+          "sub": "Receitas simples e baratas, com a semana de refeições planejada.",
           "art": "🍳",
           "icon": "chef-hat",
           "pat": "diag",
@@ -1592,8 +1592,8 @@
         },
         {
           "id": "dinheiro-basico",
-          "title": "Dinheiro básico",
-          "sub": "Orçamento, dívidas, reserva e como fugir de golpes",
+          "title": "Finanças simplificadas",
+          "sub": "Organize seus gastos, saia das dívidas e proteja-se de golpes.",
           "art": "R$",
           "icon": "wallet",
           "pat": "dots",
@@ -1697,7 +1697,7 @@
         {
           "id": "saude-emocional",
           "title": "Saúde emocional",
-          "sub": "Ansiedade, sono, estresse e relações, com calma",
+          "sub": "Um espaço acolhedor para entender o que você sente e cuidar de si, no seu ritmo.",
           "art": "♡",
           "icon": "heart",
           "pat": "rings",
@@ -1722,7 +1722,7 @@
         {
           "id": "direitos-cidadania",
           "title": "Direitos e cidadania",
-          "sub": "Consumidor, trabalho, contratos e como o governo funciona",
+          "sub": "Entenda seus direitos como consumidor, no trabalho e no dia a dia.",
           "art": "⚖",
           "icon": "scale",
           "pat": "grid",
@@ -1746,8 +1746,8 @@
         },
         {
           "id": "decisoes",
-          "title": "Decidir bem e organizar a vida",
-          "sub": "Foco, prioridades e escolhas com menos peso",
+          "title": "Organização da vida",
+          "sub": "Defina prioridades, ganhe foco e decida com mais tranquilidade.",
           "art": "◎",
           "icon": "compass",
           "pat": "diag",
@@ -1770,8 +1770,8 @@
         },
         {
           "id": "planeta-comunidade",
-          "title": "Consumo consciente e comunidade",
-          "sub": "Pequenas escolhas que cuidam do planeta e de quem está perto",
+          "title": "Sustentabilidade simplificada",
+          "sub": "Pequenas escolhas para cuidar do planeta e da sua comunidade.",
           "art": "🌱",
           "icon": "leaf",
           "pat": "dots",
@@ -1800,39 +1800,39 @@
     "itens": [
       {
         "k": "trk:dinheiro-basico",
-        "por": "Para o dinheiro render e para fugir de golpes"
+        "por": "Organize seus gastos, saia das dívidas e proteja-se de golpes."
       },
       {
         "k": "trk:primeiros-socorros",
-        "por": "Saber agir nos primeiros minutos pode salvar uma vida"
+        "por": "Saiba o que fazer nos primeiros minutos de uma emergência."
       },
       {
         "k": "trk:direitos-cidadania",
-        "por": "Conhecer seus direitos protege você"
+        "por": "Entenda seus direitos como consumidor, no trabalho e no dia a dia."
       },
       {
         "k": "trk:saude-emocional",
-        "por": "Cuidar da cabeça sustenta todo o resto"
+        "por": "Um espaço acolhedor para entender o que você sente e cuidar de si, no seu ritmo."
       },
       {
         "k": "trk:pensamento-critico",
-        "por": "Para não cair em golpes nem em fake news"
+        "por": "Identifique golpes e notícias falsas e proteja os seus dados."
       },
       {
         "k": "trk:comunicacao",
-        "por": "Falar, ouvir e resolver conflitos"
+        "por": "Aprenda a falar, ouvir e resolver conflitos com clareza."
       },
       {
         "k": "trk:cozinhar-basico",
-        "por": "Comer bem gastando menos"
+        "por": "Receitas simples e baratas, com a semana de refeições planejada."
       },
       {
         "k": "trk:decisoes",
-        "por": "Prioridades e foco no dia a dia"
+        "por": "Defina prioridades, ganhe foco e decida com mais tranquilidade."
       },
       {
         "k": "trk:planeta-comunidade",
-        "por": "Cuidar do lugar onde você vive"
+        "por": "Pequenas escolhas para cuidar do planeta e da sua comunidade."
       }
     ]
   },
