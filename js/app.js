@@ -200,24 +200,24 @@ async function home() {
     </div>
   </section>
 
-  <section class="section"><div class="section-head"><div><div class="eyebrow">Sua IA</div><h2 style="margin-top:8px">Como funciona o seu limite de IA</h2></div><button class="btn btn-ghost btn-sm" data-iainfo>Entender tudo</button></div>
+  <section class="section" data-bloco="ia"><div class="section-head"><div><div class="eyebrow">Sua IA</div><h2 style="margin-top:8px">Como funciona o seu limite de IA</h2></div><button class="btn btn-ghost btn-sm" data-iainfo>Entender tudo</button></div>
     <div class="grid g3">
       <div class="panel"><h3>Seu uso hoje</h3><div style="margin-top:14px">${iaMeterHTML()}</div><p class="small muted" style="margin-top:12px">O IAlvorecer é gratuito para todo mundo, então cada pessoa tem uma quantidade de usos por dia. Renova todo dia à meia-noite.</p></div>
       <div class="panel"><h3>O que gasta</h3><div style="margin-top:12px">${CUSTOS.slice(0, 4).map(([a, c, i]) => `<div class="row small" style="padding:7px 0;border-bottom:1px solid var(--line)"><span>${i} ${a}</span><span class="spacer"></span><b>${c}</b></div>`).join('')}</div><button class="btn btn-ghost btn-sm" data-iainfo style="margin-top:12px">Ver tudo</button></div>
       <div class="panel"><h3>Quer usar mais?</h3><p class="small muted" style="margin:10px 0 14px">Conecte a sua própria IA (Google Gemini, grátis) e use sem o limite do site. Leva 2 minutos e ela continua tão carinhosa e inteligente quanto aqui.</p><button class="btn btn-pink btn-sm" data-iainfo="conectar">Conectar minha IA</button></div>
     </div></section>
 
-  <section class="section"><div class="section-head"><div><div class="eyebrow">Explore</div><h2 style="margin-top:8px">O que você pode aprender aqui</h2></div><span class="small dim">${nCourses} cursos</span></div>
+  <section class="section" data-bloco="explore"><div class="section-head"><div><div class="eyebrow">Explore</div><h2 style="margin-top:8px">O que você pode aprender aqui</h2></div><span class="small dim">${nCourses} cursos</span></div>
     <div class="grid g3">${areas.map((a, i) => `<a class="area pat-${['rings', 'grid', 'dots'][i]}" href="${a.href}" style="${grad(a.g)}"><div><span class="aic">${icoOf(a.i)}</span><h3>${esc(a.t)}</h3><p>${esc(a.s)}</p><ul>${a.items.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div><span class="btn btn-pink btn-sm" style="align-self:flex-start;margin-top:18px">Explorar</span></a>`).join('')}</div></section>
 
-  <section class="section"><div class="section-head"><div><div class="eyebrow">Áreas de interesse</div><h2 style="margin-top:8px">Escolha o que faz sentido para você</h2></div><button class="btn btn-ghost btn-sm" id="homeAreas">▦ Todas as áreas</button></div>
+  <section class="section" data-bloco="areas"><div class="section-head"><div><div class="eyebrow">Áreas de interesse</div><h2 style="margin-top:8px">Escolha o que faz sentido para você</h2></div><button class="btn btn-ghost btn-sm" id="homeAreas">▦ Todas as áreas</button></div>
     <p class="muted" style="max-width:720px;margin-bottom:22px">Além de Idiomas e Tecnologia &amp; IA, uma área de interesse aparece no seu menu. Troque quando quiser no botão Áreas do topo, ou peça ao IAlvorecer.</p>
     <div class="atiles" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr))">${Object.entries(C.tracks).filter(([, x]) => x.area).map(([id, x]) => `<button class="atile pat-dots ${id === areaId ? 'on' : ''}" data-harea="${id}" style="${grad(x.g)}"><i>${icoOf(x.icon)}</i><div><b>${esc(x.name)}</b><br><small>${x.courses.length} cursos</small></div></button>`).join('')}</div>
   </section>
 
-  <section class="section"><div class="cta-band"><span class="ci">✦</span><div style="flex:1;min-width:220px"><h3 style="font-size:21px">Não achou o seu curso?</h3><p class="muted" style="margin:6px 0 0">Peça ao IAlvorecer e ele cria um curso completo só para você, em Seu Alvorecer.</p></div><button class="btn btn-ghost" id="seuInfo">Como funciona</button><button class="btn btn-pink" id="homeAsk">✦ Pedir um curso</button></div></section>
+  <section class="section" data-bloco="curso"><div class="cta-band"><span class="ci">✦</span><div style="flex:1;min-width:220px"><h3 style="font-size:21px">Não achou o seu curso?</h3><p class="muted" style="margin:6px 0 0">Peça ao IAlvorecer e ele cria um curso completo só para você, em Seu Alvorecer.</p></div><button class="btn btn-ghost" id="seuInfo">Como funciona</button><button class="btn btn-pink" id="homeAsk">✦ Pedir um curso</button></div></section>
 
-  <section class="section"><div class="section-head"><div><div class="eyebrow">Método</div><h2 style="margin-top:8px">Como funciona</h2></div></div>
+  <section class="section" data-bloco="metodo"><div class="section-head"><div><div class="eyebrow">Método</div><h2 style="margin-top:8px">Como funciona</h2></div></div>
     <div class="grid g4 how">
       <div class="step"><b>1</b><h4>Receba o convite</h4><p>No horário que você escolher, chega um e-mail com a aula do dia (se você quiser).</p></div>
       <div class="step"><b>2</b><h4>Aprenda e pratique</h4><p>Aula curta, vocabulário com áudio e exercícios corrigidos na hora pelo IAlvorecer.</p></div>
@@ -225,7 +225,7 @@ async function home() {
       <div class="step"><b>4</b><h4>Lembre para sempre</h4><p>Palavras e erros viram cartões de revisão. Toda sexta tem teste da semana.</p></div>
     </div></section>
 
-  <section class="section feature">
+  <section class="section feature" data-bloco="assistente">
     <div><div class="eyebrow">Falar com o IAlvorecer</div><h2 style="margin:12px 0 12px">Precisa de algo? É só pedir.</h2>
       <p class="muted">Tire dúvidas, mude o cronograma, troque o nível, deixe as aulas mais curtas, pause os e-mails ou abra a mentoria de carreira. Tudo com botão de desfazer.</p>
       <button class="btn btn-pink" id="homeAsst" style="margin-top:20px">✦ Falar com o IAlvorecer</button></div>
@@ -236,23 +236,24 @@ async function home() {
     </div>
   </section>
 
-  <section class="section feature">
+  <section class="section feature" data-bloco="mentoria">
     <div><div class="eyebrow">Mentoria de carreira</div><h2 style="margin:12px 0 12px">Do trabalho de hoje ao trabalho dos sonhos</h2>
       <p class="muted">Converse com o IAlvorecer sobre seus objetivos, medos, o salário que você quer e seus sonhos. A conversa fica salva e o plano se atualiza a cada sessão.</p>
       <a class="btn btn-pink" href="#/mentoria" style="margin-top:20px">${cr?.plan ? 'Ver meu plano de carreira' : 'Começar mentoria'}</a></div>
     <div class="area pat-rings" style="background:linear-gradient(150deg,#2dd4bf,#4f46e5);min-height:220px"><span class="aic">${ic('compass')}</span><div>${cr?.plan ? `<div class="small" style="opacity:.85">Agora</div><b>${esc(cr.plan.agora || '')}</b>` : '<b>Agora → em 1–2 anos → o sonho</b>'}</div></div>
   </section>
 
-  <section class="section"><a class="cta-band" href="#/cuidar"><span class="ci">${ic('heart-handshake')}</span><div style="flex:1;min-width:220px"><h3 style="font-size:21px">Cuidar de mim</h3><p class="muted" style="margin:6px 0 0">Desabafo, alimentação, água e treino com apoio de IA, para quem não pode pagar esses profissionais agora. Com carinho e honestidade, sem substituir profissionais.</p></div><span class="btn btn-pink">Abrir</span></a></section>
-  <section class="section feature"><div><div class="eyebrow">Sobre o IAlvorecer</div><h2 style="margin:12px 0 12px">Um novo dia, uma nova chance</h2><p class="muted">O IAlvorecer é feito com IA para quem não tem condições de pagar cursos, nutricionista, personal trainer ou psicólogo. É uma base para ajudar: pode errar e não substitui profissionais qualificados.</p><div class="row" style="margin-top:20px"><a class="btn btn-ghost" href="#/sobre">Conhecer a história</a><a class="btn btn-pink" href="#/apoiar">Apoiar com Pix</a></div></div>
+  <section class="section" data-bloco="cuidar"><a class="cta-band" href="#/cuidar"><span class="ci">${ic('heart-handshake')}</span><div style="flex:1;min-width:220px"><h3 style="font-size:21px">Cuidar de mim</h3><p class="muted" style="margin:6px 0 0">Desabafo, alimentação, água e treino com apoio de IA, para quem não pode pagar esses profissionais agora. Com carinho e honestidade, sem substituir profissionais.</p></div><span class="btn btn-pink">Abrir</span></a></section>
+  <section class="section feature" data-bloco="sobre"><div><div class="eyebrow">Sobre o IAlvorecer</div><h2 style="margin:12px 0 12px">Um novo dia, uma nova chance</h2><p class="muted">O IAlvorecer é feito com IA para quem não tem condições de pagar cursos, nutricionista, personal trainer ou psicólogo. É uma base para ajudar: pode errar e não substitui profissionais qualificados.</p><div class="row" style="margin-top:20px"><a class="btn btn-ghost" href="#/sobre">Conhecer a história</a><a class="btn btn-pink" href="#/apoiar">Apoiar com Pix</a></div></div>
     <div style="display:flex;flex-direction:column;gap:10px"><button class="task" data-fb="avaliacao" style="text-align:left;width:100%"><span class="ck">⭐</span><span><div class="t">Avaliar o IAlvorecer</div><div class="s">Sua opinião chega direto para a criadora</div></span></button><button class="task" data-fb="erro" style="text-align:left;width:100%"><span class="ck">⚠️</span><span><div class="t">Reportar um erro</div><div class="s">Algo não funcionou? Conte pra gente</div></span></button></div></section>
-  <section class="section"><div class="stats">
+  <section class="section" data-bloco="numeros"><div class="stats">
     <div class="stat"><b>${S.state.stats.lessons}</b><span>aulas feitas</span></div>
     <div class="stat"><b>${S.state.stats.conversations}</b><span>conversações (${S.state.stats.minutes} min)</span></div>
     <div class="stat"><b>${S.srs.length}</b><span>palavras na memória</span></div>
     <div class="stat"><b>${S.state.streak.best || 0}</b><span>recorde de dias seguidos</span></div>
   </div></section>`;
   $('#homeStart').onclick = () => abrirComecar();
+  window.IAPers && IAPers.home();
   $('#homeAsst').onclick = () => openAssistant();
   $('#homeAreas').onclick = () => openAreas();
   $('#homeAsk').onclick = () => openAssistant('Quero um curso de ');
@@ -926,7 +927,7 @@ async function ajustes() {
   <div class="panel" style="margin-bottom:18px"><h3 style="margin-bottom:14px">Perfil</h3>
     <div class="grid g2"><div class="field"><label>Seu nome</label><input id="nm" value="${esc(st.profile.name)}"></div><div class="field"><label>Sua área profissional</label><input id="ar" value="${esc(st.profile.area)}"></div></div>
     <div class="field"><label>Idioma das aulas (Tecnologia, áreas de interesse e Seu Alvorecer) e do IAlvorecer</label><select id="cl">${[['pt', 'Português'], ['en', 'Inglês (English)'], ['es', 'Espanhol (Español)']].map(([v, l]) => `<option value="${v}" ${(st.profile.prefs?.contentLang || 'pt') === v ? 'selected' : ''}>${l}</option>`).join('')}</select><div class="help">Dá pra mudar só de um curso no topo da página dele (PT / EN / ES). Os cursos de idiomas seguem o seu nível.</div></div></div>
-  <div class="panel" style="margin-bottom:18px"><h3 style="margin-bottom:6px">Aparência</h3><p class="small muted" style="margin-bottom:14px">Escolha as cores do site: paletas prontas (Nascer do sol, Manhã, Meio-dia e outras) ou as suas. Fica salvo só neste aparelho.</p><div class="row" style="gap:14px;align-items:center"><button type="button" class="btn btn-ghost" data-tema-open><i data-lucide="palette"></i> Personalizar cores</button><span class="small muted">Tema atual: <b data-tema-nome>${esc(temaNome())}</b></span></div></div>
+  <div class="panel" style="margin-bottom:18px"><h3 style="margin-bottom:6px">Aparência</h3><p class="small muted" style="margin-bottom:14px">Escolha as cores do site: paletas prontas (Nascer do sol, Manhã, Meio-dia e outras) ou as suas. Fica salvo só neste aparelho.</p><div class="row" style="gap:14px;align-items:center"><button type="button" class="btn btn-ghost" data-tema-open><i data-lucide="palette"></i> Personalizar cores</button><button type="button" class="btn btn-ghost" data-pers-open><i data-lucide="layout-dashboard"></i> Personalizar o site</button><span class="small muted">Tema atual: <b data-tema-nome>${esc(temaNome())}</b></span></div></div>
   <div class="panel" style="margin-bottom:18px"><h3 style="margin-bottom:6px">Dias de estudo</h3><p class="small muted" style="margin-bottom:14px">Fins de semana e feriados são de descanso por padrão. Quem trabalha muito pode escolher só os dias que cabem na rotina. Lembre: ter pelo menos 1 dia de descanso do trabalho e/ou dos estudos ajuda o conteúdo a fixar melhor.</p><div class="row" style="gap:14px;align-items:center"><button type="button" class="btn btn-ghost" id="diasOpen">Escolher dias de estudo</button><span class="small muted" id="diasRes">${esc(diasResumo())}</span></div></div>
   <div class="panel" style="margin-bottom:18px"><h3 style="margin-bottom:6px">Plano de estudos</h3><p class="small muted" style="margin-bottom:14px">O e-mail da manhã e a tela inicial seguem isto. Nos dias marcados, a aula do dia é do idioma secundário.</p>
     <div class="grid g2"><div class="field"><label>Idioma principal</label><select id="pm">${langOpts(st.plan.main)}</select></div>
@@ -1756,6 +1757,7 @@ async function boot() {
   $('#topbar').hidden = false; $('#tabbar').hidden = false;
   document.body.insertAdjacentHTML('beforeend', '<button class="fab" id="fab">✦ Falar com o IAlvorecer</button>');
   $('#fab').onclick = () => toggleAssistant();
+  window.IAPers && IAPers.topo();
   $('#areasBtn').onclick = () => openAreas();
   $('#avatar').textContent = (S.state.profile.name || 'A')[0].toUpperCase();
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') S.flush(); });

@@ -678,3 +678,25 @@ select option{background:var(--bg2);color:var(--text)}
 /* Cuidados: termos com pesquisa científica */
 a.sci{color:var(--mint);text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;font-weight:600}
 a.sci:hover{color:var(--sun)}
+
+/* Personalizar o site (js/pers.js aplica; js/pers-ui.js é o painel, carregado só ao abrir) */
+[data-pers-off]{display:none!important}
+[data-bloco][data-cor] .panel,[data-bloco][data-cor] .stat,[data-bloco][data-cor] .step,[data-bloco][data-cor] .area,[data-bloco][data-cor] .atile,[data-bloco][data-cor] .cta-band,[data-bloco][data-cor] .task,[data-bloco][data-cor].feature,[data-bloco][data-cor] .cta-band.cta-band{background:var(--pers-cor)!important;background-image:none!important}
+.ps-box{max-width:560px;max-height:88vh;overflow:auto}
+.ps-h{font-size:15px;margin:22px 0 10px;font-family:Sora,Inter,sans-serif}
+.ps-lista{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.ps-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;justify-content:space-between;padding:8px 10px;border-radius:14px;background:rgba(var(--text-rgb),.06);border:1px solid rgba(var(--text-rgb),.12)}
+.ps-nome{display:flex;align-items:center;gap:10px;font-weight:600;font-size:14px;min-width:0;flex:1 1 150px}
+.ps-dot{width:14px;height:14px;border-radius:50%;flex:none;background:rgba(var(--text-rgb),.25);border:1px solid rgba(var(--text-rgb),.4)}
+.ps-act{display:flex;gap:4px}
+.ps-act .iconbtn[disabled]{opacity:.35;cursor:default}
+.ps-cores{flex-basis:100%;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding-top:6px}
+.ps-sw{width:28px;height:28px;border-radius:50%;border:2px solid rgba(var(--text-rgb),.35)}
+.ps-sw.on{outline:3px solid var(--sun);outline-offset:2px}
+.ps-sw[disabled]{opacity:.3}
+.ps-pick input{width:34px;height:30px;padding:0;border:0;background:none;cursor:pointer}
+.ps-aviso{flex-basis:100%;margin:0;min-height:0}
+.ps-aviso:empty{display:none}
+.ps-chks{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px 14px}
+.ps-chk{display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer}
+.ps-chk input{width:18px;height:18px;accent-color:var(--sun)}
