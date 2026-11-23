@@ -1040,3 +1040,36 @@ a.sci:hover{color:var(--sun)}
 .hx-ctrl{gap:14px}
 /* cards extras coloridos */
 .hx-extra{background-color:transparent}
+
+/* início v9: cuidados em azul brilhante, card central da marca e navegação em uma barra só */
+.hx-cuid-l .hx-cu:nth-child(n){--c:rgb(var(--sky-rgb))}
+.hx-cu{background:linear-gradient(180deg,rgba(var(--sky-rgb),.30),rgba(var(--sky-rgb),.10));border-color:rgba(var(--sky-rgb),.55)}
+.hx-cu::before{background:linear-gradient(90deg,rgb(var(--mint-rgb)),rgb(var(--sky-rgb)))}
+.hx-cu-i{color:#d6efff;filter:drop-shadow(0 0 8px rgba(var(--sky-rgb),.7))}.hx-cu-n{color:rgb(var(--mint-rgb))}
+.hx-cu b{color:#fff}
+.hx-cu:hover{background:linear-gradient(180deg,rgba(var(--sky-rgb),.42),rgba(var(--sky-rgb),.16));border-color:rgb(var(--sky-rgb))}
+.hx-cuid{border-color:rgba(var(--sky-rgb),.4);background:linear-gradient(90deg,rgba(var(--sky-rgb),.16),rgba(var(--mint-rgb),.08))}
+.hx-cuid-t b{color:rgb(var(--sky-rgb))}
+
+/* card central */
+.hx-centro{width:min(310px,34%);padding:24px 22px 20px;gap:9px;border:3px solid transparent;border-radius:var(--rq);color:#fff;
+  background:linear-gradient(150deg,#1f6a92 0%,#1a5479 100%) padding-box,linear-gradient(135deg,rgb(var(--mint-rgb)),rgb(var(--sky-rgb)) 50%,rgb(var(--mint-rgb))) border-box;
+  box-shadow:0 14px 40px rgba(0,0,0,.4),0 0 34px rgba(var(--mint-rgb),.28)}
+.hx-centro::before{background:radial-gradient(circle,rgba(var(--mint-rgb),.4),transparent 68%);opacity:.9}
+.hx-centro::after{background:radial-gradient(circle,rgba(var(--sky-rgb),.45),transparent 70%);opacity:.9}
+.hx-c-ic{color:rgb(var(--mint-rgb));filter:drop-shadow(0 0 12px rgba(var(--mint-rgb),.8));width:46px;height:46px}
+.hx-c-t{color:rgb(var(--mint-rgb));opacity:1}
+.hx-centro h2{color:#fff}.hx-centro p{color:rgba(255,255,255,.9)}
+.hx-c-b1{background:linear-gradient(135deg,rgb(var(--mint-rgb)),rgb(var(--sky-rgb)));color:#06303f;box-shadow:0 8px 22px rgba(var(--mint-rgb),.4)}
+.hx-c-b1:hover{background:linear-gradient(135deg,rgb(var(--mint-rgb)),rgb(var(--sky-rgb)));filter:brightness(1.08)}
+.hx-c-b2{color:#fff}
+
+/* navegação: uma barra só, com setas e segmentos do mesmo material */
+.hx-bar2{display:flex;align-items:stretch;border:1px solid rgba(var(--sky-rgb),.5);border-radius:var(--rq);background:linear-gradient(90deg,rgba(var(--sky-rgb),.2),rgba(var(--mint-rgb),.12));overflow:hidden}
+.hx-bar2 .hx-sq{width:44px;height:40px;border:0;border-radius:0;background:transparent;color:#fff;box-shadow:none}
+.hx-bar2 .hx-sq:hover{background:rgba(255,255,255,.14);border:0}
+.hx-bar2 .hx-sq:first-child{border-right:1px solid rgba(var(--sky-rgb),.4)}
+.hx-bar2 .hx-sq-go{border-left:1px solid rgba(var(--sky-rgb),.4);background:transparent;color:#fff;box-shadow:none}
+.hx-bar2 .hx-tabs{display:flex;align-items:center;gap:6px;padding:0 16px}
+.hx-bar2 .hx-tab{width:34px;height:8px;border-radius:2px;background:rgba(255,255,255,.28)}
+.hx-bar2 .hx-tab.on{width:34px;background:linear-gradient(90deg,rgb(var(--mint-rgb)),#fff)}

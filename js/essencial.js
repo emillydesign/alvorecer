@@ -49,7 +49,7 @@ export function homeHTML({ C, S, esc, icoOf, grad, saudacao, dia }) {
   <div class="hx-stage"><div class="hx-grid">${pg}
     <div class="hx-centro"><span class="hx-c-ic">${icoOf('sunrise')}</span><div class="hx-c-t">Nosso diferencial</div><h2>Encontre o trabalho ideal para você</h2><p>Mentoria de carreira gratuita para descobrir e conquistar um trabalho que combine com o seu tempo e os seus cuidados. Ele orienta, você decide.</p><a class="hx-c-b1" href="#/tempo">Montar meu caminho</a><a class="hx-c-b2" href="#/mentoria">Conhecer a mentoria</a></div>
   </div></div>
-  <div class="hx-ctrl"><button type="button" class="hx-sq" id="hxPrev" aria-label="Cursos anteriores" disabled>${icoOf('chevron-left')}</button><div class="hx-tabs" role="tablist">${paginas.map((_, n) => `<button type="button" role="tab" class="hx-tab${n ? '' : ' on'}" data-go="${n}" aria-label="Cursos ${n + 1} de ${paginas.length}"></button>`).join('')}</div><button type="button" class="hx-sq hx-sq-go" id="hxNext" aria-label="Próximos cursos">${icoOf('chevron-right')}</button><span id="hxNome" data-nomes="${esc(JSON.stringify(nomes))}" hidden></span></div>`;
+  <div class="hx-ctrl"><div class="hx-bar2"><button type="button" class="hx-sq" id="hxPrev" aria-label="Cursos anteriores">${icoOf('chevron-left')}</button><div class="hx-tabs" role="tablist">${paginas.map((_, n) => `<button type="button" role="tab" class="hx-tab${n ? '' : ' on'}" data-go="${n}" aria-label="Cursos ${n + 1} de ${paginas.length}"></button>`).join('')}</div><button type="button" class="hx-sq hx-sq-go" id="hxNext" aria-label="Próximos cursos">${icoOf('chevron-right')}</button></div><span id="hxNome" data-nomes="${esc(JSON.stringify(nomes))}" hidden></span></div>`;
 }
 
 export function ligarHome(root) {
@@ -58,13 +58,12 @@ export function ligarHome(root) {
   const nomes = JSON.parse(nome.dataset.nomes || '[]'); let at = 0;
   const prev = root.querySelector('#hxPrev'), next = root.querySelector('#hxNext');
   const ir = n => {
-    n = Math.max(0, Math.min(pags.length - 1, n)); at = n;
+    n = (n + pags.length) % pags.length; at = n;
     pags.forEach((p, i) => { p.classList.toggle('on', i === n); p.classList.toggle('prev', i < n); p.classList.toggle('next', i > n); });
     dots.forEach((d, i) => d.classList.toggle('on', i === n)); nome.textContent = nomes[n] || '';
-    prev.disabled = n === 0;
   };
   dots.forEach(d => d.onclick = () => ir(+d.dataset.go));
-  next.onclick = () => ir(at === pags.length - 1 ? 0 : at + 1);
+  next.onclick = () => ir(at + 1);
   prev.onclick = () => ir(at - 1);
   let x0 = null; const st = root.querySelector('.hx-grid');
   st.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
