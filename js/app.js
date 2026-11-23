@@ -126,6 +126,7 @@ async function router() {
   cleanup?.(); cleanup = null; stopSpeaking(); closeAreas(); aplicarDias();
   const parts = location.hash.replace(/^#\/?/, '').split('/').map(decodeURIComponent);
   const fn = routes[parts[0]] || home;
+  document.body.classList.toggle('na-home', fn === home); document.body.classList.toggle('rolou', scrollY > 30);
   let navKey = parts[0] || 'home';
   if (parts[0] === 'trilha') navKey = parts[1] === 'tech' ? 'tech' : 'area';
   else if (['curso', 'aula', 'conversa', 'nivelamento'].includes(parts[0])) { const k = parts[1] || ''; navKey = k.startsWith('trk:') ? (trk(k.slice(4))?.track === 'tech' ? 'tech' : 'area') : k.startsWith('cus:') ? 'seu' : 'idiomas'; }
@@ -241,7 +242,7 @@ async function home() {
     <div class="stat"><b>${S.srs.length}</b><span>palavras na memória</span></div>
     <div class="stat"><b>${S.state.streak.best || 0}</b><span>recorde de dias seguidos</span></div>
   </div></section>`;
-  import('./essencial.js?v=13').then(E => { const el = $('#homeTopo'); if (el) { el.innerHTML = E.homeHTML({ C, S, esc, icoOf, grad, saudacao: hello + (name ? ', ' + name : ''), dia: fmtDay(t) + (rest ? (hol ? ' · ' + hol + ': ' : ' · ') + 'dia de descanso' : '') }); const b = $('#homeStart3'); if (b) b.onclick = () => abrirComecar(); E.ligarHome(el); } }).catch(() => { });
+  import('./essencial.js?v=14').then(E => { const el = $('#homeTopo'); if (el) { el.innerHTML = E.homeHTML({ C, S, esc, icoOf, grad, saudacao: hello + (name ? ', ' + name : ''), dia: fmtDay(t) + (rest ? (hol ? ' · ' + hol + ': ' : ' · ') + 'dia de descanso' : '') }); const b = $('#homeStart3'); if (b) b.onclick = () => abrirComecar(); E.ligarHome(el); } }).catch(() => { });
   window.IAPers && IAPers.home();
   $('#homeAsst').onclick = () => openAssistant();
   $('#homeAreas').onclick = () => openAreas();
@@ -1268,6 +1269,7 @@ async function mentoria(sub) {
   const hasDraft = !!draft?.history?.length;
   app.innerHTML = `<div class="eyebrow">Mentoria de carreira</div><h1 style="margin:6px 0 10px">Seu caminho profissional</h1>
   <p class="muted" style="max-width:720px">Converse com o IAlvorecer sobre onde você está, o salário que quer e seus sonhos. A cada sessão ele atualiza o seu plano: o passo possível agora, o próximo e o sonho lá na frente.</p>
+  <div class="panel mentor-passos" style="margin:18px 0 0"><div class="grid g2"><div><div class="small dim">Passo 1</div><h3 style="margin:4px 0 6px">Seu caminho de trabalho</h3><p class="small muted" style="margin-bottom:10px">${S.state.tempo?.plano ? 'Seu caminho já está montado. A mentoria usa essas respostas na conversa.' : 'Uma pesquisa rápida: horário, horas por dia, onde e em qual área você quer trabalhar.'}</p><a class="btn btn-ghost btn-sm" href="#/tempo">${S.state.tempo?.plano ? 'Rever meu caminho' : 'Montar meu caminho'}</a></div><div><div class="small dim">Passo 2</div><h3 style="margin:4px 0 6px">Conversa com a mentoria</h3><p class="small muted">Sua história, seus sonhos e seus medos viram um plano em etapas, que se atualiza a cada sessão e já parte do seu caminho.</p></div></div></div>
   <div class="row" style="margin:18px 0 26px"><a class="btn btn-pink" href="#/mentoria/sessao">${hasDraft ? `💬 Continuar a conversa de ${fmtShort(draft.started || today())}` : `🧭 ${pl ? 'Nova sessão de mentoria' : 'Começar primeira sessão'}`}</a>${hasDraft ? '<span class="small muted" style="align-self:center">Sua conversa fica salva: pode fechar e voltar outro dia.</span>' : ''}</div>
   ${pl ? `
   <div class="grid g3">
@@ -1350,7 +1352,7 @@ async function mentorSession() {
   const DRAFT = 'conversas/mentoria-rascunho.json';
   const draft = await S.read(DRAFT);
   const langs = Object.entries(S.state.courses).filter(([k]) => k.startsWith('lang:')).map(([k, s]) => `${ctitle(k)} ${s.level}`).join(', ');
-  const system = AI.mentorSystem({ career: { profile: cr.profile, plan: cr.plan, steps: (cr.steps || []).map(s => s.t), linkedin: cr.linkedin?.text?.slice(0, 4000), sessoes_anteriores: (cr.sessions || []).slice(0, 5).map(s => `${s.date}: ${s.summary}`) }, langs });
+  const system = AI.mentorSystem({ career: { profile: cr.profile, plan: cr.plan, caminho_de_trabalho: S.state.tempo ? { respostas: S.state.tempo.resp, resumo: S.state.tempo.plano?.resumo, caminhos: (S.state.tempo.plano?.caminhos || []).map(c => c.titulo) } : undefined, steps: (cr.steps || []).map(s => s.t), linkedin: cr.linkedin?.text?.slice(0, 4000), sessoes_anteriores: (cr.sessions || []).slice(0, 5).map(s => `${s.date}: ${s.summary}`) }, langs });
   const hist = draft?.history?.length ? draft.history : [];
   const started = (hist.length && draft.started) || today();
   const t0 = Date.now(); let stopMic = null, busy = false, ended = false;
@@ -1384,7 +1386,7 @@ async function mentorSession() {
     if (hist.filter(m => m.role === 'me').length < 2) { toast('Converse um pouco mais antes de encerrar (a conversa fica salva).'); ended = false; return; }
     app.innerHTML = spinner('Atualizando seu plano de carreira…');
     try {
-      const r = await AI.mentorUpdate({ transcript: hist.map(m => `${m.role === 'me' ? 'ALUNA' : 'IALVORECER'}: ${m.text}`), career: { profile: cr.profile, plan: cr.plan, steps: (cr.steps || []).map(s => s.t), linkedin: cr.linkedin?.text?.slice(0, 4000) } });
+      const r = await AI.mentorUpdate({ transcript: hist.map(m => `${m.role === 'me' ? 'ALUNA' : 'IALVORECER'}: ${m.text}`), career: { profile: cr.profile, plan: cr.plan, caminho_de_trabalho: S.state.tempo ? { respostas: S.state.tempo.resp, resumo: S.state.tempo.plano?.resumo, caminhos: (S.state.tempo.plano?.caminhos || []).map(c => c.titulo) } : undefined, steps: (cr.steps || []).map(s => s.t), linkedin: cr.linkedin?.text?.slice(0, 4000) } });
       const old = cr.steps || [];
       const nsteps = (r.steps || []).map(t => ({ t, done: !!old.find(o => norm(o.t) === norm(t))?.done }));
       const cid = `${today()}-mentoria-${uid()}`;
@@ -1792,6 +1794,7 @@ async function boot() {
   // (cliques de avaliação/erro tratados no início do boot)
   $('#topbar').hidden = false; $('#tabbar').hidden = false;
   document.body.insertAdjacentHTML('beforeend', '<button class="fab" id="fab">✦ Falar com o IAlvorecer</button>');
+  addEventListener('scroll', () => document.body.classList.toggle('rolou', scrollY > 30), { passive: true });
   $('#fab').onclick = () => toggleAssistant();
   { const tr = $('.topright'); if (tr) { tr.insertAdjacentHTML('afterbegin', '<button type="button" class="iconbtn" id="vozBtn" title="Assistente de voz" aria-label="Assistente de voz"><i data-lucide="mic"></i></button>'); $('#vozBtn').onclick = abrirVozAssistente; try { lucide.createIcons(); } catch { } } }
   visualConta();

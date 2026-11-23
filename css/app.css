@@ -1100,3 +1100,16 @@ a.sci:hover{color:var(--sun)}
 .hx-c-t{padding:5px 12px;border-radius:99px;border:1px solid rgba(var(--mint-rgb),.55);background:rgba(var(--mint-rgb),.12);color:#fff;letter-spacing:.16em;font-size:11px}
 .hx-c-b1{margin-top:6px}
 .hx-c-b2{margin-top:2px}
+
+/* início v11: só a seção inicial ao abrir (cabeçalho e botão de conversa aparecem ao rolar), bússola colorida, centro mais leve */
+body.na-home .topbar{position:fixed;left:0;right:0;top:0;transition:transform .45s var(--ease),opacity .35s}
+body.na-home:not(.rolou) .topbar{transform:translateY(-100%);opacity:0;pointer-events:none}
+.fab{transition:opacity .35s,transform .45s var(--ease)}
+body.na-home:not(.rolou) .fab{opacity:0;pointer-events:none;transform:translateY(14px)}
+body.na-home main{padding-top:0}
+@media (min-width:901px){body.na-home .home-topo{min-height:100vh;box-sizing:border-box;padding:24px 0;justify-content:center}}
+.hx-c-ic{width:76px;height:76px;padding:0;border-radius:0;background:none;box-shadow:none;border:0;margin-bottom:0;filter:drop-shadow(0 6px 18px rgba(var(--mint-rgb),.5))}
+.hx-c-ic svg{stroke-width:1.4}
+.hx-c-ic svg circle{stroke:rgb(var(--mint-rgb))}
+.hx-c-ic svg polygon{stroke:var(--sun,#ffd58a);fill:rgba(255,213,138,.3)}
+@media (min-width:901px){.hx-centro p{font-size:15.5px}.hx-centro h2{font-size:clamp(24px,2.3vw,30px)}.hx-c-b1{padding:14px 16px;font-size:16px}}
