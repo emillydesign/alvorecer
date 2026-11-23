@@ -120,7 +120,7 @@ function addCards(list, key, source) {
 }
 
 // ---------- roteamento ----------
-const routes = { agenda: async (t) => { const m = await import('./agenda.js?v=72'); m.initAgenda({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.agenda(t); }, 'boas-vindas': boasVindas, nivelamento, cronograma, mentoria, seu, cuidar: (s) => cuidar(s), cuidados: async (s) => { const m = await import('./cuidados.js?v=71'); m.initCuidados({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.cuidados(s); }, sobre, apoiar, '': home, idiomas, cursos, trilha, curso, aula, conversa, memorizacao, revisao, teste, historico, ajustes, guia };
+const routes = { tempo: async () => { const m = await import('./tempo.js?v=1'); m.initTempo({ S, AI, app, toast }); return m.tempo(); }, agenda: async (t) => { const m = await import('./agenda.js?v=72'); m.initAgenda({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.agenda(t); }, 'boas-vindas': boasVindas, nivelamento, cronograma, mentoria, seu, cuidar: (s) => cuidar(s), cuidados: async (s) => { const m = await import('./cuidados.js?v=71'); m.initCuidados({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.cuidados(s); }, sobre, apoiar, '': home, idiomas, cursos, trilha, curso, aula, conversa, memorizacao, revisao, teste, historico, ajustes, guia };
 let cleanup = null;
 async function router() {
   cleanup?.(); cleanup = null; stopSpeaking(); closeAreas(); aplicarDias();
@@ -208,6 +208,8 @@ async function home() {
     </div></section>
 
   <section class="section" data-bloco="essencial" id="homeEssencial"></section>
+  <section class="section" data-bloco="cuidados" id="homeCuidados"></section>
+  <section class="section" data-bloco="tempo" id="homeTempo"></section>
   <section class="section" data-bloco="explore"><div class="section-head"><div><div class="eyebrow">Explore</div><h2 style="margin-top:8px">O que você pode aprender aqui</h2></div><span class="small dim">${nCourses} cursos</span></div>
     <div class="grid g3">${areas.map((a, i) => `<a class="area pat-${['rings', 'grid', 'dots'][i]}" href="${a.href}" style="${grad(a.g)}"><div><span class="aic">${icoOf(a.i)}</span><h3>${esc(a.t)}</h3><p>${esc(a.s)}</p><ul>${a.items.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div><span class="btn btn-pink btn-sm" style="align-self:flex-start;margin-top:18px">Explorar</span></a>`).join('')}</div></section>
 
@@ -254,7 +256,7 @@ async function home() {
     <div class="stat"><b>${S.state.streak.best || 0}</b><span>recorde de dias seguidos</span></div>
   </div></section>`;
   $('#homeStart').onclick = () => abrirComecar();
-  import('./essencial.js?v=1').then(E => { const el = $('#homeEssencial'); if (el) el.innerHTML = E.essencialHTML({ C, S, esc, icoOf, grad }); }).catch(() => { });
+  import('./essencial.js?v=2').then(E => { const el = $('#homeEssencial'); if (el) el.innerHTML = E.essencialHTML({ C, S, esc, icoOf, grad }); const c2 = $('#homeCuidados'); if (c2) c2.innerHTML = E.cuidadosHTML({ C, esc }); const t2 = $('#homeTempo'); if (t2) t2.innerHTML = E.tempoHTML({ C, esc }); }).catch(() => { });
   window.IAPers && IAPers.home();
   $('#homeAsst').onclick = () => openAssistant();
   $('#homeAreas').onclick = () => openAreas();
