@@ -1291,6 +1291,29 @@
             "Café da manhã e lanches rápidos",
             "Seu plano de refeições da semana"
           ]
+        },
+        {
+          "id": "sol-protetor",
+          "title": "Sol, vitamina D e protetor solar",
+          "sub": "Pegar sol com segurança, sem exagero",
+          "art": "☀",
+          "icon": "sun",
+          "pat": "rings",
+          "g": [
+            "#fbbf24",
+            "#38bdf8"
+          ],
+          "ctx": "Conteúdo educativo geral, realista e sem alarmismo; não substitui profissionais. Brasil: sol forte, índice UV, horários mais seguros, FPS do protetor, reaplicação, vitamina D e quando procurar dermatologista (UBS/SUS). Nunca incentivar bronzeamento artificial.",
+          "lessons": [
+            "Por que o sol faz bem e quando faz mal",
+            "Vitamina D: o que é e como o corpo produz",
+            "Índice UV e os melhores horários",
+            "Como escolher e usar o protetor solar (FPS, quantidade, reaplicação)",
+            "Chapéu, óculos e roupas: proteção além do protetor",
+            "Pele negra, parda ou clara: cuidados e mitos",
+            "Sinais de alerta na pele: quando procurar o dermatologista",
+            "Sol e rotina: um hábito simples por dia"
+          ]
         }
       ]
     },
@@ -1812,5 +1835,57 @@
         "por": "Cuidar do lugar onde você vive"
       }
     ]
+  },
+  "cuidadosEssenciais": {
+    "eyebrow": "Cuidados essenciais",
+    "titulo": "Primeiro o básico que sustenta a sua saúde",
+    "texto": "Antes de pele, estética e rotinas, o corpo e a mente precisam do básico. Vá nesta ordem, uma etapa de cada vez, no seu ritmo.",
+    "etapas": [
+      {
+        "t": "Dormir bem",
+        "por": "Adultos costumam precisar de 7 a 9 horas por noite (crianças e adolescentes, mais). Higiene do sono ajuda a dormir no horário certo.",
+        "h": "#/curso/trk:sono-energia"
+      },
+      {
+        "t": "Beber a água que o seu corpo precisa",
+        "por": "Calcule a quantidade mínima para você e distribua nos horários do dia.",
+        "h": "#/cuidar/alimentacao"
+      },
+      {
+        "t": "Comer bem",
+        "por": "Sem dieta maluca: comida de verdade, no seu orçamento e na sua rotina.",
+        "h": "#/cuidar/alimentacao"
+      },
+      {
+        "t": "Se exercitar",
+        "por": "Um treino possível para a sua semana, seguro e no seu nível.",
+        "h": "#/cuidar/treino"
+      },
+      {
+        "t": "Pegar sol, com protetor",
+        "por": "Vitamina D e proteção da pele, sem exagero.",
+        "h": "#/curso/trk:sol-protetor"
+      },
+      {
+        "t": "Estresse e inteligência emocional",
+        "por": "Entender o que o estresse causa no corpo e como lidar com ele.",
+        "h": "#/curso/trk:saude-emocional"
+      },
+      {
+        "t": "Pele, estética e cuidados pessoais",
+        "por": "Depois do básico, cuide da pele, das unhas, do cabelo e do cheiro.",
+        "h": "#/cuidados"
+      },
+      {
+        "t": "Rotina que cabe na sua vida",
+        "por": "Monte a agenda com trabalho, deslocamento, treino, aulas e descanso.",
+        "h": "#/agenda"
+      }
+    ]
+  },
+  "tempo": {
+    "eyebrow": "Nosso diferencial",
+    "titulo": "Cuidar de si exige tempo. A gente ajuda você a ter mais.",
+    "texto": "Muita gente não consegue dormir bem, treinar ou comer direito por causa das horas de trabalho e de transporte. Por isso o IAlvorecer vai além dos cursos: ajuda você a conseguir um trabalho melhor, que pague bem e deixe tempo livre, na área que você quer (ou em home office), e tem uma mentoria de carreira onde você pode contar sua história e até desabafar."
   }
 }
