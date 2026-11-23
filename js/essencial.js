@@ -31,15 +31,19 @@ export function homeHTML({ C, S, esc, icoOf, grad, saudacao, dia }) {
   const feitas = k => Object.keys(S.state.courses?.[k]?.done || {}).length;
   const lista = E.itens.map((it, i) => ({ ...it, i, c: achar(it.k) })).filter(x => x.c);
   const POS = ['tl', 'tr', 'bl', 'br'];
+  // Cores dos cards: só tons de verde e azul (combinam com o fundo), uma dupla para cada curso, todas na mesma faixa de luminosidade
+  const PAL = { 'dinheiro-basico': ['#34d399', '#1d6fa8'], 'primeiros-socorros': ['#3fd1bd', '#0f5f6e'], 'direitos-cidadania': ['#60a5fa', '#0f766e'], 'saude-emocional': ['#67e8f9', '#2f7d6a'], 'pensamento-critico': ['#38bdf8', '#1e4f8f'], 'comunicacao': ['#5fcf97', '#1a6f86'], 'cozinhar-basico': ['#4fcf9f', '#166e4f'], 'decisoes': ['#2dd4bf', '#2563a8'], 'planeta-comunidade': ['#3fc47a', '#0e7490'] };
+  const FALL = [['#34d399', '#1d6fa8'], ['#60a5fa', '#0f766e'], ['#2dd4bf', '#2563a8'], ['#7dd3fc', '#1f8a6a']];
+  const cor = (x, i) => PAL[x.c.id] || FALL[i % FALL.length];
   const curso = (x, pos) => { const f = feitas(x.k), n = (x.c.lessons || []).length, pct = n ? Math.round(f / n * 100) : 0;
-    return `<a class="hx-card hx-${pos}" href="#/curso/${esc(x.k)}" style="${grad(x.c.g)}"><span class="hx-wm">${icoOf(x.c.icon)}</span>
+    return `<a class="hx-card hx-${pos}" href="#/curso/${esc(x.k)}" style="${grad(cor(x, x.i))}"><span class="hx-wm">${icoOf(x.c.icon)}</span>
       <span class="hx-tag">Curso essencial</span><b>${esc(x.c.title)}</b><span class="hx-d">${esc(x.por)}</span>
       <span class="hx-meta"><span>${n} aulas${f ? ' · ' + pct + '%' : ''}</span><i>${f ? 'Continuar' : 'Começar'}</i></span><span class="hx-bar" style="width:${pct}%"></span></a>`; };
   const extra = (pos, ic, t, d, h, g) => `<a class="hx-card hx-${pos} hx-extra" href="${h}" style="${grad(g)}"><span class="hx-wm">${icoOf(ic)}</span><span class="hx-tag">E mais</span><b>${esc(t)}</b><span class="hx-d">${esc(d)}</span><span class="hx-meta"><span>&nbsp;</span><i>Abrir</i></span></a>`;
   const paginas = [];
   for (let i = 0; i < lista.length; i += 4) paginas.push(lista.slice(i, i + 4).map((x, k) => curso(x, POS[k])));
   const ult = paginas[paginas.length - 1], falt = 4 - ult.length;
-  const ex = [['layout-grid', 'Ver todas as áreas', 'Idiomas, tecnologia, saúde, finanças e muito mais para explorar.', '#/cursos', ['#6366f1', '#14b8a6']], ['languages', 'Idiomas', 'Do zero ao fluente, com conversação e correção.', '#/idiomas', ['#2dd4bf', '#2563eb']], ['sparkles', 'Peça um curso', 'O IAlvorecer cria um curso do seu jeito.', '#/seu', ['#f59e0b', '#14b8a6']], ['heart-handshake', 'Cuidar de mim', 'Desabafo, alimentação e treino.', '#/cuidar', ['#86efac', '#6366f1']]];
+  const ex = [['layout-grid', 'Ver todas as áreas', 'Idiomas, tecnologia, saúde, finanças e muito mais para explorar.', '#/cursos', ['#60a5fa', '#1b8a7a']], ['languages', 'Idiomas', 'Do zero ao fluente, com conversação e correção.', '#/idiomas', ['#2dd4bf', '#1d5fa0']], ['sparkles', 'Peça um curso', 'O IAlvorecer cria um curso do seu jeito.', '#/seu', ['#5fcf97', '#1f7a8c']], ['heart-handshake', 'Cuidar de mim', 'Desabafo, alimentação e treino.', '#/cuidar', ['#7dd3fc', '#1f8a6a']]];
   for (let k = 0; k < falt; k++) { const e = ex[k]; ult.push(extra(POS[4 - falt + k], e[0], e[1], e[2], e[3], e[4])); }
   const nomes = paginas.map((_, n) => n === 0 ? 'Os mais essenciais' : n === paginas.length - 1 ? 'E mais para explorar' : 'Continue depois');
   const curtos = paginas.map((_, n) => n === 0 ? 'Essenciais' : n === paginas.length - 1 ? 'Explorar' : 'Continue depois');
