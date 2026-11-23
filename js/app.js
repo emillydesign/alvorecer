@@ -193,7 +193,6 @@ async function home() {
         <div class="eyebrow">${esc(fmtDay(t))}${rest ? ` · ${hol ? esc(hol) + ': ' : ''}dia de descanso` : ''}</div>
         <h1>${hello}${name ? ', ' + esc(name) : ''}.<br><span class="grad">Todo dia é um novo começo.</span></h1>
         <p class="lead">Idiomas, tecnologia, carreira e o que mais você quiser aprender. Um pouco por dia, no seu ritmo, com uma IA que faz de tudo para as coisas darem certo.</p>
-        <div class="row hero-cta"><button class="btn btn-pink" id="homeStart">Começar</button><a class="btn btn-ghost" href="#/cronograma">Meu cronograma</a></div>
       </div>
       <aside class="hero-cta-card" aria-label="Comece por onde quiser">
         <div class="eyebrow">Sem ordem certa</div>
@@ -260,7 +259,6 @@ async function home() {
     <div class="stat"><b>${S.srs.length}</b><span>palavras na memória</span></div>
     <div class="stat"><b>${S.state.streak.best || 0}</b><span>recorde de dias seguidos</span></div>
   </div></section>`;
-  $('#homeStart').onclick = () => abrirComecar();
   $('#homeStart2').onclick = () => abrirComecar();
   import('./essencial.js?v=2').then(E => { const el = $('#homeEssencial'); if (el) el.innerHTML = E.essencialHTML({ C, S, esc, icoOf, grad }); const c2 = $('#homeCuidados'); if (c2) c2.innerHTML = E.cuidadosHTML({ C, esc }); const t2 = $('#homeTempo'); if (t2) t2.innerHTML = E.tempoHTML({ C, esc }); }).catch(() => { });
   window.IAPers && IAPers.home();
