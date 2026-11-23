@@ -120,7 +120,7 @@ function addCards(list, key, source) {
 }
 
 // ---------- roteamento ----------
-const routes = { agenda: async (t) => { const m = await import('./agenda.js?v=65'); m.initAgenda({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.agenda(t); }, 'boas-vindas': boasVindas, nivelamento, cronograma, mentoria, seu, cuidar: (s) => cuidar(s), cuidados: async (s) => { const m = await import('./cuidados.js?v=64'); m.initCuidados({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.cuidados(s); }, sobre, apoiar, '': home, idiomas, cursos, trilha, curso, aula, conversa, memorizacao, revisao, teste, historico, ajustes, guia };
+const routes = { agenda: async (t) => { const m = await import('./agenda.js?v=65'); m.initAgenda({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.agenda(t); }, 'boas-vindas': boasVindas, nivelamento, cronograma, mentoria, seu, cuidar: (s) => cuidar(s), cuidados: async (s) => { const m = await import('./cuidados.js?v=70'); m.initCuidados({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.cuidados(s); }, sobre, apoiar, '': home, idiomas, cursos, trilha, curso, aula, conversa, memorizacao, revisao, teste, historico, ajustes, guia };
 let cleanup = null;
 async function router() {
   cleanup?.(); cleanup = null; stopSpeaking(); closeAreas(); aplicarDias();
@@ -943,6 +943,7 @@ async function ajustes() {
     <div class="field"><label>Chave do Gemini</label><input id="gk" type="password" value="${esc(cf.geminiKey || '')}" placeholder="Cole sua chave aqui"><div class="help">Crie em aistudio.google.com → Get API key.</div></div>
     <div class="field"><label>Modelo</label><input id="gm" value="${esc(cf.model || '')}" placeholder="automático (recomendado)"><div class="help">Deixe vazio: o site escolhe sozinho o modelo mais atual do Google.</div></div>
     <button class="btn btn-ghost btn-sm" id="tst">Testar IA</button> <span class="small" id="tstm"></span></div>
+  <div id="memAj"></div>
   <div class="panel" style="margin-bottom:18px"><h3 style="margin-bottom:6px">E-mails</h3><p class="small muted" style="margin-bottom:14px">Um e-mail por dia, de segunda a sexta (fora feriados), com tudo o que você precisa: a aula do dia, as revisões e a sua conversação. Lembrete extra só se você marcar uma conversação e pedir o aviso.</p>
     <div class="field"><label>E-mail que recebe as aulas</label><input id="em" value="${esc(S.user?.email || cf.email || '')}" readonly><div class="help">Os e-mails vão sempre para o e-mail da sua conta.</div></div>
     <label class="check small" style="margin-bottom:10px"><input type="checkbox" id="eon" style="width:auto" ${cf.emailsOn !== false ? 'checked' : ''}> Enviar e-mails</label>
@@ -969,6 +970,7 @@ async function ajustes() {
     cf.email = S.user?.email || cf.email; cf.emailHoraAula = +$('#hA').value; cf.emailsOn = $('#eon').checked; cf.pauseUntil = $('#pz').value || null;
     S.saveState(); S.saveConfig(); await S.flush(); $('#avatar').textContent = (st.profile.name || 'E')[0].toUpperCase(); toast('Ajustes salvos ✓');
   };
+  import('./memoria.js?v=1').then(M => { const r = $('#memAj'); if (r) { r.innerHTML = M.memoriaHTML(S); M.ligar(r, { S, openInfo, toast }); } }).catch(() => { });
   $('#tst').onclick = async () => {
     S.config.geminiKey = $('#gk').value.trim(); if ($('#gm').value.trim()) S.config.model = $('#gm').value.trim(); else delete S.config.model;
     $('#tstm').innerHTML = '<span class="spin"></span>';
@@ -1051,7 +1053,7 @@ function asstContext() {
     const ls = lessonsOf(k), nx = nextLesson(k);
     return { key: k, titulo: ctitle(k), nivel: s.level, aulas_feitas: Object.keys(s.done || {}).length, proxima: nx ? `Aula ${nx.n}: ${nx.title}` : null, proximas: ls ? ls.filter(l => !s.done[l.id]).slice(0, 8).map(l => `Aula ${l.n}: ${l.title}`) : 'plano ainda não montado' };
   }).filter(Boolean);
-  return { hoje: today(), perfil: st.profile, plano: st.plan, cursos, emails: { ligados: S.config.emailsOn !== false, conversacao: convCfg(), pausa_ate: S.config.pauseUntil || null }, historico_visivel_desde: st.historyFrom || 'início', alteracoes_que_podem_ser_desfeitas: (st.backups || []).length,
+  return { memoria_geral: memMod ? memMod.resumo(S) : undefined, hoje: today(), perfil: st.profile, plano: st.plan, cursos, emails: { ligados: S.config.emailsOn !== false, conversacao: convCfg(), pausa_ate: S.config.pauseUntil || null }, historico_visivel_desde: st.historyFrom || 'início', alteracoes_que_podem_ser_desfeitas: (st.backups || []).length,
     areas_disponiveis: Object.entries(C.tracks).filter(([, t]) => t.area).map(([id, t]) => `${id} = ${t.name}`), area_atual: st.area || 'design', idioma_das_aulas: st.profile?.prefs?.contentLang || 'pt',
     cursos_personalizados: (st.custom || []).map(c => `cus:${c.id} = ${c.title}`),
     cursos_disponiveis: [...C.languages.map(l => `lang:${l.id} = ${l.name}`), ...C.complementary.map(c => `comp:${c.id} = ${c.title}`), ...Object.values(C.tracks).flatMap(t => t.courses.map(c => `trk:${c.id} = ${c.title}`)), ...(st.custom || []).map(c => `cus:${c.id} = ${c.title}`)] };
@@ -1156,14 +1158,18 @@ function visualConta() {
   window.addEventListener('ia-pers', () => sync('pers'));
   window.addEventListener('ia-tema', () => sync('tema'));
 }
+let memMod; // memória geral (arquivo à parte), carregada quando o assistente abre
+const carregaMem = () => memMod ? Promise.resolve(memMod) : import('./memoria.js?v=1').then(m => memMod = m).catch(() => null);
 let vozMod; // arquivo à parte: só carrega quando a pessoa clica no botão de voz
 async function abrirVozAssistente() {
+  await carregaMem();
   try { vozMod ||= await import('./voz.js?v=69'); } catch { return toast('Não consegui abrir o assistente de voz agora. Tente de novo.'); }
   vozMod.abrirVoz({ C, S, AI, esc, md, toast, asstContext, applyActions, describeAction });
 }
 function closeAssistant() { $('#asst')?.remove(); if (asst.onKey) { document.removeEventListener('keydown', asst.onKey); asst.onKey = null; } }
 function toggleAssistant() { if ($('#asst')) { closeAssistant(); return; } openAssistant(); }
 function openAssistant(prefill = '') {
+  carregaMem();
   if (!$('#asst')) {
     document.body.insertAdjacentHTML('beforeend', `<div class="asst" id="asst"><div class="asst-h"><span class="avatar" style="width:36px;height:36px">✦</span><div><b>IAlvorecer</b><div class="small muted">Faz de tudo para dar certo: tira dúvidas, planeja e ajusta seus estudos</div></div><span class="spacer"></span><button class="iconbtn" id="asstUndo" title="Desfazer a última alteração">↶</button><button class="iconbtn" id="asstX" title="Fechar">✕</button></div><div class="asst-m" id="asstM"></div><div class="asst-c"><textarea id="asstT" rows="1" placeholder="Pergunte ou peça uma mudança…"></textarea><button id="asstS">➤</button></div></div>`);
     $('#asstX').onclick = e => { e.stopPropagation(); closeAssistant(); };
@@ -1618,7 +1624,7 @@ async function boasVindas() {
   const steps = [
     () => `<h1>Oi! Vamos montar o seu curso ☀️</h1><p class="muted" style="margin:10px 0 22px">Umas perguntas rápidas para o IAlvorecer te conhecer. Dá pra mudar tudo depois.</p>
       <div class="field"><label>Como você quer ser chamada(o)?</label><input id="o-name" value="${esc(o.name)}"></div>
-      <div class="field"><label>Sua área ou profissão</label><input id="o-area" value="${esc(o.area)}" placeholder="ex.: UX Design, estudante, marketing…"></div>`,
+      <div class="field"><label>Sua área ou profissão</label><input id="o-area" value="${esc(o.area)}" placeholder="ex.: UX Design, estudante, marketing…"></div><div id="memBoas"></div>`,
     () => `<h2>O que você quer aprender?</h2><p class="muted" style="margin:8px 0 16px">Escolha quantos quiser.</p>${chips('goals', [['Cuidar de mim', '💛 Cuidar de mim (desabafo, alimentação, treino)'], ['Idiomas', '🗣 Idiomas'], ['Tecnologia & IA', '🤖 Tecnologia & IA'], ['Carreira', '🧭 Carreira e mentoria'], ...Object.values(C.tracks).filter(t => t.area).map(t => [t.name, t.name]), ['Outro', '＋ Outro']], true)}${o.goals.includes('Outro') ? `<div class="field" style="margin-top:14px"><label>O que mais você quer aprender?</label><input id="o-other" value="${esc(o.other)}" placeholder="Ex.: violão, Excel, fotografia…"><div class="help">Depois é só pedir ao IAlvorecer: ele cria um curso personalizado para você em Seu Alvorecer.</div></div>` : ''}
       <h3 style="margin:28px 0 12px">Como você aprendeu o que já sabe de idiomas?</h3>${chips('learned', [['natural', 'Sozinha(o): séries, games, internet'], ['escola', 'Escola ou curso'], ['fora', 'Morando ou viajando fora'], ['zero', 'Estou começando agora']])}`,
     () => `<h2>Por qual idioma você quer começar?</h2><p class="muted" style="margin:8px 0 16px">Escolha um (ou mais). O primeiro escolhido vira o principal.</p><button class="chip ${o.noLang ? 'on' : ''}" id="o-nolang" style="margin-bottom:16px">${o.noLang ? '✓ ' : ''}Não quero aprender idiomas agora</button>${o.noLang ? '<p class="muted">Tudo bem! Quando quiser, é só abrir a aba Idiomas.</p>' : ''}<button class="btn btn-ghost btn-sm" id="o-zero" style="margin-bottom:16px">⏭ Pular nivelamento: começar do zero (A1)</button>${chips('langs', [...C.languages, ...(S.state.customLangs || [])].map(l => [l.id, l.flag ? `<img class="flagimg" src="https://flagcdn.com/w40/${l.flag}.png" alt="">${l.name}` : `🌎 ${l.name}`]), true)}<div class="row" style="margin-top:14px"><input id="o-otherlang" placeholder="Outro idioma? Ex.: Hindi, Holandês, Libras…" style="max-width:300px"><button class="btn btn-ghost btn-sm" id="o-addlang">＋ Adicionar</button></div>
@@ -1634,6 +1640,7 @@ async function boasVindas() {
   const draw = () => {
     app.innerHTML = `<div class="onb panel"><div class="dots">${steps.map((_, i) => `<i class="${i <= step ? 'on' : ''}"></i>`).join('')}</div><div id="ob">${steps[step]()}</div>
       <div class="row" style="margin-top:28px">${step ? '<button class="btn btn-ghost" id="o-back">Voltar</button>' : ''}<span class="spacer"></span><button class="btn btn-pink" id="o-next">${step === steps.length - 1 || (step === steps.length - 2 && (!o.langs.length || o.noLang)) ? 'Começar' : 'Continuar'}</button></div></div>`;
+    if (step === 0) import('./memoria.js?v=1').then(M => { const r = $('#memBoas'); if (!r) return; if (S.config.memoria === undefined) S.config.memoria = true; r.innerHTML = M.memoriaHTML(S, { compacto: true }).replace('class="panel" style="margin-bottom:18px"', 'class="panel" style="margin:8px 0 0"'); M.ligar(r, { S, openInfo, toast }); }).catch(() => { });
     $$('[data-c]').forEach(b => b.onclick = () => {
       const n = b.dataset.c, v = typeof o[n] === 'number' ? +b.dataset.v : b.dataset.v;
       if (b.dataset.m) { o[n] = o[n].includes(v) ? o[n].filter(x => x !== v) : [...o[n], v]; if (n === 'langs' && !o.levels[v]) o.levels[v] = cs('lang:' + v).level; if (n === 'styles') { if (v === 'recomendado' && o.styles.includes(v)) o.styles = ['recomendado']; else o.styles = o.styles.filter(x => x !== 'recomendado'); if (!o.styles.length) o.styles = ['recomendado']; } }
