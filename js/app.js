@@ -193,16 +193,13 @@ async function home() {
         <div class="eyebrow">${esc(fmtDay(t))}${rest ? ` · ${hol ? esc(hol) + ': ' : ''}dia de descanso` : ''}</div>
         <h1>${hello}${name ? ', ' + esc(name) : ''}.<br><span class="grad">Todo dia é um novo começo.</span></h1>
         <p class="lead">Idiomas, tecnologia, carreira e o que mais você quiser aprender. Um pouco por dia, no seu ritmo, com uma IA que faz de tudo para as coisas darem certo.</p>
-        <div class="row hero-cta"><button class="btn btn-pink" id="homeStart">Começar</button><a class="btn btn-ghost" href="#/cronograma">Meu cronograma</a></div>
       </div>
-      <aside class="hero-hoje" aria-label="Seu dia">
-        <a class="streak" href="#/historico"><span class="streak-n">${streakNow()}</span><span class="streak-t"><b>${streakNow() === 1 ? 'dia seguido' : 'dias seguidos'}</b><small>${streakNow() ? 'Continue, não quebre a sequência' : 'Comece hoje a sua sequência'}</small></span><i class="streak-ic">${ic('flame')}</i></a>
-        <div class="hoje-lista">
-          <div class="hoje-h">Hoje</div>
-          <a href="${nx ? `#/aula/${key}/${nx.id}` : `#/curso/${key}`}" class="${did('lesson') ? 'done' : ''}" style="${noLang ? 'display:none' : ''}"><i>${ic('book-open')}</i><span>${nx ? `Aula ${nx.n} de ${esc(d.title)}` : `Plano de ${esc(d.title)}`}</span></a>
-          <a href="#/revisao" class="${!due || did('review') ? 'done' : ''}"><i>${ic('repeat-2')}</i><span>${due} cartões para revisar</span></a>
-          <a href="#/conversa/${key}" class="${did('conversation') ? 'done' : ''}" style="${noLang ? 'display:none' : ''}"><i>${ic('mic')}</i><span>Conversa de ${convMin()} min</span></a>
-        </div>
+      <aside class="hero-cta-card" aria-label="Comece por onde quiser">
+        <div class="eyebrow">Sem ordem certa</div>
+        <h3>Comece por onde der mais vontade</h3>
+        <p>Idiomas, tecnologia, carreira, saúde, dinheiro e muito mais. Um passo pequeno já é começar.</p>
+        <button class="btn btn-pink" id="homeStart2">Ver todas as áreas e cursos</button>
+        <div class="hero-tags"><span>Idiomas</span><span>Tecnologia &amp; IA</span><span>Saúde</span><span>Finanças</span><span>Bem-estar</span><span>Negócios</span></div>
       </aside>
     </div>
   </section>
@@ -262,7 +259,7 @@ async function home() {
     <div class="stat"><b>${S.srs.length}</b><span>palavras na memória</span></div>
     <div class="stat"><b>${S.state.streak.best || 0}</b><span>recorde de dias seguidos</span></div>
   </div></section>`;
-  $('#homeStart').onclick = () => abrirComecar();
+  $('#homeStart2').onclick = () => abrirComecar();
   import('./essencial.js?v=2').then(E => { const el = $('#homeEssencial'); if (el) el.innerHTML = E.essencialHTML({ C, S, esc, icoOf, grad }); const c2 = $('#homeCuidados'); if (c2) c2.innerHTML = E.cuidadosHTML({ C, esc }); const t2 = $('#homeTempo'); if (t2) t2.innerHTML = E.tempoHTML({ C, esc }); }).catch(() => { });
   window.IAPers && IAPers.home();
   $('#homeAsst').onclick = () => openAssistant();
@@ -310,8 +307,11 @@ async function idiomas() {
   const others = langs.filter(k => !S.state.courses[k]);
   const byLang = {};
   for (const c of C.complementary) (byLang[c.lang] ||= []).push('comp:' + c.id);
+  setTimeout(() => $('#idiStart')?.addEventListener('click', () => window.scrollTo({ top: 520, behavior: 'smooth' })), 0);
   app.innerHTML = `
   <div class="eyebrow">Idiomas</div><h1 style="margin:6px 0 18px">Sua rota para falar com o mundo</h1>
+  <div class="idi-top"><a class="streak" href="#/historico"><span class="streak-n">${streakNow()}</span><span class="streak-t"><b>${streakNow() === 1 ? 'dia seguido' : 'dias seguidos'}</b><small>${streakNow() ? 'Continue, não quebre a sequência' : 'Comece hoje a sua sequência'}</small></span><i class="streak-ic">${ic('flame')}</i></a>
+    ${active.length ? `<a class="btn btn-pink" href="${nx ? `#/aula/${key}/${nx.id}` : `#/curso/${key}`}">${nx ? `Continuar: aula ${nx.n} de ${esc(d.title)}` : `Abrir ${esc(d.title)}`}</a>` : `<button class="btn btn-pink" id="idiStart">Escolher um idioma para começar</button>`}</div>
   <div class="journey">
     <a class="journey-card pat-${d.pat || 'rings'}" href="${nx ? `#/aula/${key}/${nx.id}` : `#/curso/${key}`}" style="${grad(d.g)}">
       <div class="art">${esc(d.art)}</div>
