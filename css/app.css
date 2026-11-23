@@ -1138,3 +1138,12 @@ body.na-home main{padding-top:0}
 .hx-centro h2{color:#fff}
 .hx-c-b1{background:linear-gradient(135deg,#f6e3d0,#e8c9ab);color:#3b2718;box-shadow:0 8px 22px rgba(232,201,171,.35)}
 .hx-c-b1:hover{background:linear-gradient(135deg,#fbebdb,#efd2b6);filter:none}
+
+/* início v13: card central com o fundo do site (segue o tema), borda fina clara e anel em degradê que apaga */
+.hx-centro{border:7px solid transparent;
+  background:linear-gradient(150deg,var(--bg-a),var(--bg-b) 55%,var(--bg-c)) padding-box,linear-gradient(135deg,rgba(var(--text-rgb),.6),rgba(var(--text-rgb),.06)) border-box;
+  box-shadow:inset 0 0 0 1.5px rgba(var(--text-rgb),.9),inset 0 0 26px rgba(var(--sky-rgb),.25),0 0 34px rgba(var(--sky-rgb),.4),0 22px 50px rgba(0,0,0,.4)}
+.hx-centro::before{display:none}
+.hx-c-b1{background:linear-gradient(135deg,color-mix(in srgb,var(--mint) 58%,#052a2e),color-mix(in srgb,var(--sky) 58%,#052a2e));color:#fff;border:1px solid rgba(var(--text-rgb),.7);box-shadow:0 8px 22px rgba(var(--mint-rgb),.35)}
+.hx-c-b1:hover{background:linear-gradient(135deg,color-mix(in srgb,var(--mint) 68%,#052a2e),color-mix(in srgb,var(--sky) 68%,#052a2e));filter:none}
+.hx-c-b1{background:linear-gradient(135deg,color-mix(in srgb,var(--mint) 72%,#065a58),color-mix(in srgb,var(--sky) 72%,#065a58));border-color:rgba(var(--text-rgb),.95);text-shadow:0 1px 2px rgba(0,0,0,.45);box-shadow:0 0 0 3px rgba(var(--mint-rgb),.25),0 8px 24px rgba(var(--mint-rgb),.5)}
