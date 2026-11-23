@@ -1155,3 +1155,11 @@ body.na-home main{padding-top:0}
 .hx-dust i{position:absolute;bottom:-8px;width:3px;height:3px;border-radius:50%;background:rgba(190,250,240,.7);box-shadow:0 0 10px rgba(var(--sky-rgb),.9);opacity:0;animation:hxFloat 12s linear infinite}
 @keyframes hxFloat{0%{transform:translateY(0);opacity:0}15%{opacity:.85}85%{opacity:.5}100%{transform:translateY(-380px);opacity:0}}
 @media (prefers-reduced-motion:reduce){.hx-dust i{animation:none;opacity:.5;bottom:40%}}
+
+/* início v15: cards pastel (azul e verde claros) com texto escuro, para alternar com os tons profundos */
+.hx-lt{color:#0b2b33}
+.hx-lt::before{background:linear-gradient(160deg,rgba(255,255,255,.22),rgba(255,255,255,0))}
+.hx-lt .hx-tag,.hx-lt b,.hx-lt .hx-d,.hx-lt .hx-meta{color:#0b2b33}
+.hx-lt .hx-tag{opacity:.8}
+.hx-lt .hx-wm{color:#0b2b33;opacity:.12}
+.hx-lt .hx-meta i{background:rgba(11,43,51,.12);border-color:rgba(11,43,51,.4);color:#0b2b33}
