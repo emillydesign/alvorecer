@@ -1,6 +1,6 @@
 // Cuidar de mim: desabafo, alimentação + água + foto do prato, treino.
 // IA de apoio: NÃO substitui psicólogo, nutricionista, educador físico ou médico.
-import { $, $, esc, md as mdBase, today, uid, addDays } from './util.js';
+import { $, $$, esc, md as mdBase, today, uid, addDays } from './util.js';
 import { listen, canListen, stopSpeaking } from './speech.js?v=69';
 
 let X; // contexto: { S, AI, app, toast, spinner, errBox, setCleanup }

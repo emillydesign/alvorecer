@@ -122,9 +122,20 @@ function hoje() {
     ${lista.length ? lista.map(i => `<label class="panel check" style="margin-bottom:10px;padding:14px 18px;gap:14px;${prox?.id === i.id ? 'outline:2px solid var(--mint)' : ''}">
       <input type="checkbox" data-id="${esc(i.id)}" ${feitos[i.id] ? 'checked' : ''}>
       <b style="min-width:56px">${esc(i.hora)}</b>
-      <span style="flex:1;${feitos[i.id] ? 'opacity:.55;text-decoration:line-through' : ''}">${esc(i.titulo)}${i.ml ? ` <span class="small muted">· ${i.ml} ml de água</span>` : ''}</span>
+      <span style="flex:1;${feitos[i.id] ? 'opacity:.55;text-decoration:line-through' : ''}">${esc(i.titulo)}${i.ml ? ` <span class="small muted">· ${i.ml} ml de água</span>` : ''}${cardapioDe(i)}</span>
       ${LINKS[i.tipo] ? `<a class="btn btn-ghost btn-sm" href="${LINKS[i.tipo][0]}">${esc(LINKS[i.tipo][1])}</a>` : ''}</label>`).join('') : '<div class="panel muted">Nada marcado para hoje. Adicione itens em "Minha rotina" ou peça ao IAlvorecer.</div>'}`;
   $$('[data-id]').forEach(c => c.onchange = () => { if (!livre()) { c.checked = !c.checked; return; } feitos[c.dataset.id] = c.checked; if (!c.checked) delete feitos[c.dataset.id]; for (const k of Object.keys(d.feitos)) if (k < addDays(t, -30)) delete d.feitos[k]; save(); hoje(); });
+}
+
+// cardápio por horário: pega a refeição do plano alimentar (Cuidar de mim) mais perto do horário do item
+function cardapioDe(item) {
+  if (item.tipo !== 'refeicao') return '';
+  const ref = X.S.state.health?.planoAlimentar?.refeicoes; if (!Array.isArray(ref) || !ref.length) return '';
+  const h = min(item.hora); let melhor = null, dist = 1e9;
+  for (const r of ref) { if (!/^\d{1,2}:\d{2}/.test(String(r.hora || ''))) continue; const m = min(String(r.hora).padStart(5, '0')); const dd = Math.abs(m - h); if (dd < dist) { dist = dd; melhor = r; } }
+  if (!melhor || dist > 120) return '';
+  const ops = (melhor.opcoes || []).slice(0, 2).join(' ou ');
+  return `<div class="small muted" style="margin-top:4px">Do seu plano: ${esc(melhor.nome || '')}${ops ? ': ' + esc(ops) : ''}</div>`;
 }
 
 // ---------- minha rotina ----------

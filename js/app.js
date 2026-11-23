@@ -12,7 +12,7 @@ const authStorage = {
 };
 import { makeAI, NoKeyError } from './ai.js?v=64';
 import { speak, stopSpeaking, pauseSpeaking, resumeSpeaking, onSpeechState, speechState, listen, canListen, canSpeak } from './speech.js?v=69';
-import { initSaude, cuidar, startAgua } from './saude.js?v=63';
+import { initSaude, cuidar, startAgua } from './saude.js?v=71';
 import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=63';
 
 let C, S, AI;
@@ -120,7 +120,7 @@ function addCards(list, key, source) {
 }
 
 // ---------- roteamento ----------
-const routes = { agenda: async (t) => { const m = await import('./agenda.js?v=65'); m.initAgenda({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.agenda(t); }, 'boas-vindas': boasVindas, nivelamento, cronograma, mentoria, seu, cuidar: (s) => cuidar(s), cuidados: async (s) => { const m = await import('./cuidados.js?v=70'); m.initCuidados({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.cuidados(s); }, sobre, apoiar, '': home, idiomas, cursos, trilha, curso, aula, conversa, memorizacao, revisao, teste, historico, ajustes, guia };
+const routes = { agenda: async (t) => { const m = await import('./agenda.js?v=71'); m.initAgenda({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.agenda(t); }, 'boas-vindas': boasVindas, nivelamento, cronograma, mentoria, seu, cuidar: (s) => cuidar(s), cuidados: async (s) => { const m = await import('./cuidados.js?v=71'); m.initCuidados({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.cuidados(s); }, sobre, apoiar, '': home, idiomas, cursos, trilha, curso, aula, conversa, memorizacao, revisao, teste, historico, ajustes, guia };
 let cleanup = null;
 async function router() {
   cleanup?.(); cleanup = null; stopSpeaking(); closeAreas(); aplicarDias();

@@ -12,6 +12,10 @@
 | `js/config.js` | endereço do Supabase, Pix, `LIMITE_IA`, `CONTATO` (iaalvorecer@gmail.com) |
 | `js/fx.js` | ícones (Lucide) e animações |
 | `js/speech.js` | voz (falar e ouvir) do navegador |
+| `js/voz.js` | assistente de voz (botão de microfone no topo); só carrega ao clicar |
+| `js/asst-rascunho.js` | rascunho do chat "Falar com o IAlvorecer"; só carrega quando o chat abre |
+| `js/memoria.js` | memória geral (a pessoa liga ou desliga em Ajustes e nas boas-vindas) |
+| `js/essencial.js` | bloco "O essencial para aprender primeiro" da tela inicial (lista em `essencial` no catalog.json) |
 | `js/util.js` | ajudantes: datas, feriados, `esc()` (proteção de texto), `md()` (formatação segura) |
 | `js/demo.js` | dados e IA de mentirinha do modo demonstração |
 | `data/catalog.json` | idiomas, níveis, áreas, trilhas e cursos |
