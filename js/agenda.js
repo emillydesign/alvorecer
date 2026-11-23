@@ -30,24 +30,22 @@ const metaAgua = () => { const p = X.S.state.health?.profile || {}; const w = +p
 
 // ---------- rotina inicial a partir das respostas ----------
 function gerarRotina(p) {
+  // Só entra o que a pessoa informou. Nada de café, jantar, água ou sono "de brinde".
   const it = [], add = (hora, titulo, tipo, dias, ml) => it.push({ id: uid(), hora, titulo, tipo, dias, ...(ml ? { ml } : {}) });
-  const ini = min(p.inicio), fim = min(p.fim), ida = p.transporte || 0;
   const trab = p.ocupacao !== 'nenhum';
   const dias = trab ? UTEIS : TODOS, nome = p.ocupacao === 'estudo' ? 'estudo' : 'trabalho';
-  add(p.acordar, 'Acordar e tomar café da manhã', 'refeicao', TODOS, 250);
+  const ida = p.transporte || 0, volta = p.transporteVolta ?? ida;
+  if (p.acordar) add(p.acordar, 'Acordar', 'sono', TODOS);
   if (trab) {
-    if (ida) add(hhmm(ini - ida), 'Sair de casa', 'transporte', dias);
-    add(p.inicio, nome === 'estudo' ? 'Início das aulas' : 'Chegada no trabalho', nome, dias, 250);
-    add(p.almoco, 'Almoço', 'refeicao', dias, 250);
-    add(p.fim, nome === 'estudo' ? 'Fim das aulas' : 'Saída do trabalho', nome, dias, 250);
-    if (ida) add(hhmm(fim + ida), 'Chegada em casa', 'transporte', dias);
-    add(hhmm(fim + ida + 60), 'Jantar', 'refeicao', dias, 250);
-  } else {
-    add(p.almoco, 'Almoço', 'refeicao', TODOS, 250);
-    add(hhmm(min(p.dormir) - 180), 'Jantar', 'refeicao', TODOS, 250);
-  }
-  add(hhmm(min(p.dormir) - 30), 'Higiene do sono (sem telas, luz baixa)', 'sono', TODOS);
-  add(p.dormir, 'Dormir', 'sono', TODOS);
+    const ini = min(p.inicio), fim = min(p.fim);
+    if (ida) add(hhmm(ini - ida), `Sair de casa (${ida} min de ida)`, 'transporte', dias);
+    add(p.inicio, nome === 'estudo' ? 'Início das aulas' : 'Chegada no trabalho', nome, dias);
+    if (p.almoco) add(p.almoco, 'Almoço', 'refeicao', dias);
+    add(p.fim, nome === 'estudo' ? 'Fim das aulas' : 'Saída do trabalho', nome, dias);
+    if (volta) add(hhmm(fim + volta), `Chegada em casa (${volta} min de volta)`, 'transporte', dias);
+  } else if (p.almoco) add(p.almoco, 'Almoço', 'refeicao', TODOS);
+  if (p.higieneSono && p.dormir) add(hhmm(min(p.dormir) - 30), 'Higiene do sono (sem telas, luz baixa)', 'sono', TODOS);
+  if (p.dormir) add(p.dormir, 'Dormir', 'sono', TODOS);
   return it;
 }
 // completa a água até a meta, nos maiores intervalos do dia, sem mexer nos horários de trabalho
@@ -80,33 +78,49 @@ export async function agenda(tab = 'hoje') {
 // ---------- perguntas iniciais ----------
 function perguntas() {
   const opt = (v, l) => `<option value="${v}">${esc(l)}</option>`;
+  const hora = (id, rot, v) => `<div class="field"><label>${rot}</label><input type="time" id="q-${id}" value="${v}"><label class="check small" style="margin-top:6px;gap:6px"><input type="checkbox" id="q-${id}-sem" style="width:auto"> Sem horário específico</label></div>`;
   X.app.innerHTML = `<div class="eyebrow">Agenda</div><h1 style="margin:10px 0 10px">Vamos montar a sua rotina</h1>
-    <p class="muted" style="max-width:720px">Responda rapidinho. Eu monto a base do seu dia (incluindo a água, sem atrapalhar o trabalho) e você muda o que quiser depois.</p>
+    <p class="muted" style="max-width:720px">Responda o que fizer sentido. Eu só coloco na rotina o que você me contar: nada vem pré-definido. Você muda tudo depois.</p>
     <div class="panel" style="max-width:640px;margin-top:20px">
       <div class="field"><label>Você trabalha ou estuda?</label><select id="q-oc">${opt('trabalho', 'Trabalho')}${opt('estudo', 'Estudo')}${opt('nenhum', 'Nenhum dos dois agora')}</select></div>
       <div id="q-hor">
         <div class="row" style="gap:12px;flex-wrap:wrap">
           <div class="field"><label>Começa às</label><input type="time" id="q-ini" value="09:00"></div>
           <div class="field"><label>Termina às</label><input type="time" id="q-fim" value="18:00"></div>
-          <div class="field"><label>Deslocamento (ida), em minutos</label><input type="number" id="q-tr" min="0" max="240" value="30"></div>
         </div>
+        <div class="row" style="gap:12px;flex-wrap:wrap">
+          <div class="field"><label>Deslocamento de ida, em minutos</label><input type="number" id="q-tr" min="0" max="240" value="30"></div>
+          <div class="field"><label>Deslocamento de volta, em minutos</label><input type="number" id="q-tv" min="0" max="240" value="30"></div>
+        </div>
+        <p class="small muted" style="margin:-4px 0 14px">Se não se desloca, deixe 0.</p>
       </div>
-      <div class="row" style="gap:12px;flex-wrap:wrap">
-        <div class="field"><label>Acorda às</label><input type="time" id="q-ac" value="07:00"></div>
-        <div class="field"><label>Almoça às</label><input type="time" id="q-al" value="12:00"></div>
-        <div class="field"><label>Dorme às</label><input type="time" id="q-do" value="22:30"></div>
-      </div>
+      <div class="row" style="gap:12px;flex-wrap:wrap">${hora('ac', 'Acorda às', '07:00')}${hora('al', 'Almoça às', '12:00')}${hora('do', 'Dorme às', '22:30')}</div>
+      <div class="notice" style="margin:8px 0 14px"><label class="check" style="gap:8px"><input type="checkbox" id="q-hs" style="width:auto"> <span><b>Incluir higiene do sono (opcional)</b><br><span class="small">É importante para melhorar a qualidade do sono e conseguir dormir no horário certo. Precisa de um horário de dormir.</span></span></label><button type="button" class="btn btn-ghost btn-sm" id="q-hs-info" style="margin-top:8px">Quero aprender como funciona</button></div>
       <div class="row" style="margin-top:8px"><button class="btn btn-pink" id="q-ok">Montar minha rotina</button></div>
     </div>`;
   const oc = $('#q-oc');
   oc.onchange = () => { $('#q-hor').hidden = oc.value === 'nenhum'; };
+  ['ac', 'al', 'do'].forEach(k => { const s = $('#q-' + k + '-sem'); s.onchange = () => { $('#q-' + k).disabled = s.checked; if (k === 'do' && s.checked) $('#q-hs').checked = false; }; });
+  $('#q-hs').onchange = () => { if ($('#q-hs').checked && $('#q-do-sem').checked) { $('#q-hs').checked = false; X.toast('Para a higiene do sono, informe o horário de dormir.'); } };
+  $('#q-hs-info').onclick = infoSono;
   $('#q-ok').onclick = () => {
     if (!livre()) return;
-    const p = { ocupacao: oc.value, inicio: $('#q-ini').value, fim: $('#q-fim').value, transporte: Math.max(0, Math.min(240, +$('#q-tr').value || 0)), acordar: $('#q-ac').value, almoco: $('#q-al').value, dormir: $('#q-do').value };
-    if (![p.acordar, p.almoco, p.dormir].every(h => HORA.test(h)) || (p.ocupacao !== 'nenhum' && !(HORA.test(p.inicio) && HORA.test(p.fim)))) return X.toast('Confira os horários.');
+    const h = k => ($('#q-' + k + '-sem').checked ? '' : $('#q-' + k).value);
+    const p = { ocupacao: oc.value, inicio: $('#q-ini').value, fim: $('#q-fim').value, transporte: Math.max(0, Math.min(240, +$('#q-tr').value || 0)), transporteVolta: Math.max(0, Math.min(240, +$('#q-tv').value || 0)), acordar: h('ac'), almoco: h('al'), dormir: h('do'), higieneSono: $('#q-hs').checked };
+    if (![p.acordar, p.almoco, p.dormir].every(x => x === '' || HORA.test(x)) || (p.ocupacao !== 'nenhum' && !(HORA.test(p.inicio) && HORA.test(p.fim)))) return X.toast('Confira os horários.');
     if (p.ocupacao !== 'nenhum' && min(p.fim) <= min(p.inicio)) return X.toast('O fim precisa ser depois do início.');
-    const d = A(); d.perfil = p; d.itens = completarAgua(gerarRotina(p), p); save(); location.hash = '#/agenda/hoje'; agenda('hoje');
+    const d = A(); d.perfil = p; d.itens = gerarRotina(p); save(); location.hash = '#/agenda/hoje'; agenda('hoje');
   };
+}
+function infoSono() {
+  document.querySelector('.modal-ov')?.remove();
+  document.body.insertAdjacentHTML('beforeend', `<div class="modal-ov"><div class="modal-box"><button class="iconbtn x">✕</button>
+    <div class="eyebrow">Higiene do sono</div><h2 style="margin:10px 0 12px">O que é e por que ajuda</h2>
+    <p>Higiene do sono não é sobre limpeza: são hábitos simples antes de dormir que avisam ao corpo que está na hora de desacelerar. Eles ajudam a pegar no sono mais fácil, dormir no horário certo e acordar mais descansado.</p>
+    <ul style="margin:12px 0 12px 18px"><li>Horários parecidos para dormir e acordar, até no fim de semana.</li><li>Cerca de 30 minutos antes de dormir: luz baixa e sem telas (a luz do celular atrasa o sono).</li><li>Evitar cafeína no fim do dia e refeições pesadas perto da hora de dormir.</li><li>Quarto escuro, silencioso e fresco.</li></ul>
+    <p class="small muted">Se você incluir, aparece um lembrete 30 minutos antes do seu horário de dormir. Se tiver insônia frequente, procure a UBS: o IAlvorecer não substitui um profissional.</p>
+    <div class="row" style="margin-top:18px"><span class="spacer"></span><button class="btn btn-ghost btn-sm" data-close>Entendi</button></div></div></div>`);
+  const ov = document.querySelector('.modal-ov'); ov.onclick = e => { if (e.target === ov || e.target.closest('.x') || e.target.closest('[data-close]')) ov.remove(); };
 }
 
 // ---------- hoje: checklist ----------
@@ -142,7 +156,9 @@ function cardapioDe(item) {
 function rotina() {
   const d = A(), itens = [...d.itens].sort((a, b) => a.hora.localeCompare(b.hora));
   const chips = (sel) => TODOS.map(n => `<button type="button" class="chip ${sel.includes(n) ? 'on' : ''}" data-dia="${n}">${DIAS[n]}</button>`).join('');
-  $('#ag').innerHTML = `<div class="panel" style="margin-bottom:18px"><div class="row" style="gap:12px;flex-wrap:wrap;align-items:flex-end">
+  const sa = X.S.state.health || {}, temAgua = +sa.profile?.peso > 0, temPlano = Array.isArray(sa.planoAlimentar?.refeicoes) && sa.planoAlimentar.refeicoes.length;
+  $('#ag').innerHTML = `<div class="notice" style="margin-bottom:18px"><b>Integrada com os seus cursos.</b> Aqui só aparece o que você colocar. Você também pode trazer coisas dos cursos de alimentação, água, cuidados e dos cursos que escolher fazer.<div class="row" style="gap:10px;flex-wrap:wrap;margin-top:12px"><button class="btn btn-ghost btn-sm" id="i-agua">${temAgua ? 'Trazer os horários de água' : 'Calcular minha água'}</button><button class="btn btn-ghost btn-sm" id="i-ref">${temPlano ? 'Trazer refeições do meu plano alimentar' : 'Montar meu plano alimentar'}</button><a class="btn btn-ghost btn-sm" href="#/cuidados">Cuidados</a></div></div>
+    <div class="panel" style="margin-bottom:18px"><div class="row" style="gap:12px;flex-wrap:wrap;align-items:flex-end">
       <div class="field" style="margin:0"><label>Horário</label><input type="time" id="n-h" value="08:00"></div>
       <div class="field" style="margin:0;flex:1;min-width:180px"><label>O que é?</label><input type="text" id="n-t" maxlength="80" placeholder="Ex.: Treino de pernas"></div>
       <div class="field" style="margin:0"><label>Tipo</label><select id="n-tp">${Object.entries(TIPOS).map(([k, v]) => `<option value="${k}">${esc(v.n)}</option>`).join('')}</select></div></div>
@@ -158,6 +174,19 @@ function rotina() {
     d.itens.push({ id: uid(), hora, titulo, tipo: TIPOS[tipo] ? tipo : 'outro', dias: [...dias].sort() }); save(); rotina();
   };
   $$('[data-del]').forEach(b => b.onclick = () => { if (!livre()) return; d.itens = d.itens.filter(i => i.id !== b.dataset.del); save(); rotina(); });
+  $('#i-agua').onclick = () => {
+    if (!temAgua) { location.hash = '#/cuidar/alimentacao'; return X.toast('Preencha seu peso e veja a aba Água para calcular quanto você precisa.', 5000); }
+    if (!livre()) return;
+    d.itens = d.itens.filter(i => i.tipo !== 'agua');
+    const pp = d.perfil || {}; completarAgua(d.itens, { acordar: pp.acordar || '07:00', dormir: pp.dormir || '22:00' }); save(); X.toast('Horários de água adicionados ✓'); rotina();
+  };
+  $('#i-ref').onclick = () => {
+    if (!temPlano) { location.hash = '#/cuidar/alimentacao'; return X.toast('Monte seu plano alimentar e depois traga as refeições para cá.', 5000); }
+    if (!livre()) return;
+    let n = 0;
+    for (const r of sa.planoAlimentar.refeicoes) { const hr = String(r.hora || '').padStart(5, '0').slice(0, 5); if (!HORA.test(hr) || !r.nome) continue; if (d.itens.some(i => i.tipo === 'refeicao' && i.hora === hr && i.titulo === r.nome)) continue; d.itens.push({ id: uid(), hora: hr, titulo: String(r.nome).slice(0, 80), tipo: 'refeicao', dias: [...TODOS] }); n++; }
+    save(); X.toast(n ? n + ' refeições adicionadas ✓' : 'Suas refeições já estão aqui.'); rotina();
+  };
   $('#n-ref').onclick = () => { if (!livre()) return; if (confirm('Refazer as perguntas e montar uma rotina nova? Isso troca a rotina atual.')) { d.perfil = null; d.itens = []; save(); perguntas(); } };
 }
 
