@@ -29,7 +29,7 @@ O site já salva, na configuração de cada aluno (`config`, lida pelo robô):
 
 Regra que o robô deve seguir: o **e-mail do dia** vai se o dia da semana de hoje (horário de Brasília) estiver em `diasEstudo.dias` e, se hoje for feriado, só se `diasEstudo.feriados` for verdadeiro. O **lembrete de conversação** (modo diário) usa `conversa.dias` / `conversa.feriados` do mesmo jeito. Se o campo não existir (conta antiga), vale o padrão: segunda a sexta, fora feriados. Todas as proteções abaixo continuam valendo: no máximo 1 por dia, só com "Enviar e-mails" ligado, nada em pausa (férias), `LIMITE_DIA`.
 
-**Situação:** o site já grava esses campos, mas `scripts/email_diario.py` (repositório `alvorecer-dados`) ainda precisa passar a ler. Até lá, o robô segue enviando só de segunda a sexta, fora feriados.
+**Situação:** o site grava esses campos e o robô (`scripts/email_diario.py`, repositório `alvorecer-dados`) já os lê (função `dia_de_envio`). Conta sem escolha segue o padrão: segunda a sexta, fora feriados.
 
 ### Proteções (não remova)
 - **Sempre para o e-mail da própria conta.** O endereço vem da tabela `novas_contas` (o e-mail do login), não de algo que a pessoa digita. Assim ninguém consegue usar o site para mandar e-mail a outra pessoa.
