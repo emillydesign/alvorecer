@@ -11,7 +11,7 @@ const authStorage = {
   removeItem(k) { try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch { } }
 };
 import { makeAI, NoKeyError } from './ai.js?v=64';
-import { speak, stopSpeaking, pauseSpeaking, resumeSpeaking, onSpeechState, speechState, listen, canListen, canSpeak } from './speech.js?v=63';
+import { speak, stopSpeaking, pauseSpeaking, resumeSpeaking, onSpeechState, speechState, listen, canListen, canSpeak } from './speech.js?v=69';
 import { initSaude, cuidar, startAgua } from './saude.js?v=63';
 import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=63';
 
@@ -986,7 +986,7 @@ async function ajustes() {
     if (error) return toast('⚠️ ' + error.message, 6000);
     await sb.auth.signOut(); LS.set('pg_remember', null); location.hash = ''; location.reload();
   };
-  $('#out').onclick = async () => { if (S.isDemo) return toast('Na demonstração não há conta.'); if (confirm('Sair desta conta neste aparelho? Seus dados continuam salvos.')) { await S.flush(); await sb.auth.signOut(); location.hash = ''; location.reload(); } };
+  $('#out').onclick = async () => { if (S.isDemo) return toast('Na demonstração não há conta.'); if (confirm('Sair desta conta neste aparelho? Seus dados continuam salvos.')) { await S.flush(); LS.set('ia_asst_rascunho', null); await sb.auth.signOut(); location.hash = ''; location.reload(); } };
 }
 
 // ---------- GUIA ----------
@@ -1154,18 +1154,27 @@ function visualConta() {
   window.addEventListener('ia-pers', () => sync('pers'));
   window.addEventListener('ia-tema', () => sync('tema'));
 }
-function toggleAssistant() { if ($('#asst')) { $('#asst').remove(); return; } openAssistant(); }
+let vozMod; // arquivo à parte: só carrega quando a pessoa clica no botão de voz
+async function abrirVozAssistente() {
+  try { vozMod ||= await import('./voz.js?v=69'); } catch { return toast('Não consegui abrir o assistente de voz agora. Tente de novo.'); }
+  vozMod.abrirVoz({ C, S, AI, esc, md, toast, asstContext, applyActions, describeAction });
+}
+function closeAssistant() { $('#asst')?.remove(); if (asst.onKey) { document.removeEventListener('keydown', asst.onKey); asst.onKey = null; } }
+function toggleAssistant() { if ($('#asst')) { closeAssistant(); return; } openAssistant(); }
 function openAssistant(prefill = '') {
   if (!$('#asst')) {
     document.body.insertAdjacentHTML('beforeend', `<div class="asst" id="asst"><div class="asst-h"><span class="avatar" style="width:36px;height:36px">✦</span><div><b>IAlvorecer</b><div class="small muted">Faz de tudo para dar certo: tira dúvidas, planeja e ajusta seus estudos</div></div><span class="spacer"></span><button class="iconbtn" id="asstUndo" title="Desfazer a última alteração">↶</button><button class="iconbtn" id="asstX" title="Fechar">✕</button></div><div class="asst-m" id="asstM"></div><div class="asst-c"><textarea id="asstT" rows="1" placeholder="Pergunte ou peça uma mudança…"></textarea><button id="asstS">➤</button></div></div>`);
-    $('#asstX').onclick = () => $('#asst').remove();
+    $('#asstX').onclick = e => { e.stopPropagation(); closeAssistant(); };
+    asst.onKey = e => { if (e.key === 'Escape' && $('#asst')) closeAssistant(); };
+    document.addEventListener('keydown', asst.onKey);
+    import('./asst-rascunho.js?v=1').then(R => { if ($('#asstT')) asst.rasc = R.iniciarRascunho({ ta: $('#asstT'), prefill }); }).catch(() => { });
     $('#asstUndo').onclick = () => doUndo();
     $('#asstS').onclick = asstSend;
     $('#asstT').onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); asstSend(); } };
     if (!asst.msgs.length) asst.msgs.push({ role: 'ai', text: `Oi${S.state.profile.name ? ', ' + S.state.profile.name : ''}! Posso tirar dúvidas sobre o IAlvorecer ou mudar seus estudos: cronograma, dias, nível, temas das aulas, e-mails… Tudo o que eu mudar pode ser desfeito no botão ↶.`, sugs: ['Mudar os dias do meu cronograma', 'Quero aulas de 15 minutos', 'Pausar e-mails até segunda', 'Como funciona a prova de nível?', 'Reiniciar o curso de inglês'] });
     asstRender();
   }
-  if (prefill) { const t = $('#asstT'); t.value = prefill; t.focus(); t.setSelectionRange(prefill.length, prefill.length); }
+  if (prefill && !LS.get('ia_asst_rascunho')) { const t = $('#asstT'); t.value = prefill; t.focus(); t.setSelectionRange(prefill.length, prefill.length); }
 }
 function asstRender() {
   const box = $('#asstM'); if (!box) return;
@@ -1183,7 +1192,7 @@ function asstRender() {
 async function asstSend() {
   const t = $('#asstT'), text = t.value.trim(); if (!text) return;
   if (S.readonly) { t.value = ''; asst.msgs.push({ role: 'me', text }, { role: 'ai', text: 'No modo visitante dá pra explorar tudo, mas para conversar comigo, fazer aulas e salvar seu progresso é preciso criar uma conta grátis. É rapidinho!' }); return asstRender(); }
-  t.value = ''; asst.msgs.forEach(m => delete m.sugs);
+  t.value = ''; asst.rasc?.depoisDeEnviar(); asst.msgs.forEach(m => delete m.sugs);
   asst.msgs.push({ role: 'me', text }); asst.msgs.push({ role: 'typing' }); asstRender();
   try {
     const hist = asst.msgs.filter(m => m.role === 'me' || m.role === 'ai').slice(-16);
@@ -1193,7 +1202,7 @@ async function asstSend() {
     const go = acts.find(a => a.type === 'open_page');
     const PAGES = { cuidar: '#/cuidar', desabafo: '#/cuidar/desabafo', alimentacao: '#/cuidar/alimentacao', treino: '#/cuidar/treino', sobre: '#/sobre', apoiar: '#/apoiar', mentoria_sessao: '#/mentoria/sessao', mentoria: '#/mentoria', cronograma: '#/cronograma', seu: '#/seu', ajustes: '#/ajustes', historico: '#/historico', idiomas: '#/idiomas', memorizacao: '#/memorizacao' };
     asst.msgs.push({ role: 'ai', text: r.reply || 'Certo!', actions: acts.filter(a => a.type !== 'open_page') });
-    if (go && PAGES[go.page]) { location.hash = PAGES[go.page]; if (go.page === 'mentoria_sessao') $('#asst')?.remove(); }
+    if (go && PAGES[go.page]) { location.hash = PAGES[go.page]; if (go.page === 'mentoria_sessao') closeAssistant(); }
   } catch (e) { asst.msgs = asst.msgs.filter(m => m.role !== 'typing'); asst.msgs.push({ role: 'ai', text: '⚠️ ' + e.message }); }
   asstRender();
 }
@@ -1785,6 +1794,7 @@ async function boot() {
   $('#topbar').hidden = false; $('#tabbar').hidden = false;
   document.body.insertAdjacentHTML('beforeend', '<button class="fab" id="fab">✦ Falar com o IAlvorecer</button>');
   $('#fab').onclick = () => toggleAssistant();
+  { const tr = $('.topright'); if (tr) { tr.insertAdjacentHTML('afterbegin', '<button type="button" class="iconbtn" id="vozBtn" title="Assistente de voz" aria-label="Assistente de voz"><i data-lucide="mic"></i></button>'); $('#vozBtn').onclick = abrirVozAssistente; try { lucide.createIcons(); } catch { } } }
   visualConta();
   window.IAPers && IAPers.topo();
   $('#areasBtn').onclick = () => openAreas();

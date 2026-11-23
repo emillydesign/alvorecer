@@ -1,6 +1,6 @@
 // Agenda: rotina do dia, checklist diário, férias e folgas. Arquivo à parte: só carrega quando a pessoa abre #/agenda.
 import { $, $$, esc, uid, today, weekday, addDays, fmtDay, fmtShort } from './util.js';
-import { listen, canListen } from './speech.js?v=63';
+import { listen, canListen } from './speech.js?v=69';
 
 let X; // contexto: { S, AI, app, toast, setCleanup }
 export function initAgenda(ctx) { X = ctx; }

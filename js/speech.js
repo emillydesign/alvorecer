@@ -7,8 +7,26 @@ let voices = [];
 function loadVoices() { voices = canSpeak ? speechSynthesis.getVoices() : []; }
 if (canSpeak) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
 
+// Voz escolhida pela pessoa (vale para o site todo, neste aparelho)
+const VKEY = 'ia_voz';
+const lerPref = () => { try { return JSON.parse(localStorage.getItem(VKEY) || '{}'); } catch { return {}; } };
+export const vozPref = lerPref;
+export function salvarVozPref(p) { try { localStorage.setItem(VKEY, JSON.stringify({ ...lerPref(), ...p })); } catch { } }
+export function vozesDoIdioma(locale) { const l = locale.slice(0, 2); return voices.filter(v => v.lang.toLowerCase().startsWith(l)); }
+// tira símbolos, links e emojis para a leitura soar natural
+export function limparParaFalar(t) {
+  return String(t || '')
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/https?:\/\/\S+/g, ' ')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/[*_#>`~|]+/g, ' ')
+    .replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, ' ')
+    .replace(/\s+[-•]\s+/g, '. ')
+    .replace(/\s+/g, ' ').trim();
+}
 function bestVoice(locale) {
   const lang = locale.slice(0, 2);
+  const pref = lerPref().nome; if (pref) { const v = voices.find(x => x.name === pref && x.lang.toLowerCase().startsWith(lang)); if (v) return v; }
   const cands = voices.filter(v => v.lang.replace('_', '-').toLowerCase().startsWith(lang));
   const score = v => (v.lang.replace('_', '-') === locale ? 4 : 0) + (/natural|neural|online|google|premium|enhanced/i.test(v.name) ? 3 : 0) + (/female|samantha|aria|jenny|zira|paulina|monica/i.test(v.name) ? 1 : 0);
   return cands.sort((a, b) => score(b) - score(a))[0];
@@ -26,7 +44,7 @@ function toChunks(input, locale) {
   const segs = Array.isArray(input) ? input : [{ t: input, l: locale }];
   const out = [];
   for (const sg of segs) {
-    const txt = String(sg.t || '').replace(/\s+/g, ' ').trim();
+    const txt = limparParaFalar(sg.t);
     if (!txt) continue;
     const parts = txt.match(/[^.!?…;:]+[.!?…;:]*\s*/g) || [txt];
     let buf = '';
@@ -44,7 +62,7 @@ function next(my) {
   const c = queue[idx];
   const u = new SpeechSynthesisUtterance(c.t);
   u.lang = c.l; const v = bestVoice(c.l); if (v) u.voice = v;
-  u.rate = cfg.rate;
+  u.rate = cfg.rate * (lerPref().rate || 1);
   const adv = () => { if (my === session && state === 'playing') { idx++; next(my); } };
   u.onend = adv;
   u.onerror = e => { if (e.error !== 'canceled' && e.error !== 'interrupted') adv(); };
