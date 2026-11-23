@@ -797,6 +797,30 @@
             "Lidando com pessoas difíceis",
             "Fechamento e acordo"
           ]
+        },
+        {
+          "id": "pensamento-critico",
+          "title": "Pensamento crítico e segurança digital",
+          "sub": "Fake news, golpes online, privacidade e uso sábio da IA",
+          "art": "🛡",
+          "icon": "shield-check",
+          "pat": "grid",
+          "g": [
+            "#38bdf8",
+            "#7c3aed"
+          ],
+          "ctx": "Conteúdo educativo geral, realista e sem alarmismo; não substitui profissionais. Alfabetização digital para qualquer pessoa. Ensinar a checar fontes, reconhecer golpes e usar IA com senso crítico (IA erra, inventa e não substitui verificação).",
+          "lessons": [
+            "Como a informação chega até você: redes e algoritmos",
+            "Checando uma notícia em 5 passos",
+            "Imagens, vídeos e áudios falsos (deepfakes)",
+            "Golpes por mensagem, ligação e site falso",
+            "Senhas, verificação em duas etapas e gerenciadores gratuitos",
+            "Privacidade: o que você compartilha e com quem",
+            "Usando IA com senso crítico: quando ela erra",
+            "Argumentos, falácias e debates sem brigar",
+            "Seu kit de segurança digital"
+          ]
         }
       ],
       "icon": "cpu",
@@ -1217,6 +1241,56 @@
             "Sua rotina diária"
           ],
           "ctx": "Conteúdo educativo e geral, sem substituir profissionais. Sempre inclua cuidados de segurança."
+        },
+        {
+          "id": "primeiros-socorros",
+          "title": "Primeiros socorros",
+          "sub": "O que fazer nos primeiros minutos de uma emergência",
+          "art": "+",
+          "icon": "heart-pulse",
+          "pat": "rings",
+          "g": [
+            "#f87171",
+            "#14b8a6"
+          ],
+          "ctx": "Conteúdo educativo geral, realista e sem alarmismo; não substitui profissionais. Sempre começar por: avaliar a segurança do local e ligar para o SAMU 192 (ou Bombeiros 193). Orientações gerais; nunca ensinar procedimentos arriscados para leigos além do básico reconhecido.",
+          "lessons": [
+            "Antes de ajudar: segurança, SAMU 192 e como pedir ajuda",
+            "Engasgo em adultos e crianças",
+            "Desmaio e queda de pressão",
+            "Cortes, sangramentos e curativos",
+            "Queimaduras: o que fazer e o que nunca fazer",
+            "Parada cardíaca: massagem e o uso do desfibrilador (DEA)",
+            "Convulsão e AVC: sinais e primeiros passos",
+            "Intoxicação, picadas e animais peçonhentos",
+            "Fraturas, torções e entorses",
+            "Kit de primeiros socorros em casa e segurança doméstica"
+          ]
+        },
+        {
+          "id": "cozinhar-basico",
+          "title": "Cozinhar o básico e planejar a semana",
+          "sub": "Comida simples, barata e que nutre",
+          "art": "🍳",
+          "icon": "chef-hat",
+          "pat": "diag",
+          "g": [
+            "#fbbf24",
+            "#16a34a"
+          ],
+          "ctx": "Conteúdo educativo geral, realista e sem alarmismo; não substitui profissionais. Receitas simples e baratas, com ingredientes comuns no Brasil, segurança na cozinha e higiene dos alimentos. Sem dietas restritivas nem promessas de emagrecimento.",
+          "lessons": [
+            "Utensílios e segurança na cozinha",
+            "Higiene e conservação dos alimentos",
+            "Arroz, feijão e a base de muitas refeições",
+            "Proteínas e legumes: cortes e cozimentos simples",
+            "Temperos que mudam tudo",
+            "Marmitas e sobras sem desperdício",
+            "Planejar o cardápio e a lista de compras da semana",
+            "Fazer a feira e o mercado gastando menos",
+            "Café da manhã e lanches rápidos",
+            "Seu plano de refeições da semana"
+          ]
         }
       ]
     },
@@ -1492,6 +1566,31 @@
             "Impostos de quem recebe de fora",
             "Planejando a mudança de país"
           ]
+        },
+        {
+          "id": "dinheiro-basico",
+          "title": "Dinheiro básico",
+          "sub": "Orçamento, dívidas, reserva e como fugir de golpes",
+          "art": "R$",
+          "icon": "wallet",
+          "pat": "dots",
+          "g": [
+            "#34d399",
+            "#2563eb"
+          ],
+          "ctx": "Conteúdo educativo geral, realista e sem alarmismo; não substitui profissionais. Público amplo, linguagem simples, exemplos do Brasil, só ferramentas gratuitas (planilha, apps grátis). Sem recomendar produtos financeiros específicos nem prometer ganhos.",
+          "lessons": [
+            "Para onde vai o seu dinheiro: entradas e saídas",
+            "Orçamento simples que cabe na vida real",
+            "Dívidas: juros, cartão e como sair do aperto",
+            "Renegociar dívidas: caminhos gratuitos e oficiais",
+            "Reserva de emergência: quanto e onde guardar",
+            "Gastos pequenos que pesam: assinaturas e impulsos",
+            "Golpes financeiros comuns (Pix, boleto, falsa central) e como se proteger",
+            "Contas, tarifas e direitos do consumidor no banco",
+            "Metas: juntar dinheiro para um objetivo",
+            "Seu plano de dinheiro para o mês"
+          ]
         }
       ]
     },
@@ -1571,8 +1670,147 @@
             "Lidando com platôs",
             "Seu método pessoal"
           ]
+        },
+        {
+          "id": "saude-emocional",
+          "title": "Saúde emocional",
+          "sub": "Ansiedade, sono, estresse e relações, com calma",
+          "art": "♡",
+          "icon": "heart",
+          "pat": "rings",
+          "g": [
+            "#a78bfa",
+            "#34d399"
+          ],
+          "ctx": "Conteúdo educativo geral, realista e sem alarmismo; não substitui profissionais. Deixar claro que o IAlvorecer não substitui psicólogo ou psiquiatra (SUS/CAPS e UBS oferecem atendimento gratuito). Em crise: CVV 188 (24h) e SAMU 192. Nunca diagnosticar nem rotular a pessoa.",
+          "lessons": [
+            "Emoções não são inimigas: nomear o que sinto",
+            "Estresse e ansiedade: o que acontece no corpo",
+            "Respiração e pausas que ajudam na hora",
+            "Sono: hábitos que melhoram a noite",
+            "Pensamentos que se repetem e como desacelerar",
+            "Limites, dizer não e relações mais saudáveis",
+            "Solidão, luto e fases difíceis",
+            "Quando procurar ajuda profissional (SUS, CAPS, CVV 188)",
+            "Rede de apoio: pessoas e lugares",
+            "Seu plano de cuidado emocional"
+          ]
+        },
+        {
+          "id": "direitos-cidadania",
+          "title": "Direitos e cidadania",
+          "sub": "Consumidor, trabalho, contratos e como o governo funciona",
+          "art": "⚖",
+          "icon": "scale",
+          "pat": "grid",
+          "g": [
+            "#60a5fa",
+            "#0f766e"
+          ],
+          "ctx": "Conteúdo educativo geral, realista e sem alarmismo; não substitui profissionais. Brasil. Informação geral: indicar Procon, Defensoria Pública, Justiça do Trabalho e gov.br como caminhos gratuitos. Não dar aconselhamento jurídico individual.",
+          "lessons": [
+            "Seus documentos: RG, CPF, título e como tirar",
+            "Direitos do consumidor: trocas, garantia e propaganda enganosa",
+            "Como reclamar: SAC, Procon e consumidor.gov.br",
+            "Contratos: o que ler antes de assinar",
+            "Aluguel: direitos de quem aluga",
+            "Trabalho com carteira, MEI e freela: direitos básicos",
+            "Férias, 13º, FGTS e rescisão em palavras simples",
+            "Como o governo funciona: municípios, estados e União",
+            "Votar, impostos e para onde vai o dinheiro público",
+            "Defensoria Pública e serviços gratuitos do gov.br"
+          ]
+        },
+        {
+          "id": "decisoes",
+          "title": "Decidir bem e organizar a vida",
+          "sub": "Foco, prioridades e escolhas com menos peso",
+          "art": "◎",
+          "icon": "compass",
+          "pat": "diag",
+          "g": [
+            "#2dd4bf",
+            "#6366f1"
+          ],
+          "ctx": "Conteúdo educativo geral, realista e sem alarmismo; não substitui profissionais. ",
+          "lessons": [
+            "O que realmente importa para você",
+            "Decisões grandes e pequenas: um método simples",
+            "Vieses que atrapalham nossas escolhas",
+            "Dizer sim, dizer não e abrir mão",
+            "Organizar casa, tarefas e papéis",
+            "Tempo, energia e atenção",
+            "Hábitos: começar pequeno",
+            "Revisão semanal da vida",
+            "Planejar o próximo ano sem pressão"
+          ]
+        },
+        {
+          "id": "planeta-comunidade",
+          "title": "Consumo consciente e comunidade",
+          "sub": "Pequenas escolhas que cuidam do planeta e de quem está perto",
+          "art": "🌱",
+          "icon": "leaf",
+          "pat": "dots",
+          "g": [
+            "#4ade80",
+            "#0ea5e9"
+          ],
+          "ctx": "Conteúdo educativo geral, realista e sem alarmismo; não substitui profissionais. Ideias baratas e viáveis, sem culpar a pessoa; foco em ações reais no Brasil (coleta seletiva, reaproveitamento, voluntariado).",
+          "lessons": [
+            "Consumir menos e melhor sem culpa",
+            "Água e energia: economizar em casa",
+            "Lixo, reciclagem e compostagem",
+            "Reaproveitar, consertar e trocar",
+            "Alimentação e desperdício",
+            "Voluntariado: como começar perto de você",
+            "Vizinhança e comunidade: pequenos projetos",
+            "Mutirões, doações e ONGs confiáveis"
+          ]
         }
       ]
     }
+  },
+  "essencial": {
+    "titulo": "O essencial para aprender primeiro",
+    "texto": "Se você não sabe por onde começar, estas áreas fazem diferença em qualquer vida. Siga a ordem ou escolha a que mais precisa agora.",
+    "itens": [
+      {
+        "k": "trk:dinheiro-basico",
+        "por": "Para o dinheiro render e para fugir de golpes"
+      },
+      {
+        "k": "trk:primeiros-socorros",
+        "por": "Saber agir nos primeiros minutos pode salvar uma vida"
+      },
+      {
+        "k": "trk:direitos-cidadania",
+        "por": "Conhecer seus direitos protege você"
+      },
+      {
+        "k": "trk:saude-emocional",
+        "por": "Cuidar da cabeça sustenta todo o resto"
+      },
+      {
+        "k": "trk:pensamento-critico",
+        "por": "Para não cair em golpes nem em fake news"
+      },
+      {
+        "k": "trk:comunicacao",
+        "por": "Falar, ouvir e resolver conflitos"
+      },
+      {
+        "k": "trk:cozinhar-basico",
+        "por": "Comer bem gastando menos"
+      },
+      {
+        "k": "trk:decisoes",
+        "por": "Prioridades e foco no dia a dia"
+      },
+      {
+        "k": "trk:planeta-comunidade",
+        "por": "Cuidar do lugar onde você vive"
+      }
+    ]
   }
 }
