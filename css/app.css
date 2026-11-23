@@ -700,3 +700,15 @@ a.sci:hover{color:var(--sun)}
 .ps-chks{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px 14px}
 .ps-chk{display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer}
 .ps-chk input{width:18px;height:18px;accent-color:var(--sun)}
+
+/* Meus saves (js/saves.js) */
+.sv{margin-top:20px;padding-top:14px;border-top:1px solid rgba(var(--text-rgb),.14)}
+.sv-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-family:Sora,Inter,sans-serif}
+.sv-lista{list-style:none;margin:0 0 12px;padding:0;display:flex;flex-direction:column;gap:8px}
+.sv-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:8px 10px;border-radius:14px;background:rgba(var(--text-rgb),.06);border:1px solid rgba(var(--text-rgb),.12)}
+.sv-nome{display:flex;flex-direction:column;font-weight:600;font-size:14px;min-width:0}
+.sv-nome small{font-weight:400;opacity:.65;font-size:12px}
+.sv-act{display:flex;gap:6px;align-items:center}
+.sv-novo{display:flex;gap:8px;flex-wrap:wrap}
+.sv-in{flex:1 1 160px;min-width:0;padding:9px 12px;border-radius:12px;border:1px solid rgba(var(--text-rgb),.25);background:rgba(var(--text-rgb),.06);color:var(--text);font:inherit}
+.sv-msg:empty{display:none}

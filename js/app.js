@@ -1126,6 +1126,31 @@ async function applyActions(actions) {
   S.saveState(); S.saveSrs(); S.saveConfig(); await S.flush();
   refreshView();
 }
+// Personalização visual por conta: o que vale agora (cores e site) e os saves (até 5 de cada) ficam em state.visual
+function visualConta() {
+  const P = window.IAPers, T = window.IATema;
+  window.IAConta = {
+    readonly: !!S.readonly,
+    ler: () => S.state.visual || null,
+    gravar(fn) { if (S.readonly) return false; const v = S.state.visual = S.state.visual || { saves: { pers: [], tema: [] } }; fn(v); S.saveState(); return true; }
+  };
+  let trava = true;
+  const v = S.state.visual;
+  try {
+    if (v && 'pers' in v && P) { v.pers ? P.gravar(v.pers) : P.padrao(); P.tudo(); }
+    if (v && 'tema' in v && T) { if (!v.tema) T.restaurar(); else if (v.tema.id === 'custom') T.usarPersonalizado(v.tema.c); else T.usarPreset(v.tema.id); }
+  } catch { }
+  trava = false;
+  const sync = tipo => {
+    if (trava || S.readonly) return;
+    IAConta.gravar(x => {
+      if (tipo === 'pers') { let tem = null; try { tem = localStorage.getItem('ia_pers'); } catch { } x.pers = tem ? P.ler() : null; }
+      else { const a = T.atual(); x.tema = a.id === 'morning' ? null : a; }
+    });
+  };
+  window.addEventListener('ia-pers', () => sync('pers'));
+  window.addEventListener('ia-tema', () => sync('tema'));
+}
 function toggleAssistant() { if ($('#asst')) { $('#asst').remove(); return; } openAssistant(); }
 function openAssistant(prefill = '') {
   if (!$('#asst')) {
@@ -1757,6 +1782,7 @@ async function boot() {
   $('#topbar').hidden = false; $('#tabbar').hidden = false;
   document.body.insertAdjacentHTML('beforeend', '<button class="fab" id="fab">✦ Falar com o IAlvorecer</button>');
   $('#fab').onclick = () => toggleAssistant();
+  visualConta();
   window.IAPers && IAPers.topo();
   $('#areasBtn').onclick = () => openAreas();
   $('#avatar').textContent = (S.state.profile.name || 'A')[0].toUpperCase();

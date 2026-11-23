@@ -67,7 +67,7 @@
   document.addEventListener('click', function (e) {
     var b = e.target.closest && e.target.closest('[data-pers-open]'); if (!b) return;
     e.preventDefault();
-    import('./pers-ui.js?v=1').then(function (m) { m.abrir(); }).catch(function () { });
+    import('./pers-ui.js?v=2').then(function (m) { m.abrir(); }).catch(function () { });
   });
 
   w.IAPers = { BLOCOS: BLOCOS, TOPO: TOPO, ler: ler, gravar: gravar, ordenados: ordenados, home: home, topo: topo, tudo: tudo, padrao: padrao };

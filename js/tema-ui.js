@@ -20,6 +20,13 @@ if (T) {
   window.addEventListener('ia-tema', rotular);
 }
 
+function montarSaves(raiz) {
+  import('./saves.js?v=1').then(m => m.montar(raiz.querySelector('[data-saves]'), 'tema', {
+    atual: () => T.atual(),
+    carregar: d => { if (d && d.id === 'custom') T.usarPersonalizado(d.c); else if (d && d.id) T.usarPreset(d.id); },
+    depois: () => { cores = { ...T.coresAtuais() }; marcarCards(); pintarEditor(); }
+  }));
+}
 function nomeAtual() { return T.nome(T.atual().id); }
 function rotular() { document.querySelectorAll('[data-tema-nome]').forEach(el => { el.textContent = nomeAtual(); }); }
 function normHex(s) {
@@ -44,6 +51,7 @@ function abrir() {
     <p class="muted small">Escolha uma paleta pronta ou crie a sua. A escolha fica salva só neste aparelho.</p>
     <div class="tm-grid">${cards}</div>
     <button type="button" class="tm-custom" data-tm-toggle aria-haspopup="dialog"><span class="tm-custom-ic"><i data-lucide="palette"></i></span><span class="tm-custom-tx"><b>Personalizar cores</b><small>Abra o círculo cromático e crie a sua paleta</small></span><i class="tm-custom-go" data-lucide="plus"></i></button>
+    <div class="sv" data-saves></div>
     <div class="tm-foot"><button type="button" class="btn btn-ghost btn-sm" data-tm-reset><i data-lucide="rotate-ccw"></i> Restaurar padrão</button><button type="button" class="btn btn-pink btn-sm" data-tm-fechar>Concluir</button></div>
   </div>`;
   document.body.appendChild(ov);
@@ -51,7 +59,7 @@ function abrir() {
   ov.addEventListener('input', digitou);
   ov.addEventListener('keydown', teclado);
   document.addEventListener('keydown', esc);
-  marcarCards(); pintarEditor();
+  marcarCards(); pintarEditor(); montarSaves(ov);
   (ov.querySelector('.tm-card.on') || ov.querySelector('.tm-card'))?.focus();
 }
 
@@ -79,9 +87,11 @@ function abrirEditor() {
       <div class="tm-prev" aria-hidden="true"><b>Texto de exemplo</b><span class="tm-pdot"></span></div>
       <p class="tm-warn" role="status" aria-live="polite"></p>
     </div>
+    <div class="sv" data-saves></div>
     <div class="tm-foot"><button type="button" class="btn btn-ghost btn-sm" data-tm-reset><i data-lucide="rotate-ccw"></i> Restaurar padrão</button><button type="button" class="btn btn-pink btn-sm" data-tm-fechar2>Concluir</button></div>
   </div>`;
   document.body.appendChild(ov2);
+  montarSaves(ov2);
   ov2.addEventListener('click', e => {
     if (e.target === ov2 || e.target.closest('[data-tm-fechar2]')) return fecharEditor();
     if (e.target.closest('[data-tm-reset]')) { T.restaurar(); cores = { ...T.coresAtuais() }; marcarCards(); pintarEditor(); aviso(); return; }

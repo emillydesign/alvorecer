@@ -67,9 +67,13 @@ function desenhar(refoco) {
     <h3 class="ps-h">Assistente</h3>
     <label class="ps-chk"><input type="checkbox" data-ps-fab${p.fab ? ' checked' : ''}><span>Mostrar o botão flutuante "Falar com o IAlvorecer"</span></label>
 
+    <h3 class="ps-h">Salvar versões</h3>
+    <div class="sv" data-saves></div>
+
     <div class="tm-foot"><button type="button" class="btn btn-ghost btn-sm" data-ps="padrao"><i data-lucide="rotate-ccw"></i> Voltar ao padrão</button><button type="button" class="btn btn-pink btn-sm" data-ps-fechar>Concluir</button></div>
   </div>`;
   if (refoco) ov.querySelector(refoco)?.focus();
+  import('./saves.js?v=1').then(m => { if (ov) m.montar(ov.querySelector('[data-saves]'), 'pers', { atual: () => P.ler(), carregar: d => { P.gravar(d); P.tudo(); }, depois: () => desenhar() }); });
 }
 
 function mudar(fn, refoco) { const p = P.ler(); fn(p); P.gravar(p); P.tudo(); desenhar(refoco); }
