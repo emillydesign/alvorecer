@@ -1844,42 +1844,58 @@
       {
         "t": "Dormir bem",
         "por": "Adultos costumam precisar de 7 a 9 horas por noite (crianças e adolescentes, mais). Higiene do sono ajuda a dormir no horário certo.",
-        "h": "#/curso/trk:sono-energia"
+        "h": "#/curso/trk:sono-energia",
+        "curto": "Dormir bem",
+        "i": "moon"
       },
       {
         "t": "Beber a água que o seu corpo precisa",
         "por": "Calcule a quantidade mínima para você e distribua nos horários do dia.",
-        "h": "#/cuidar/alimentacao"
+        "h": "#/cuidar/alimentacao",
+        "curto": "Beber água",
+        "i": "droplets"
       },
       {
         "t": "Comer bem",
         "por": "Sem dieta maluca: comida de verdade, no seu orçamento e na sua rotina.",
-        "h": "#/cuidar/alimentacao"
+        "h": "#/cuidar/alimentacao",
+        "curto": "Comer bem",
+        "i": "utensils"
       },
       {
         "t": "Se exercitar",
         "por": "Um treino possível para a sua semana, seguro e no seu nível.",
-        "h": "#/cuidar/treino"
+        "h": "#/cuidar/treino",
+        "curto": "Se exercitar",
+        "i": "dumbbell"
       },
       {
         "t": "Pegar sol, com protetor",
         "por": "Vitamina D e proteção da pele, sem exagero.",
-        "h": "#/curso/trk:sol-protetor"
+        "h": "#/curso/trk:sol-protetor",
+        "curto": "Sol e protetor",
+        "i": "sun"
       },
       {
         "t": "Estresse e inteligência emocional",
         "por": "Entender o que o estresse causa no corpo e como lidar com ele.",
-        "h": "#/curso/trk:saude-emocional"
+        "h": "#/curso/trk:saude-emocional",
+        "curto": "Mente em paz",
+        "i": "brain"
       },
       {
         "t": "Pele, estética e cuidados pessoais",
         "por": "Depois do básico, cuide da pele, das unhas, do cabelo e do cheiro.",
-        "h": "#/cuidados"
+        "h": "#/cuidados",
+        "curto": "Pele e estética",
+        "i": "sparkles"
       },
       {
         "t": "Rotina que cabe na sua vida",
         "por": "Monte a agenda com trabalho, deslocamento, treino, aulas e descanso.",
-        "h": "#/agenda"
+        "h": "#/agenda",
+        "curto": "Sua rotina",
+        "i": "calendar-check"
       }
     ]
   },
