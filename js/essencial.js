@@ -42,17 +42,18 @@ export function homeHTML({ C, S, esc, icoOf, grad, saudacao, dia }) {
   const ex = [['layout-grid', 'Ver todas as áreas', 'Idiomas, tecnologia, saúde, finanças e muito mais para explorar.', '#/cursos'], ['languages', 'Idiomas', 'Do zero ao fluente, com conversação e correção.', '#/idiomas'], ['sparkles', 'Peça um curso', 'O IAlvorecer cria um curso do seu jeito.', '#/seu'], ['heart-handshake', 'Cuidar de mim', 'Desabafo, alimentação e treino.', '#/cuidar']];
   for (let k = 0; k < falt; k++) { const e = ex[k]; ult.push(extra(POS[4 - falt + k], e[0], e[1], e[2], e[3])); }
   const nomes = paginas.map((_, n) => n === 0 ? 'Os mais essenciais' : n === paginas.length - 1 ? 'E mais para explorar' : 'Continue depois');
+  const curtos = paginas.map((_, n) => n === 0 ? 'Essenciais' : n === paginas.length - 1 ? 'Explorar' : 'Continue depois');
   const pg = paginas.map((p, n) => `<div class="hx-pag${n ? ' next' : ' on'}" data-pag="${n}">${p.join('')}</div>`).join('');
   return `
   <div class="hx-stage"><div class="hx-grid">${pg}
-    <div class="hx-centro"><span class="hx-c-ic">${icoOf('briefcase')}</span><div class="hx-c-t">Nosso diferencial</div><h2>Encontre o trabalho ideal para você</h2><p>Mentoria de carreira gratuita: o IAlvorecer ajuda você a descobrir e conquistar um trabalho que combine com o seu tempo e os seus cuidados. Ele orienta, você decide.</p><a class="hx-c-b1" href="#/tempo">Montar meu caminho</a><a class="hx-c-b2" href="#/mentoria">Falar com a mentoria</a></div>
+    <div class="hx-centro"><span class="hx-c-ic">${icoOf('briefcase')}</span><div class="hx-c-t">Nosso diferencial</div><h2>Encontre o trabalho ideal para você</h2><p>Mentoria de carreira gratuita para descobrir e conquistar um trabalho que combine com o seu tempo e os seus cuidados. Ele orienta, você decide.</p><a class="hx-c-b1" href="#/tempo">Montar meu caminho</a><a class="hx-c-b2" href="#/mentoria">Conhecer a mentoria</a></div>
   </div></div>
-  <div class="hx-ctrl"><button type="button" class="btn btn-ghost btn-sm" id="hxPrev" hidden>Voltar</button><span class="hx-dots">${paginas.map((_, n) => `<button type="button" class="hx-dot${n ? '' : ' on'}" data-go="${n}" aria-label="Página ${n + 1}"></button>`).join('')}</span><button type="button" class="btn btn-pink btn-sm hx-next" id="hxNext">Continuar<i>${icoOf('chevrons-right')}</i></button><span id="hxNome" data-nomes="${esc(JSON.stringify(nomes))}" hidden></span></div>
+  <div class="hx-ctrl"><button type="button" class="hx-sq" id="hxPrev" aria-label="Cursos anteriores" disabled>${icoOf('chevron-left')}</button><div class="hx-tabs" role="tablist">${paginas.map((_, n) => `<button type="button" role="tab" class="hx-tab${n ? '' : ' on'}" data-go="${n}"><b>${n + 1}</b>${esc(curtos[n])}</button>`).join('')}</div><button type="button" class="hx-sq hx-sq-go" id="hxNext" aria-label="Próximos cursos">${icoOf('chevron-right')}</button><span id="hxNome" data-nomes="${esc(JSON.stringify(nomes))}" hidden></span></div>
   <div class="hx-cuid"><div class="hx-cuid-t"><b>${esc(CE.eyebrow)}</b><span>o básico, em ordem</span></div><div class="hx-cuid-l">${CE.etapas.map((e, i) => `<a class="hx-cu" href="${esc(e.h)}" title="${esc(e.por)}"><span class="hx-cu-i">${icoOf(e.i || 'circle')}</span><span class="hx-cu-n">${i + 1}</span><b>${esc(e.curto || e.t)}</b></a>`).join('')}</div></div>`;
 }
 
 export function ligarHome(root) {
-  const pags = [...root.querySelectorAll('.hx-pag')], dots = [...root.querySelectorAll('.hx-dot')], nome = root.querySelector('#hxNome');
+  const pags = [...root.querySelectorAll('.hx-pag')], dots = [...root.querySelectorAll('.hx-tab')], nome = root.querySelector('#hxNome');
   if (!pags.length) return;
   const nomes = JSON.parse(nome.dataset.nomes || '[]'); let at = 0;
   const prev = root.querySelector('#hxPrev'), next = root.querySelector('#hxNext');
@@ -60,7 +61,7 @@ export function ligarHome(root) {
     n = Math.max(0, Math.min(pags.length - 1, n)); at = n;
     pags.forEach((p, i) => { p.classList.toggle('on', i === n); p.classList.toggle('prev', i < n); p.classList.toggle('next', i > n); });
     dots.forEach((d, i) => d.classList.toggle('on', i === n)); nome.textContent = nomes[n] || '';
-    prev.hidden = n === 0; next.firstChild.textContent = n === pags.length - 1 ? 'Voltar ao início' : 'Continuar';
+    prev.disabled = n === 0;
   };
   dots.forEach(d => d.onclick = () => ir(+d.dataset.go));
   next.onclick = () => ir(at === pags.length - 1 ? 0 : at + 1);
