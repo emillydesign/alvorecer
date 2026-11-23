@@ -23,34 +23,39 @@ export function tempoHTML({ C, esc }) {
     <div class="row" style="gap:10px;flex-wrap:wrap"><a class="btn btn-pink" href="#/tempo">Montar meu caminho para mais tempo livre</a><a class="btn btn-ghost" href="#/mentoria">Mentoria de carreira</a><a class="btn btn-ghost" href="#/agenda">Minha agenda</a></div></div>`;
 }
 
-// Início do site: UMA seção que cabe em uma tela. Cursos essenciais (em destaque), diferencial no meio, cuidados essenciais e a continuação.
+// Início do site: UMA seção em quadrantes. Cursos essenciais nos cantos (com páginas), mentoria de carreira no centro
+// e, embaixo, uma faixa horizontal com os cuidados essenciais.
 export function homeHTML({ C, S, esc, icoOf, grad, saudacao, dia }) {
-  const E = C.essencial, CE = C.cuidadosEssenciais, T = C.tempo; if (!E) return '';
+  const E = C.essencial, CE = C.cuidadosEssenciais; if (!E) return '';
   const achar = k => { const id = k.replace(/^trk:/, ''); for (const t of Object.values(C.tracks)) { const c = t.courses.find(x => x.id === id); if (c) return c; } return null; };
   const feitas = k => Object.keys(S.state.courses?.[k]?.done || {}).length;
   const lista = E.itens.map((it, i) => ({ ...it, i, c: achar(it.k) })).filter(x => x.c);
-  const topo = lista.slice(0, 3), resto = lista.slice(3);
-  const prog = x => { const f = feitas(x.k), n = (x.c.lessons || []).length; return f > 0 ? `${f}/${n}` : 'Começar'; };
-  const grande = x => `<a class="ess-big" href="#/curso/${esc(x.k)}" style="${grad(x.c.g)}"><span class="ess-n">${x.i + 1}</span><span class="ess-ic">${icoOf(x.c.icon)}</span><span class="ess-tx"><b>${esc(x.c.title)}</b><small>${esc(x.por)}</small></span><span class="ess-go">${esc(prog(x))}</span></a>`;
-  const chip = x => `<a class="ess-chip" href="#/curso/${esc(x.k)}" title="${esc(x.por)}"><span class="ess-ic2">${icoOf(x.c.icon)}</span>${esc(x.c.title)}</a>`;
+  const prog = x => { const f = feitas(x.k), n = (x.c.lessons || []).length; return f > 0 ? `${f}/${n} aulas` : 'Começar'; };
+  const card = (x, pos) => `<a class="qd-card qd-${pos}" href="#/curso/${esc(x.k)}" style="${grad(x.c.g)}"><span class="qd-n">${x.i + 1}</span><span class="qd-ic">${icoOf(x.c.icon)}</span><b>${esc(x.c.title)}</b><small>${esc(x.por)}</small><em>${esc(prog(x))}</em></a>`;
+  const todas = pos => `<button type="button" class="qd-card qd-${pos} qd-todas" id="homeStart3"><span class="qd-ic">${icoOf('layout-grid')}</span><b>Ver todas as áreas e cursos</b><small>Idiomas, tecnologia, saúde, finanças e muito mais</small><em>Explorar</em></button>`;
+  const POS = ['tl', 'tr', 'bl', 'br'];
+  const paginas = [];
+  for (let i = 0; i < lista.length; i += 4) paginas.push(lista.slice(i, i + 4));
+  const ult = paginas[paginas.length - 1];
+  if (ult.length < 4) ult.push({ todas: true });
+  const pg = paginas.map((p, n) => `<div class="qd-pag${n ? '' : ' on'}" data-pag="${n}">${p.map((x, k) => x.todas ? todas(POS[k]) : card(x, POS[k])).join('')}</div>`).join('');
+  const nomes = paginas.map((_, n) => n === 0 ? 'Os mais essenciais' : n === paginas.length - 1 ? 'E mais para aprender' : 'Continue depois');
   return `
-  <div class="uni-top"><div><div class="eyebrow">${esc(dia)}</div><h1 class="uni-h">${esc(saudacao)}. <span class="grad">Comece por aqui.</span></h1></div><button class="btn btn-ghost btn-sm" id="homeStart3">Ver todas as áreas e cursos</button></div>
-  <div class="uni-grid">
-    <div class="uni-col uni-a">
-      <div class="uni-lb">Os cursos mais essenciais</div>
-      <div class="ess-grande">${topo.map(grande).join('')}</div>
-      <div class="uni-lb uni-lb2">Continue depois</div>
-      <div class="ess-chips">${resto.map(chip).join('')}</div>
+  <div class="qd-top"><div class="eyebrow">${esc(dia)}</div><h1 class="qd-h">${esc(saudacao)}. <span class="grad">Comece por aqui.</span></h1></div>
+  <div class="qd-wrap">
+    <div class="qd-grid">${pg}
+      <div class="qd-centro"><div class="eyebrow">Nosso diferencial</div><h2>Um trabalho que cabe na sua vida</h2><p>Mentoria de carreira para conseguir um trabalho que combine com o seu tempo e com os seus cuidados.</p><div class="qd-btns"><a class="btn btn-pink btn-sm" href="#/tempo">Montar meu caminho</a><a class="btn btn-ghost btn-sm" href="#/mentoria">Mentoria</a></div></div>
     </div>
-    <div class="uni-dif home-dif">
-      <div class="eyebrow">${esc(T.eyebrow)}</div>
-      <h2>${esc(T.titulo)}</h2>
-      <p>${esc(T.texto)}</p>
-      <div class="dif-btns"><a class="btn btn-pink" href="#/tempo">Montar meu caminho para mais tempo livre</a><a class="btn btn-ghost" href="#/mentoria">Mentoria de carreira</a></div>
-    </div>
-    <div class="uni-col uni-c">
-      <div class="uni-lb">${esc(CE.eyebrow)}, em ordem</div>
-      <div class="cuid-lista">${CE.etapas.map((e, i) => `<a class="cuid-item" href="${esc(e.h)}" title="${esc(e.por)}"><b class="cuid-n">${i + 1}</b><span class="cuid-t">${esc(e.t)}</span></a>`).join('')}</div>
-    </div>
-  </div>`;
+    <div class="qd-pager"><span class="qd-nome" id="qdNome" data-nomes="${esc(JSON.stringify(nomes))}">${esc(nomes[0])}</span><span class="qd-dots">${paginas.map((_, n) => `<button type="button" class="qd-dot${n ? '' : ' on'}" data-go="${n}" aria-label="Página ${n + 1}"></button>`).join('')}</span><button type="button" class="btn btn-ghost btn-sm" id="qdMais">Ver mais cursos essenciais</button></div>
+  </div>
+  <div class="cuid-faixa"><div class="cuid-faixa-t">${esc(CE.eyebrow)}<small>em ordem</small></div><div class="cuid-faixa-l">${CE.etapas.map((e, i) => `<a class="cf-item" href="${esc(e.h)}" title="${esc(e.por)}"><b>${i + 1}</b><span>${esc(e.t)}</span></a>`).join('')}</div></div>`;
+}
+
+export function ligarHome(root) {
+  const pags = [...root.querySelectorAll('.qd-pag')], dots = [...root.querySelectorAll('.qd-dot')], nome = root.querySelector('#qdNome');
+  if (!pags.length) return;
+  const nomes = JSON.parse(nome.dataset.nomes || '[]'); let at = 0;
+  const ir = n => { at = (n + pags.length) % pags.length; pags.forEach((p, i) => p.classList.toggle('on', i === at)); dots.forEach((d, i) => d.classList.toggle('on', i === at)); nome.textContent = nomes[at] || ''; };
+  dots.forEach(d => d.onclick = () => ir(+d.dataset.go));
+  const mais = root.querySelector('#qdMais'); if (mais) mais.onclick = () => ir(at + 1);
 }
