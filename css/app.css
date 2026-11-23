@@ -1113,3 +1113,28 @@ body.na-home main{padding-top:0}
 .hx-c-ic svg circle{stroke:rgb(var(--mint-rgb))}
 .hx-c-ic svg polygon{stroke:var(--sun,#ffd58a);fill:rgba(255,213,138,.3)}
 @media (min-width:901px){.hx-centro p{font-size:15.5px}.hx-centro h2{font-size:clamp(24px,2.3vw,30px)}.hx-c-b1{padding:14px 16px;font-size:16px}}
+
+/* início v12: cards menores com respiro intermediário; card central no brilho do "Cuidados essenciais" */
+@media (min-width:901px){
+  .hx-stage{min-height:340px;max-height:560px}
+  body.na-home .home-topo{padding:56px 0}
+  .hx-card{padding-top:18px;padding-bottom:18px;gap:6px}
+  .hx-card b{font-size:clamp(19px,1.8vw,24px)}
+  .hx-d{font-size:clamp(13px,1.15vw,15px)}
+  .hx-meta{font-size:13px}
+  .hx-wm{width:160px;height:160px}
+  .hx-centro{width:min(400px,37%);padding:26px 28px 24px;gap:14px}
+  .hx-centro h2{font-size:clamp(23px,2.1vw,28px)}
+  .hx-c-b1{padding:13px 16px;font-size:15.5px}
+}
+.hx-centro{overflow:hidden;
+  background:linear-gradient(180deg,rgba(var(--sky-rgb),.30),rgba(var(--sky-rgb),.05)),linear-gradient(180deg,#3a97c9,#1c70a0);
+  border:1px solid rgb(var(--sky-rgb));
+  box-shadow:0 0 0 7px rgba(var(--bg-rgb),.75),0 24px 60px rgba(0,0,0,.5),0 0 56px rgba(var(--sky-rgb),.55),inset 0 0 40px rgba(255,255,255,.10)}
+.hx-centro::before{left:0;right:0;top:0;width:auto;height:4px;margin:0;border-radius:0;filter:none;opacity:1;background:linear-gradient(90deg,rgb(var(--mint-rgb)),#fff)}
+.hx-c-ic{color:#fff;filter:drop-shadow(0 0 14px rgba(255,255,255,.7))}
+.hx-c-ic svg circle{stroke:#fff}
+.hx-c-ic svg polygon{stroke:#fff;fill:rgba(255,255,255,.35)}
+.hx-centro h2{color:#fff}
+.hx-c-b1{background:linear-gradient(135deg,#f6e3d0,#e8c9ab);color:#3b2718;box-shadow:0 8px 22px rgba(232,201,171,.35)}
+.hx-c-b1:hover{background:linear-gradient(135deg,#fbebdb,#efd2b6);filter:none}
