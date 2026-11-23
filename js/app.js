@@ -12,7 +12,7 @@ const authStorage = {
 };
 import { makeAI, NoKeyError } from './ai.js?v=64';
 import { speak, stopSpeaking, pauseSpeaking, resumeSpeaking, onSpeechState, speechState, listen, canListen, canSpeak } from './speech.js?v=69';
-import { initSaude, cuidar, startAgua } from './saude.js?v=71';
+import { initSaude, cuidar, startAgua } from './saude.js?v=72';
 import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=63';
 
 let C, S, AI;
@@ -120,7 +120,7 @@ function addCards(list, key, source) {
 }
 
 // ---------- roteamento ----------
-const routes = { tempo: async () => { const m = await import('./tempo.js?v=1'); m.initTempo({ S, AI, app, toast }); return m.tempo(); }, agenda: async (t) => { const m = await import('./agenda.js?v=72'); m.initAgenda({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.agenda(t); }, 'boas-vindas': boasVindas, nivelamento, cronograma, mentoria, seu, cuidar: (s) => cuidar(s), cuidados: async (s) => { const m = await import('./cuidados.js?v=71'); m.initCuidados({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.cuidados(s); }, sobre, apoiar, '': home, idiomas, cursos, trilha, curso, aula, conversa, memorizacao, revisao, teste, historico, ajustes, guia };
+const routes = { tempo: async () => { const m = await import('./tempo.js?v=2'); m.initTempo({ S, AI, app, toast }); return m.tempo(); }, agenda: async (t) => { const m = await import('./agenda.js?v=72'); m.initAgenda({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.agenda(t); }, 'boas-vindas': boasVindas, nivelamento, cronograma, mentoria, seu, cuidar: (s) => cuidar(s), cuidados: async (s) => { const m = await import('./cuidados.js?v=72'); m.initCuidados({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.cuidados(s); }, sobre, apoiar, '': home, idiomas, cursos, trilha, curso, aula, conversa, memorizacao, revisao, teste, historico, ajustes, guia };
 let cleanup = null;
 async function router() {
   cleanup?.(); cleanup = null; stopSpeaking(); closeAreas(); aplicarDias();
@@ -525,7 +525,7 @@ async function aula(key, id) {
   function render() {
     const done = s.done[L.id], tab = tabs[step][0];
     app.innerHTML = `
-    <a class="back" href="#/curso/${key}">← ${esc(d.title)}</a>
+    <a class="back" href="#/curso/${key}">${esc(d.title)}</a>
     <div class="eyebrow" style="margin-top:14px">Aula ${L.n}${d.kind === 'lang' ? ` · ${s.level}` : ''}${done ? ` · feita (${done.score}%)` : ''}</div>
     <h1 style="margin-top:6px">${esc(lesson.title || L.title)}</h1>
     ${lesson.subtitle ? `<p class="muted" style="margin-top:6px">${esc(lesson.subtitle)}</p>` : ''}
@@ -666,7 +666,7 @@ async function conversa(key, lessonId) {
   }
   const tutor = 'IAlvorecer';
   const prefs = { voice: LS.get('pg_voice') !== '0', hide: LS.get('pg_hide') === '1' };
-  app.innerHTML = `<a class="back" href="#/curso/${key}">← ${esc(d.title)}</a>
+  app.innerHTML = `<a class="back" href="#/curso/${key}">${esc(d.title)}</a>
   <div class="panel" style="max-width:720px;margin:20px auto">
     <div class="eyebrow">${isTrack ? 'Discussão com mentor' : 'Aula de conversação'} · ${esc(d.title)}${isTrack ? '' : ' · ' + s.level}</div>
     <h2 style="margin:10px 0 6px">${esc(topic)}</h2>
@@ -796,7 +796,7 @@ async function revisao(key) {
   let i = 0, right = 0;
   const show = (reveal) => {
     const c = cards[i], d = course(c.course);
-    app.innerHTML = `<div class="flash"><div class="row small muted"><a href="#/memorizacao">← Sair</a><span class="spacer"></span>${i + 1} / ${cards.length}</div>
+    app.innerHTML = `<div class="flash"><div class="row small muted"><a href="#/memorizacao">Sair</a><span class="spacer"></span>${i + 1} / ${cards.length}</div>
       <div class="progress" style="margin:12px 0 20px"><i style="width:${(i / cards.length) * 100}%;background:var(--pink)"></i></div>
       <div class="fcard"><div class="small" style="opacity:.75">${esc(d.title)}${c.source === 'erro' ? ' · seu erro' : ''}</div>
         <div class="front">${esc(c.front)} ${canSpeak && d.kind !== 'trk' && c.source !== 'erro' ? `<button class="say" id="sf">🔊</button>` : ''}</div>
@@ -852,7 +852,7 @@ async function teste(kind = 'semana', key) {
     qs = shuffle(cards).slice(0, n).map(c => { const wrong = shuffle(S.srs.filter(x => x.id !== c.id && x.back !== c.back)).slice(0, 3).map(x => x.back); const options = shuffle([c.back, ...wrong]); return { type: 'mcq', q: c.front, options, answer: options.indexOf(c.back), explain: c.note }; });
     toast('Sem IA agora: teste montado só com seus cartões.');
   }
-  app.innerHTML = `<a class="back" href="#/memorizacao">← Voltar</a><div class="eyebrow" style="margin-top:14px">${esc(d.title)}</div><h1 style="margin:6px 0 20px">${isLevel ? `Prova do nível ${s.level}` : kind === 'mes' ? 'Teste do mês' : 'Teste da semana'}</h1>${isLevel ? '<p class="muted" style="margin-bottom:18px">Com 70% ou mais você sobe de nível.</p>' : ''}<div id="tb"></div>`;
+  app.innerHTML = `<a class="back" href="#/memorizacao">Voltar</a><div class="eyebrow" style="margin-top:14px">${esc(d.title)}</div><h1 style="margin:6px 0 20px">${isLevel ? `Prova do nível ${s.level}` : kind === 'mes' ? 'Teste do mês' : 'Teste da semana'}</h1>${isLevel ? '<p class="muted" style="margin-bottom:18px">Com 70% ou mais você sobe de nível.</p>' : ''}<div id="tb"></div>`;
   exercisesUI($('#tb'), qs, {
     langName: d.lang.name, doneLabel: 'Salvar resultado', onDone: async res => {
       S.state.stats.tests++; touchStreak();
@@ -1039,7 +1039,7 @@ async function cronograma() {
     }
     (weeks[ws] ||= []).push(row);
   }
-  app.innerHTML = `<a class="back" href="#/idiomas">← Idiomas</a>
+  app.innerHTML = `<a class="back" href="#/idiomas">Idiomas</a>
   <div class="eyebrow" style="margin-top:14px">Cronograma</div><h1 style="margin:6px 0 10px">Suas próximas 4 semanas</h1>
   <p class="muted" style="max-width:720px">O cronograma se ajusta sozinho conforme você avança. Quer mudar os dias, o ritmo, os temas ou pular alguma aula? Peça ao IAlvorecer (dá pra desfazer depois).</p>
   <div class="grid g${Math.min(keys.length + 1, 3)}" style="margin:20px 0 26px">
@@ -1611,7 +1611,7 @@ async function runPlacement(box, L, onLevel) {
 }
 async function nivelamento(key) {
   const d = course(key), s = cs(key);
-  app.innerHTML = `<a class="back" href="#/curso/${key}">← ${esc(d.title)}</a><div class="eyebrow" style="margin-top:14px">Teste de nivelamento</div><h1 style="margin:6px 0 18px">${esc(d.title)}: qual é o seu nível?</h1><div id="pl"></div>`;
+  app.innerHTML = `<a class="back" href="#/curso/${key}">${esc(d.title)}</a><div class="eyebrow" style="margin-top:14px">Teste de nivelamento</div><h1 style="margin:6px 0 18px">${esc(d.title)}: qual é o seu nível?</h1><div id="pl"></div>`;
   runPlacement($('#pl'), d.lang, async (lv, score) => {
     await S.addEvent({ type: 'test', kind: 'nivelamento', course: key, title: `Nivelamento de ${d.title}: ${lv}`, level: lv, score });
     app.innerHTML = `<div class="panel" style="max-width:600px;margin:30px auto;text-align:center"><div class="eyebrow">Seu nível sugerido</div><div class="score">${lv}</div><p class="muted">${esc(lvName(lv))} · você está no ${s.level} agora.</p>
@@ -1713,7 +1713,7 @@ function login(msg, mode = 'inicio') {
   let emails = true;
   const criar = mode === 'criar';
   app.innerHTML = `<div class="login panel">
-    <button class="back" data-mode="inicio" style="margin-bottom:18px">← Voltar</button>
+    <button class="back" data-mode="inicio" style="margin-bottom:18px">Voltar</button>
     <div class="brand" style="font-size:30px"><em>IA</em>lvorecer<span>.</span></div>
     <p class="muted" style="margin:10px 0 18px">${criar ? 'Crie sua conta grátis. Seu progresso fica salvo e você entra de qualquer aparelho.' : 'Que bom te ver de novo.'}</p>
     ${msg ? `<div class="notice" style="margin-bottom:16px">${esc(msg)}</div>` : ''}

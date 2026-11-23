@@ -18,7 +18,7 @@ const save = () => X.S.saveState();
 
 export async function tempo() {
   const d = st();
-  X.app.innerHTML = `<a class="back" href="#/">← Início</a><div class="eyebrow" style="margin-top:22px">Mais tempo para você</div>
+  X.app.innerHTML = `<a class="back" href="#/">Início</a><div class="eyebrow" style="margin-top:22px">Mais tempo para você</div>
     <h1 style="margin:10px 0 10px">Um trabalho melhor para ter mais tempo de se cuidar</h1>
     <p class="muted" style="max-width:760px">Muita gente não consegue dormir bem, treinar ou comer direito por causa das horas de trabalho e de transporte. Responda rapidinho e o IAlvorecer monta um caminho para um trabalho que pague bem e deixe tempo livre, na área que você quer.</p>
     <div class="notice" style="margin:18px 0 26px">É uma IA de apoio: ela mostra caminhos, mas pode errar e não promete resultados. Confira informações de vagas e valores em fontes reais.</div><div id="tp"></div>`;
