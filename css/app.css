@@ -992,3 +992,22 @@ a.sci:hover{color:var(--sun)}
 .hx-sq-go{background:linear-gradient(135deg,#ffd58a,#f4c26b 55%,#e9b45a);color:#2a1d00;border-color:transparent;box-shadow:0 6px 18px rgba(255,213,138,.28)}
 .hx-sq-go:hover:not(:disabled){background:linear-gradient(135deg,#ffd58a,#f4c26b 55%,#e9b45a);filter:brightness(1.07)}
 @media (max-width:900px){.hx-tab{padding:8px 10px;font-size:12px}.hx-tab b{display:none}}
+
+/* início v7: faixa de cuidados em cima e card central claro e delicado, com aurora suave */
+.home-topo{gap:12px}
+.hx-cuid{margin-bottom:2px}
+.hx-centro{width:min(320px,35%);padding:26px 24px 22px;border:1px solid rgba(255,255,255,.75);border-radius:var(--rq);overflow:hidden;isolation:isolate;
+  background:linear-gradient(160deg,#fbfffd 0%,#eafaf5 45%,#e6f3ff 100%);color:#10303c;
+  box-shadow:0 0 0 5px rgba(255,255,255,.14),0 18px 50px rgba(var(--mint-rgb),.28),0 0 60px rgba(var(--sky-rgb),.22)}
+.hx-centro::before,.hx-centro::after{content:"";position:absolute;z-index:-1;width:220px;height:220px;border-radius:50%;filter:blur(34px);opacity:.75;pointer-events:none}
+.hx-centro::before{left:-70px;top:-70px;background:radial-gradient(circle,rgba(126,240,207,.85),transparent 68%);animation:hxAur1 9s ease-in-out infinite alternate}
+.hx-centro::after{right:-80px;bottom:-80px;background:radial-gradient(circle,rgba(255,213,138,.8),rgba(140,207,255,.5) 55%,transparent 72%);animation:hxAur2 11s ease-in-out infinite alternate}
+@keyframes hxAur1{to{transform:translate(70px,50px) scale(1.2)}}
+@keyframes hxAur2{to{transform:translate(-60px,-50px) scale(1.15)}}
+.hx-c-ic{background:linear-gradient(135deg,#ffffff,#d7f7ec);color:#0f8f73;box-shadow:0 6px 18px rgba(var(--mint-rgb),.4);border:1px solid rgba(255,255,255,.9)}
+.hx-c-t{color:#0f8f73;letter-spacing:.2em}
+.hx-centro h2{color:#0e2c3a;font-weight:700}
+.hx-centro p{color:#3d5f6c}
+.hx-c-b1{background:linear-gradient(135deg,#ffe3a6,#ffd58a 55%,#f6c46a);color:#3a2800;box-shadow:0 8px 20px rgba(255,200,100,.45)}
+.hx-c-b2{color:#0f6f5a}.hx-c-b2:hover{color:#0a4a3c}
+@media (prefers-reduced-motion:reduce){.hx-centro::before,.hx-centro::after{animation:none}}
