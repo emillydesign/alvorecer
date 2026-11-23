@@ -51,7 +51,7 @@ const TABELA = [
 
 // ---------- layout comum ----------
 const AVISO = `<div class="notice" style="margin:18px 0 26px">💡 Esta é uma IA de apoio do IAlvorecer: ajuda como base, mas <b>não substitui</b> psicólogo, nutricionista, educador físico ou médico, e pode errar. Em emergência: <b>SAMU 192</b> · Apoio emocional 24h e gratuito: <b>CVV 188</b> (ou chat em cvv.org.br) · Avaliação gratuita: UBS/posto de saúde (SUS).</div>`;
-const head = (eyebrow, title, sub) => `<a class="back" href="#/cuidar">← Cuidar de mim</a><div class="eyebrow" style="margin-top:22px">${eyebrow}</div><h1 style="margin:10px 0 10px">${title}</h1>${sub ? `<p class="muted" style="max-width:720px">${sub}</p>` : ''}`;
+const head = (eyebrow, title, sub) => `<a class="back" href="#/cuidar">Cuidar de mim</a><div class="eyebrow" style="margin-top:22px">${eyebrow}</div><h1 style="margin:10px 0 10px">${title}</h1>${sub ? `<p class="muted" style="max-width:720px">${sub}</p>` : ''}`;
 
 // ---------- HUB ----------
 export async function cuidar(sub) {

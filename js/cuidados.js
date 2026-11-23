@@ -99,7 +99,7 @@ const st = () => ((X.S.state.cuidados ||= {}));
 const A = id => (st()[id] ||= { resp: {}, guia: null, hist: [] });
 const save = () => X.S.saveState();
 
-const head = (eyebrow, title, sub) => `<a class="back" href="#/cuidados">← Cuidados</a><div class="eyebrow" style="margin-top:22px">${eyebrow}</div><h1 style="margin:10px 0 10px">${title}</h1>${sub ? `<p class="muted" style="max-width:720px">${sub}</p>` : ''}`;
+const head = (eyebrow, title, sub) => `<a class="back" href="#/cuidados">Cuidados</a><div class="eyebrow" style="margin-top:22px">${eyebrow}</div><h1 style="margin:10px 0 10px">${title}</h1>${sub ? `<p class="muted" style="max-width:720px">${sub}</p>` : ''}`;
 
 // ---------- entrada da rota ----------
 export async function cuidados(sub) {
