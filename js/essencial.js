@@ -44,7 +44,7 @@ export function homeHTML({ C, S, esc, icoOf, grad, saudacao, dia }) {
   <div class="qd-top"><div class="eyebrow">${esc(dia)}</div><h1 class="qd-h">${esc(saudacao)}. <span class="grad">Comece por aqui.</span></h1></div>
   <div class="qd-wrap">
     <div class="qd-grid">${pg}
-      <div class="qd-centro"><div class="eyebrow">Nosso diferencial</div><h2>Um trabalho que cabe na sua vida</h2><p>Mentoria de carreira para conseguir um trabalho que combine com o seu tempo e com os seus cuidados.</p><div class="qd-btns"><a class="btn btn-pink btn-sm" href="#/tempo">Montar meu caminho</a><a class="btn btn-ghost btn-sm" href="#/mentoria">Mentoria</a></div></div>
+      <div class="qd-centro"><div class="eyebrow">Nosso diferencial</div><h2>Encontre o trabalho ideal para você</h2><p>Mentoria de carreira gratuita: o IAlvorecer ajuda você a descobrir e conquistar um trabalho que combine com o seu tempo e os seus cuidados. Ele orienta, você decide.</p><div class="qd-btns"><a class="btn btn-pink btn-sm" href="#/tempo">Montar meu caminho</a><a class="btn btn-ghost btn-sm" href="#/mentoria">Mentoria</a></div></div>
     </div>
     <div class="qd-pager"><span class="qd-nome" id="qdNome" data-nomes="${esc(JSON.stringify(nomes))}">${esc(nomes[0])}</span><span class="qd-dots">${paginas.map((_, n) => `<button type="button" class="qd-dot${n ? '' : ' on'}" data-go="${n}" aria-label="Página ${n + 1}"></button>`).join('')}</span><button type="button" class="btn btn-ghost btn-sm" id="qdMais">Ver mais cursos essenciais</button></div>
   </div>
