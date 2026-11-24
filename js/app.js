@@ -1825,7 +1825,7 @@ async function boot() {
     const { demoData, demoAI } = await import('./demo.js?v=63');
     S = new DemoStore(() => demoData(C)); S.demoAI = demoAI;
     if (qs.has('visita')) S.readonly = true;
-    window.__dockTag = S.readonly ? '<a class="dock-tag dock-visita" href="./" aria-label="Modo visitante: criar conta grátis"><span class="dv-ic"><i data-lucide="compass"></i></span><span class="dv-tx"><small><span class="dv-ponto"></span>Modo visitante</small><b>Criar conta grátis</b></span><span class="dv-btn"><i data-lucide="arrow-right"></i></span></a>' : '<div class="dock-tag dock-tag-demo"><i data-lucide="flask-conical"></i><span class="dock-tag-t"><b>Demonstração</b></span></div>';
+    window.__dockTag = S.readonly ? '<a class="dock-tag dock-visita" href="./" aria-label="Modo visitante: criar conta grátis"><span class="dv-ic"><i data-lucide="compass"></i></span><span class="dv-tx"><small>Modo visitante</small><b>Criar conta grátis</b></span></a>' : '<div class="dock-tag dock-tag-demo"><i data-lucide="flask-conical"></i><span class="dock-tag-t"><b>Demonstração</b></span></div>';
   } else {
     const { createClient } = await loadSb();
     sb = createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { storage: authStorage, persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
