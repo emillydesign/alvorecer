@@ -53,7 +53,7 @@ export function homeHTML({ C, S, esc, icoOf, grad, saudacao, dia }) {
   <div class="hx-stage"><div class="hx-grid">${pg}
     <div class="hx-centro"><span class="hx-dust" aria-hidden="true">${Array.from({ length: 16 }, (_, i) => `<i style="left:${(i * 37 + 8) % 96}%;animation-delay:-${(i * 2.3) % 14}s;animation-duration:${9 + (i * 5) % 8}s"></i>`).join('')}</span><span class="hx-c-ic">${icoOf('compass')}</span><h2>Encontre o trabalho ideal para você</h2><a class="hx-c-b1" href="#/mentoria">Conheça a mentoria gratuita</a></div>
   </div></div>
-  <div class="hx-ctrl"><div class="hx-bar2"><button type="button" class="hx-sq" id="hxPrev" aria-label="Cursos anteriores">${icoOf('chevron-left')}</button><div class="hx-tabs" role="tablist">${paginas.map((_, n) => `<button type="button" role="tab" class="hx-tab${n ? '' : ' on'}" data-go="${n}" aria-label="Cursos ${n + 1} de ${paginas.length}"></button>`).join('')}</div><button type="button" class="hx-sq hx-pp" id="hxPausa" aria-label="Pausar a troca automática" title="Pausar">${icoOf('pause')}</button><button type="button" class="hx-sq hx-pp" id="hxPlay" aria-label="Retomar a troca automática" title="Continuar">${icoOf('play')}</button><button type="button" class="hx-sq hx-sq-go" id="hxNext" aria-label="Próximos cursos">${icoOf('chevron-right')}</button></div><span id="hxNome" data-nomes="${esc(JSON.stringify(nomes))}" hidden></span></div>`;
+  <div class="hx-ctrl carregando"><div class="hx-bar2"><button type="button" class="hx-sq" id="hxPrev" aria-label="Cursos anteriores">${icoOf('chevron-left')}</button><div class="hx-tabs" role="tablist">${paginas.map((_, n) => `<button type="button" role="tab" class="hx-tab${n ? '' : ' on'}" data-go="${n}" aria-label="Cursos ${n + 1} de ${paginas.length}"></button>`).join('')}</div><button type="button" class="hx-sq hx-sq-go" id="hxNext" aria-label="Próximos cursos">${icoOf('chevron-right')}</button></div><div class="hx-bar2 hx-bar-pp"><button type="button" class="hx-sq hx-pp" id="hxPausa" aria-label="Pausar a troca automática" title="Pausar">${icoOf('pause')}</button><button type="button" class="hx-sq hx-pp" id="hxPlay" aria-label="Retomar a troca automática" title="Continuar">${icoOf('play')}</button></div><span id="hxNome" data-nomes="${esc(JSON.stringify(nomes))}" hidden></span></div>`;
 }
 
 export function ligarHome(root) {
@@ -84,7 +84,7 @@ export function ligarHome(root) {
   const passo = () => {
     if (!root.isConnected || !pags[0].isConnected) return fim();
     if (document.hidden || suspenso) return;
-    ir(at + 1, 1); agendar();
+    rodar(() => ir(at + 1, 1)); agendar();
   };
   const marcar = () => {
     pausa.classList.toggle('on', !rodando); play.classList.toggle('on', rodando);
@@ -99,10 +99,12 @@ export function ligarHome(root) {
   const fim = () => { clearTimeout(t); document.removeEventListener('visibilitychange', vis); };
   root._hxFim = fim; document.addEventListener('visibilitychange', vis);
   // manual: o clique move na hora e reinicia a contagem da pausa (se estiver pausado, continua pausado)
-  const manual = (n, d) => { ir(n, d); agendar(); };
-  dots.forEach(d => d.onclick = () => { const n = +d.dataset.go; manual(n, n > at ? 1 : -1); });
-  next.onclick = () => manual(at + 1, 1);
-  prev.onclick = () => manual(at - 1, -1);
+  let ocupado = false; const fila = [];
+  const rodar = fn => { if (ocupado) { if (fila.length < 4) fila.push(fn); return; } ocupado = true; fn(); setTimeout(() => { ocupado = false; const f = fila.shift(); if (f) rodar(f); }, 750); };
+  const manual = fn => { rodar(fn); agendar(); };
+  dots.forEach(d => d.onclick = () => manual(() => { const n = +d.dataset.go; ir(n, n > at ? 1 : -1); }));
+  next.onclick = () => manual(() => ir(at + 1, 1));
+  prev.onclick = () => manual(() => ir(at - 1, -1));
   pausa.onclick = () => definir(false, true);
   play.onclick = () => definir(true, true);
   // parado enquanto o mouse ou o dedo estão sobre os cursos (sobre os botões não: senão o Play pareceria não funcionar)
@@ -110,13 +112,21 @@ export function ligarHome(root) {
   palco.addEventListener('mouseenter', () => { suspenso = true; clearTimeout(t); });
   palco.addEventListener('mouseleave', () => { suspenso = false; agendar(); });
   let salvo = null; try { salvo = localStorage.getItem('ia_home_auto'); } catch (e) { }
-  definir(salvo ? salvo === '1' : !(celular() || reduz()), false); // começa rodando, exceto no celular (sem efeito de slide) ou com "reduzir movimento"
+  marcar();
+  const inicial = salvo ? salvo === '1' : !(celular() || reduz()); // começa rodando, exceto no celular (sem efeito de slide) ou com "reduzir movimento"
+  const ctrl = root.querySelector('.hx-ctrl'); let tent = 0;
+  const revelar = () => { // os botões só aparecem quando a página terminou de carregar e os ícones existem (no máximo 5 s de espera)
+    if (!root.isConnected || root._hxFim !== fim) return;
+    const pronto = document.readyState === 'complete' && [...ctrl.querySelectorAll('.hx-sq')].every(b => b.querySelector('svg'));
+    if (pronto || ++tent > 50) { ctrl.classList.remove('carregando'); definir(inicial, false); } else setTimeout(revelar, 100);
+  };
+  revelar();
   let x0 = null, y0 = null, arrastou = false; const st = root.querySelector('.hx-grid');
   st.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; suspenso = true; clearTimeout(t); }, { passive: true });
   st.addEventListener('touchend', e => {
     suspenso = false; if (x0 == null) return agendar();
     const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0; x0 = null;
-    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) { arrastou = true; setTimeout(() => { arrastou = false; }, 400); manual(at + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1); } else agendar();
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) { arrastou = true; setTimeout(() => { arrastou = false; }, 400); manual(() => ir(at + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1)); } else agendar();
   });
   st.addEventListener('click', e => { if (arrastou) { e.preventDefault(); e.stopPropagation(); } }, true); // deslizar o dedo não deve abrir um curso sem querer
 }
