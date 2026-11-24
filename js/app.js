@@ -298,7 +298,7 @@ async function home() {
     <div class="stat"><b>${S.srs.length}</b><span>palavras na memória</span></div>
     <div class="stat"><b>${S.state.streak.best || 0}</b><span>recorde de dias seguidos</span></div>
   </div></section>`;
-  import('./essencial.js?v=24').then(E => { const el = $('#homeTopo'); if (el) { el.innerHTML = E.homeHTML({ C, S, esc, icoOf, grad, saudacao: hello + (name ? ', ' + name : ''), dia: fmtDay(t) + (rest ? (hol ? ' · ' + hol + ': ' : ' · ') + 'dia de descanso' : '') }); const b = $('#homeStart3'); if (b) b.onclick = () => abrirComecar(); E.ligarHome(el); } }).catch(() => { });
+  import('./essencial.js?v=25').then(E => { const el = $('#homeTopo'); if (el) { el.innerHTML = E.homeHTML({ C, S, esc, icoOf, grad, saudacao: hello + (name ? ', ' + name : ''), dia: fmtDay(t) + (rest ? (hol ? ' · ' + hol + ': ' : ' · ') + 'dia de descanso' : '') }); const b = $('#homeStart3'); if (b) b.onclick = () => abrirComecar(); E.ligarHome(el); } }).catch(() => { });
   window.IAPers && IAPers.home();
   $('#homeAsst').onclick = () => openAssistant();
   $('#homeAreas').onclick = () => openAreas();
@@ -1825,7 +1825,7 @@ async function boot() {
     const { demoData, demoAI } = await import('./demo.js?v=63');
     S = new DemoStore(() => demoData(C)); S.demoAI = demoAI;
     if (qs.has('visita')) S.readonly = true;
-    document.body.insertAdjacentHTML('beforeend', S.readonly ? '<a class="demo-badge" href="./">👁 Modo visitante · Criar conta</a>' : '<div class="demo-badge">DEMONSTRAÇÃO</div>');
+    window.__dockTag = S.readonly ? '<a class="dock-tag" href="./" title="Criar conta grátis"><i data-lucide="eye"></i><span class="dock-tag-t"><b>Modo visitante</b><small>Criar conta</small></span><i class="dock-tag-go" data-lucide="user-plus"></i></a>' : '<div class="dock-tag dock-tag-demo"><i data-lucide="flask-conical"></i><span class="dock-tag-t"><b>Demonstração</b></span></div>';
   } else {
     const { createClient } = await loadSb();
     sb = createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { storage: authStorage, persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
@@ -1848,7 +1848,8 @@ async function boot() {
   setTimeout(startAgua, 2000);
   // (cliques de avaliação/erro tratados no início do boot)
   $('#topbar').hidden = false; $('#tabbar').hidden = false;
-  document.body.insertAdjacentHTML('beforeend', '<button class="fab" id="fab">✦ Falar com o IAlvorecer</button>');
+  document.body.insertAdjacentHTML('beforeend', '<div class="dock" id="dock">' + (window.__dockTag || '') + '<button class="fab" id="fab" type="button" title="Falar com o assistente" aria-label="Falar com o assistente"><i data-lucide="headset"></i></button></div>');
+  try { lucide.createIcons(); } catch (e) { }
   addEventListener('scroll', () => document.body.classList.toggle('rolou', scrollY > 30), { passive: true });
   $('#fab').onclick = () => toggleAssistant();
   { const tr = $('.topright'); if (tr) { tr.insertAdjacentHTML('afterbegin', '<button type="button" class="iconbtn" id="vozBtn" title="Assistente de voz" aria-label="Assistente de voz"><i data-lucide="mic"></i></button>'); $('#vozBtn').onclick = abrirVozAssistente; try { lucide.createIcons(); } catch { } } }

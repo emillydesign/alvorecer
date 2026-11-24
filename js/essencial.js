@@ -58,7 +58,7 @@ export function homeHTML({ C, S, esc, icoOf, grad, saudacao, dia }) {
   const curtos = paginas.map((_, n) => n === 0 ? 'Começar' : n === paginas.length - 1 ? 'Explorar' : 'Continue depois');
   const pg = paginas.map((p, n) => `<div class="hx-pag${n ? ' next' : ' on'}" data-pag="${n}">${p.join('')}</div>`).join('');
   return `
-  <div class="hx-cuid"><div class="hx-cuid-t"><b>${esc(CE.eyebrow)}</b><span>o básico, em ordem</span></div><div class="hx-cuid-l">${CE.etapas.map((e, i) => `<a class="hx-cu" href="${esc(e.h)}" title="${esc(e.por)}"><span class="hx-cu-i">${icoOf(e.i || 'circle')}</span><span class="hx-cu-n">${i + 1}</span><b>${esc(e.curto || e.t)}</b></a>`).join('')}</div></div>
+  <div class="hx-cuid"><div class="hx-cuid-t"><b>${esc(CE.eyebrow)}</b></div><div class="hx-cuid-l">${CE.etapas.map((e, i) => `<a class="hx-cu" href="${esc(e.h)}" title="${esc(e.por)}"><span class="hx-cu-i">${icoOf(e.i || 'circle')}</span><span class="hx-cu-n">${i + 1}</span><b>${esc(e.curto || e.t)}</b></a>`).join('')}</div></div>
   <div class="hx-stage"><div class="hx-grid">${pg}
     <div class="hx-centro"><span class="hx-dust" aria-hidden="true">${Array.from({ length: 16 }, (_, i) => `<i style="left:${(i * 37 + 8) % 96}%;animation-delay:-${(i * 2.3) % 14}s;animation-duration:${9 + (i * 5) % 8}s"></i>`).join('')}</span><span class="hx-c-ic">${icoOf('compass')}</span><h2>Encontre o trabalho ideal para você</h2><a class="hx-c-b1" href="#/mentoria">Conheça a mentoria gratuita</a></div>
   </div></div>
