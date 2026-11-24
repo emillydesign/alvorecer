@@ -151,20 +151,22 @@ async function router() {
 }
 function updateAreaTab() { const id = C.tracks[S.state.area]?.area ? S.state.area : 'design'; const t = C.tracks[id]; const el = $('#areaTab'); if (el) { el.textContent = t.name; el.href = '#/trilha/' + id; } }
 function closeAreas() { $('#areasPop')?.remove(); $('#popOv')?.remove(); }
-function openAreas() {
-  if ($('#areasPop')) return closeAreas();
+// Lista completa do que o site tem: um atalho para cada coisa, inclusive as áreas escondidas (cuidados, cursos essenciais...).
+// Mesma lista no botão Áreas do topo, no card "Ver todas as áreas" do início e na página Cursos.
+function todasAreasHTML(grade) {
   const areas = Object.entries(C.tracks).filter(([, t]) => t.area);
   const cur = C.tracks[S.state.area]?.area ? S.state.area : 'design';
   const nCus = (S.state.custom || []).length;
-  // Um atalho (link) para cada coisa que o site tem: nada fica escondido. Mesma lista no botão Áreas do topo e em "Todas as áreas".
+  const ga = grade ? ' style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))"' : '';
   const L = (href, ic, nome, sub, g, pat) => `<a class="atile ${pat || 'pat-dots'}" href="${href}" style="${grad(g)}"><i>${icoOf(ic)}</i><div><b>${esc(nome)}</b><br><small>${esc(sub)}</small></div></a>`;
   const sec = t => `<h4 class="ap-sec">${t}</h4>`;
   const cuid = [['pele', 'sparkles', 'Pele', 'rotina, ácidos e protetor', ['#86efac', '#0ea5e9']], ['unhas', 'hand', 'Unhas', 'cuidados e fortalecimento', ['#fbcfe8', '#6366f1']], ['cabelo', 'scissors', 'Cabelo', 'do seu tipo de fio', ['#fde68a', '#14b8a6']], ['higiene', 'droplets', 'Higiene e cheiro', 'banho, desodorante, hálito', ['#7dd3fc', '#4f46e5']], ['perfumes', 'spray-can', 'Perfumes', 'notas olfativas', ['#f9a8d4', '#7c3aed']], ['estilo', 'shirt', 'Estilo e moda', 'o seu jeito de se vestir', ['#fdba74', '#ec4899']], ['musica', 'music', 'Música', 'descobertas pro seu gosto', ['#a5b4fc', '#14b8a6']]];
-  document.body.insertAdjacentHTML('beforeend', `<div class="pop-overlay" id="popOv"></div><div class="areas-pop" id="areasPop">
-    <div class="row"><h3>Todas as áreas</h3><span class="spacer"></span><button class="iconbtn" id="apX">✕</button></div>
-    <p class="small muted">Tudo o que o IAlvorecer tem, num só lugar. Ao escolher uma <b>área de interesse</b>, ela passa a aparecer no seu menu. Quer algo mais específico? Peça ao IAlvorecer e o curso vai para <b>Seu Alvorecer</b>.</p>
+  const achar = k => { const id = k.replace(/^trk:/, ''); for (const t of Object.values(C.tracks)) { const c = t.courses.find(x => x.id === id); if (c) return c; } return null; };
+  const ess = (C.essencial?.itens || []).map(it => ({ k: it.k, c: achar(it.k) })).filter(x => x.c);
+  const etapas = C.cuidadosEssenciais?.etapas || [];
+  return `
     ${sec('Aprender')}
-    <div class="atiles">
+    <div class="atiles"${ga}>
       ${L('#/idiomas', 'languages', 'Idiomas', `${C.languages.length} idiomas, do zero ao fluente`, ['#2dd4bf', '#2563eb'], 'pat-rings')}
       ${L('#/trilha/tech', 'cpu', 'Tecnologia & IA', `${C.tracks.tech.courses.length} cursos + mentoria`, C.tracks.tech.g, 'pat-grid')}
       ${areas.map(([id, t]) => `<button class="atile pat-dots ${id === cur ? 'on' : ''}" data-area="${id}" style="${grad(t.g)}"><i>${icoOf(t.icon)}</i><div><b>${esc(t.name)}</b><br><small>${t.courses.length} cursos</small></div></button>`).join('')}
@@ -174,7 +176,7 @@ function openAreas() {
       ${L('#/historico', 'history', 'Histórico', 'seu caminho até aqui', ['#bae6fd', '#4f46e5'], 'pat-waves')}
     </div>
     ${sec('Cuidar de você')}
-    <div class="atiles">
+    <div class="atiles"${ga}>
       ${L('#/cuidar', 'heart-handshake', 'Cuidar de mim', 'desabafo, alimentação, treino', ['#86efac', '#6366f1'], 'pat-waves')}
       ${L('#/cuidar/desabafo', 'message-circle-heart', 'Desabafo', 'um espaço para ser ouvida(o)', ['#5eead4', '#6366f1'], 'pat-dots')}
       ${L('#/cuidar/alimentacao', 'salad', 'Alimentação & água', 'plano, água do dia, foto do prato', ['#86efac', '#0ea5e9'], 'pat-rings')}
@@ -183,16 +185,40 @@ function openAreas() {
       ${cuid.map(([id, ic, n, sub, g]) => L('#/cuidados/' + id, ic, n, sub, g, 'pat-dots')).join('')}
     </div>
     ${sec('Rotina e carreira')}
-    <div class="atiles">
+    <div class="atiles"${ga}>
       ${L('#/agenda', 'calendar-check', 'Agenda', 'rotina e checklist do dia', ['#fde68a', '#0ea5e9'], 'pat-grid')}
       ${L('#/tempo', 'hourglass', 'Mais tempo para você', 'trabalho melhor, mais tempo livre', ['#fdba74', '#0d9488'], 'pat-rings')}
       ${L('#/mentoria', 'compass', 'Mentoria de carreira', 'gratuita, com a IA', ['#a7f3d0', '#2563eb'], 'pat-waves')}
       <button class="atile pat-grid" id="apAsk" style="background:linear-gradient(150deg,#a5b4fc,#0ea5e9)"><i>＋</i><div><b>Pedir um curso</b><br><small>pelo IAlvorecer</small></div></button>
-    </div></div>`);
+    </div>
+    ${sec('Cursos essenciais')}
+    <div class="atiles"${ga}>
+      ${ess.map(x => L('#/curso/' + x.k, x.c.icon || 'book-open', x.c.title, x.c.sub || '', x.c.g || ['#34c28a', '#0f5e55'], 'pat-dots')).join('')}
+    </div>
+    ${sec('Cuidados essenciais, em etapas')}
+    <div class="atiles"${ga}>
+      ${etapas.map(e => L(e.h, e.i || 'circle', e.curto || e.t, e.t, ['#4fd1b5', '#17756f'], 'pat-waves')).join('')}
+    </div>
+    ${sec('Sobre o site')}
+    <div class="atiles"${ga}>
+      ${L('#/guia', 'book-open', 'Guia', 'como usar o IAlvorecer', ['#93c5fd', '#0f766e'], 'pat-dots')}
+      ${L('#/sobre', 'info', 'Sobre', 'quem faz e por quê', ['#bae6fd', '#4f46e5'], 'pat-waves')}
+      ${L('#/apoiar', 'heart', 'Apoiar', 'ajude o projeto a continuar', ['#a7f3d0', '#2563eb'], 'pat-rings')}
+    </div>`;
+}
+function ligarAreas(root, fechar) {
+  $$('[data-area]', root).forEach(b => b.onclick = () => { S.state.area = b.dataset.area; S.saveState(); fechar(); location.hash = '#/trilha/' + b.dataset.area; });
+  $$('a.atile', root).forEach(a => a.addEventListener('click', () => { if (a.getAttribute('href') === location.hash) fechar(); }));
+  const ask = $('#apAsk', root); if (ask) ask.onclick = () => { fechar(); openAssistant('Quero um curso de '); };
+}
+function openAreas() {
+  if ($('#areasPop')) return closeAreas();
+  document.body.insertAdjacentHTML('beforeend', `<div class="pop-overlay" id="popOv"></div><div class="areas-pop" id="areasPop">
+    <div class="row"><h3>Todas as áreas</h3><span class="spacer"></span><button class="iconbtn" id="apX">✕</button></div>
+    <p class="small muted">Tudo o que o IAlvorecer tem, num só lugar. Ao escolher uma <b>área de interesse</b>, ela passa a aparecer no seu menu. Quer algo mais específico? Peça ao IAlvorecer e o curso vai para <b>Seu Alvorecer</b>.</p>
+    ${todasAreasHTML()}</div>`);
   $('#apX').onclick = closeAreas; $('#popOv').onclick = closeAreas;
-  $$('[data-area]', $('#areasPop')).forEach(b => b.onclick = () => { S.state.area = b.dataset.area; S.saveState(); closeAreas(); location.hash = '#/trilha/' + b.dataset.area; });
-  $$('a.atile', $('#areasPop')).forEach(a => a.addEventListener('click', () => { if (a.getAttribute('href') === location.hash) closeAreas(); }));
-  $('#apAsk').onclick = () => { closeAreas(); openAssistant('Quero um curso de '); };
+  ligarAreas($('#areasPop'), closeAreas);
 }
 
 // ---------- INÍCIO ----------
@@ -272,7 +298,7 @@ async function home() {
     <div class="stat"><b>${S.srs.length}</b><span>palavras na memória</span></div>
     <div class="stat"><b>${S.state.streak.best || 0}</b><span>recorde de dias seguidos</span></div>
   </div></section>`;
-  import('./essencial.js?v=23').then(E => { const el = $('#homeTopo'); if (el) { el.innerHTML = E.homeHTML({ C, S, esc, icoOf, grad, saudacao: hello + (name ? ', ' + name : ''), dia: fmtDay(t) + (rest ? (hol ? ' · ' + hol + ': ' : ' · ') + 'dia de descanso' : '') }); const b = $('#homeStart3'); if (b) b.onclick = () => abrirComecar(); E.ligarHome(el); } }).catch(() => { });
+  import('./essencial.js?v=24').then(E => { const el = $('#homeTopo'); if (el) { el.innerHTML = E.homeHTML({ C, S, esc, icoOf, grad, saudacao: hello + (name ? ', ' + name : ''), dia: fmtDay(t) + (rest ? (hol ? ' · ' + hol + ': ' : ' · ') + 'dia de descanso' : '') }); const b = $('#homeStart3'); if (b) b.onclick = () => abrirComecar(); E.ligarHome(el); } }).catch(() => { });
   window.IAPers && IAPers.home();
   $('#homeAsst').onclick = () => openAssistant();
   $('#homeAreas').onclick = () => openAreas();
@@ -366,14 +392,10 @@ async function trilha(tid = 'design') {
   <div class="section"><div class="cards">${t.courses.map(c => cardHTML('trk:' + c.id)).join('')}</div></div>`;
 }
 async function cursos() {
-  const areas = Object.entries(C.tracks).filter(([, t]) => t.area);
-  const nCus = (S.state.custom || []).length;
-  app.innerHTML = `<div class="eyebrow">Cursos</div><h1 style="margin:6px 0 18px">Tudo o que dá pra aprender</h1>
-  <div class="atiles" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">
-    <a class="atile pat-grid" href="#/trilha/tech" style="${grad(C.tracks.tech.g)}"><i>${icoOf('cpu')}</i><div><b>Tecnologia &amp; IA</b><br><small>${C.tracks.tech.courses.length} cursos + mentoria</small></div></a>
-    ${areas.map(([id, t]) => `<a class="atile pat-dots" href="#/trilha/${id}" style="${grad(t.g)}"><i>${icoOf(t.icon)}</i><div><b>${esc(t.name)}</b><br><small>${t.courses.length} cursos</small></div></a>`).join('')}
-    <a class="atile pat-rings" href="#/seu" style="background:linear-gradient(150deg,#fcd34d,#14b8a6)"><i>✦</i><div><b>Seu Alvorecer</b><br><small>${nCus} personalizados</small></div></a>
-  </div>`;
+  app.innerHTML = `<div class="eyebrow">Cursos</div><h1 style="margin:6px 0 10px">Tudo o que dá pra aprender</h1>
+  <p class="small muted" style="margin-bottom:6px">Tudo o que o IAlvorecer tem, num só lugar. Quer algo mais específico? Peça ao IAlvorecer e o curso vai para <b>Seu Alvorecer</b>.</p>
+  <div id="todasAreas">${todasAreasHTML(true)}</div>`;
+  ligarAreas($('#todasAreas'), () => { });
 }
 
 // ---------- CURSO ----------

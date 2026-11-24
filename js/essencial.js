@@ -42,8 +42,13 @@ export function homeHTML({ C, S, esc, icoOf, grad, saudacao, dia }) {
   const extra = (pos, ic, tag, t, d, h, g, acao) => `<a class="hx-card hx-${pos} hx-extra${g[2] ? ' hx-lt' : ''}" href="${h}" style="${grad(g)}"><span class="hx-wm">${icoOf(ic)}</span><span class="hx-tag">${esc(tag)}</span><b>${esc(t)}</b><span class="hx-d">${esc(d)}</span><span class="hx-meta"><span>&nbsp;</span><i>${esc(acao || 'Abrir')}</i></span></a>`;
   const nTot = (C.languages || []).length + (C.complementary || []).length + Object.values(C.tracks).reduce((a, x) => a + x.courses.length, 0);
   // O primeiro card é sempre "Cursos personalizados": é o destaque do site (a pessoa pede o curso que quiser). Os cursos essenciais vêm depois.
-  const primeiro = ['sparkles', 'Peça o que quiser', 'Cursos personalizados', 'Quer aprender algo que não está na lista? Conte o que você sonha em aprender e o IAlvorecer cria um curso completo, com carinho, só para você e no seu ritmo.', '#/seu', ['#58c79e', '#1f7f78'], 'Pedir meu curso'];
-  const cards = [{ ex: primeiro }, ...lista];
+  const primeiro = ['sparkles', 'Peça o que quiser', 'Cursos personalizados', 'Quer aprender algo que não está na lista? Conte o que você sonha em aprender e o IAlvorecer cria um curso completo.', '#/seu', ['#58c79e', '#1f7f78'], 'Pedir meu curso'];
+  // Ordem do início: Segurança digital, Cursos personalizados, Idiomas, Ver todas as áreas; depois os demais essenciais por ordem de importância.
+  const ORD = ['pensamento-critico', 'dinheiro-basico', 'primeiros-socorros', 'direitos-cidadania', 'saude-emocional', 'decisoes', 'comunicacao', 'cozinhar-basico', 'planeta-comunidade'];
+  const ord = lista.slice().sort((a, b) => { const ia = ORD.indexOf(a.c.id), ib = ORD.indexOf(b.c.id); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
+  const idiomas = ['languages', 'Idiomas', 'Idiomas', 'Escolha um dos idiomas prontos ou peça o que quiser aprender: o IAlvorecer monta o curso, do zero ao fluente, com conversação por voz e correção.', '#/idiomas', ['#3f86c8', '#12476f']];
+  const todas = ['layout-grid', `${nTot} cursos`, 'Ver todas as áreas', 'Idiomas, tecnologia, saúde, finanças, cuidados e muito mais: tudo o que dá para aprender, num só lugar.', '#/cursos', ['#5b9be8', '#157a80']];
+  const cards = [ord[0], { ex: primeiro }, { ex: idiomas }, { ex: todas }, ...ord.slice(1)].filter(Boolean);
   const paginas = [];
   for (let i = 0; i < cards.length; i += 4) paginas.push(cards.slice(i, i + 4).map((x, k) => x.ex ? extra(POS[k], ...x.ex) : curso(x, POS[k])));
   const ult = paginas[paginas.length - 1], falt = 4 - ult.length;
