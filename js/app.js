@@ -298,7 +298,7 @@ async function home() {
     <div class="stat"><b>${S.srs.length}</b><span>palavras na memória</span></div>
     <div class="stat"><b>${S.state.streak.best || 0}</b><span>recorde de dias seguidos</span></div>
   </div></section>`;
-  import('./essencial.js?v=25').then(E => { const el = $('#homeTopo'); if (el) { el.innerHTML = E.homeHTML({ C, S, esc, icoOf, grad, saudacao: hello + (name ? ', ' + name : ''), dia: fmtDay(t) + (rest ? (hol ? ' · ' + hol + ': ' : ' · ') + 'dia de descanso' : '') }); const b = $('#homeStart3'); if (b) b.onclick = () => abrirComecar(); E.ligarHome(el); } }).catch(() => { });
+  import('./essencial.js?v=26').then(E => { const el = $('#homeTopo'); if (el) { el.innerHTML = E.homeHTML({ C, S, esc, icoOf, grad, saudacao: hello + (name ? ', ' + name : ''), dia: fmtDay(t) + (rest ? (hol ? ' · ' + hol + ': ' : ' · ') + 'dia de descanso' : '') }); const b = $('#homeStart3'); if (b) b.onclick = () => abrirComecar(); E.ligarHome(el); } }).catch(() => { });
   window.IAPers && IAPers.home();
   $('#homeAsst').onclick = () => openAssistant();
   $('#homeAreas').onclick = () => openAreas();
@@ -1825,7 +1825,7 @@ async function boot() {
     const { demoData, demoAI } = await import('./demo.js?v=63');
     S = new DemoStore(() => demoData(C)); S.demoAI = demoAI;
     if (qs.has('visita')) S.readonly = true;
-    window.__dockTag = S.readonly ? '<a class="dock-tag" href="./" title="Criar conta grátis"><i data-lucide="eye"></i><span class="dock-tag-t"><b>Modo visitante</b><small>Criar conta</small></span><i class="dock-tag-go" data-lucide="user-plus"></i></a>' : '<div class="dock-tag dock-tag-demo"><i data-lucide="flask-conical"></i><span class="dock-tag-t"><b>Demonstração</b></span></div>';
+    window.__dockTag = S.readonly ? '<a class="dock-tag dock-visita" href="./" aria-label="Modo visitante: criar conta grátis"><span class="dv-top"><span class="dv-ic"><i data-lucide="compass"></i></span><span class="dv-tx"><small><span class="dv-ponto"></span>Modo visitante</small><b>Gostou do que viu?</b></span></span><span class="dv-btn">Criar conta grátis<i data-lucide="arrow-right"></i></span></a>' : '<div class="dock-tag dock-tag-demo"><i data-lucide="flask-conical"></i><span class="dock-tag-t"><b>Demonstração</b></span></div>';
   } else {
     const { createClient } = await loadSb();
     sb = createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { storage: authStorage, persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });

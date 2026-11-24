@@ -46,7 +46,7 @@ export function homeHTML({ C, S, esc, icoOf, grad, saudacao, dia }) {
   // Ordem do início: Segurança digital, Cursos personalizados, Idiomas, Ver todas as áreas; depois os demais essenciais por ordem de importância.
   const ORD = ['pensamento-critico', 'dinheiro-basico', 'primeiros-socorros', 'direitos-cidadania', 'saude-emocional', 'decisoes', 'comunicacao', 'cozinhar-basico', 'planeta-comunidade'];
   const ord = lista.slice().sort((a, b) => { const ia = ORD.indexOf(a.c.id), ib = ORD.indexOf(b.c.id); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
-  const idiomas = ['languages', 'Idiomas', 'Idiomas', 'Escolha um dos idiomas prontos ou peça o que quiser aprender: o IAlvorecer monta o curso, do zero ao fluente, com conversação por voz e correção.', '#/idiomas', ['#3f86c8', '#12476f']];
+  const idiomas = ['languages', 'Idiomas', 'Idiomas', 'Escolha um dos idiomas prontos ou peça o que quiser aprender: o IAlvorecer monta o curso, do zero ao fluente, com conversação por voz e correção.', '#/idiomas', ['#5cc86a', '#1c6b3c']];
   const todas = ['layout-grid', `${nTot} cursos`, 'Ver todas as áreas', 'Idiomas, tecnologia, saúde, finanças, cuidados e muito mais: tudo o que dá para aprender, num só lugar.', '#/cursos', ['#5b9be8', '#157a80']];
   const cards = [ord[0], { ex: primeiro }, { ex: idiomas }, { ex: todas }, ...ord.slice(1)].filter(Boolean);
   const paginas = [];
