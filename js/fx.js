@@ -15,7 +15,8 @@ const RE = new RegExp(`(${KEYS.join('|')})\\uFE0F?`, 'g');
 const SEL = '.cicon,.row > span,.btn,.today-strip a,.dayrow .it,.task .ck,.fab,.chip,.back,.act,.sugs button,.lesson .st,.areasbtn,.steps button,.tabs button,.ev .ic,.notice,.say,.mic,.send,.iconbtn,.eyebrow,h1,h2,h3,.cta-band,.lock,.del,.mstep,.job .links a,.week h4,.asst-h,.atile i,.langsel button,.stat b,.demo-badge,.corr,.score';
 
 function iconize(root) {
-  root.querySelectorAll(SEL).forEach(el => {
+  const els = [...(root.matches?.(SEL) ? [root] : []), ...root.querySelectorAll(SEL)];
+  els.forEach(el => {
     if (el.closest('.msg,.prose,input,textarea')) return;
     const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
     const nodes = [];
@@ -26,7 +27,7 @@ function iconize(root) {
         if (!part) return;
         const name = EMO[part];
         if (name) { const i = document.createElement('i'); i.setAttribute('data-lucide', name); frag.append(i); }
-        else frag.append(part.replace(/️/g, ''));
+        else frag.append(part.replace(/\uFE0F/g, ''));
       });
       t.replaceWith(frag);
     });
@@ -44,10 +45,17 @@ function reveal() {
   });
 }
 
-let pending = false;
-function run() {
+// Só reprocessa o que mudou (antes varria a página inteira a cada mudança, o que deixava os cliques lentos com a tela cheia)
+let pending = false; const sujos = new Set();
+function run(tudo) {
   pending = false;
-  iconize(document.body);
+  if (tudo) iconize(document.body);
+  else {
+    const lista = [...sujos]; sujos.clear();
+    const alvo = new Set();
+    lista.forEach(r => { if (!r.isConnected) return; const c = r.closest?.(SEL); if (c) alvo.add(c); alvo.add(r); });
+    alvo.forEach(r => { if (r.isConnected) iconize(r); });
+  }
   try { window.lucide?.createIcons(); } catch { }
   reveal();
 }
@@ -55,6 +63,11 @@ export function initFx() {
   const dust = document.createElement('div'); dust.className = 'dust';
   for (let i = 0; i < 22; i++) { const p = document.createElement('i'); p.style.left = Math.random() * 100 + '%'; p.style.top = 60 + Math.random() * 50 + '%'; p.style.animationDelay = -Math.random() * 18 + 's'; p.style.animationDuration = 14 + Math.random() * 14 + 's'; p.style.transform = `scale(${0.5 + Math.random()})`; dust.append(p); }
   document.body.prepend(dust);
-  new MutationObserver(() => { if (!pending) { pending = true; requestAnimationFrame(run); } }).observe(document.body, { childList: true, subtree: true });
-  run();
+  new MutationObserver(ms => {
+    for (const m of ms) for (const n of m.addedNodes) { const el = n.nodeType === 1 ? n : n.parentElement; if (el) sujos.add(el); }
+    if (sujos.size && !pending) { pending = true; requestAnimationFrame(() => run(false)); }
+  }).observe(document.body, { childList: true, subtree: true });
+  // a biblioteca de ícones carrega sem travar a página; quando chega (ou se já chegou), desenha os ícones
+  { const ico = () => { try { window.lucide?.createIcons(); } catch { } }; if (window.lucide) ico(); else document.querySelector('script[src*="lucide"]')?.addEventListener('load', ico); }
+  run(true);
 }

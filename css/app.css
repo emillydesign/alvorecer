@@ -359,6 +359,7 @@ body{background:linear-gradient(140deg,#cdf3e4 0%,#d3ecf6 45%,#d9e3fb 100%) fixe
 .areasbtn:hover,.areasbtn.on{background:#14b8a6;color:#fff;border-color:#14b8a6}
 .areas-pop{position:fixed;top:72px;left:50%;transform:translateX(-50%);z-index:40;width:min(760px,calc(100vw - 24px));max-height:calc(100vh - 100px);overflow:auto;background:#fff;border-radius:24px;border:1px solid var(--line);box-shadow:0 24px 60px rgba(16,60,70,.25);padding:20px}
 .areas-pop h3{margin-bottom:4px}
+.ap-sec{font-family:var(--h);font-size:13px;letter-spacing:.14em;text-transform:uppercase;opacity:.75;margin:22px 0 -4px}
 .atiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
 .atile{position:relative;overflow:hidden;border-radius:18px;padding:16px;color:#fff;min-height:96px;display:flex;flex-direction:column;justify-content:space-between;isolation:isolate;text-align:left}
 .atile b{font-family:var(--h);font-size:15px}.atile i{font-style:normal;font-size:24px}
@@ -1174,3 +1175,10 @@ body.na-home main{padding-top:0}
 .hx-bar2 .hx-pp.on{background:rgba(255,255,255,.2)}
 .hx-bar2 .hx-sq-go:hover{border-left:1px solid rgba(var(--sky-rgb),.4)}
 .hx-bar2 .hx-pp:focus-visible,.hx-bar2 .hx-sq:focus-visible,.hx-bar2 .hx-tab:focus-visible{outline:2px solid #fff;outline-offset:-3px}
+
+/* início no celular: a altura do carrossel acompanha os cards (antes ficava fixa e os cards cobriam os botões de trocar/pausar) */
+@media (max-width:900px){
+  .hx-stage{flex:none;height:auto;min-height:0;max-height:none}
+  .hx-ctrl{position:relative;z-index:3}
+  .hx-centro{position:relative;left:auto;top:auto;transform:none;width:100%;max-width:none;margin-top:8px}
+}

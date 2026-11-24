@@ -39,14 +39,18 @@ export function homeHTML({ C, S, esc, icoOf, grad, saudacao, dia }) {
     return `<a class="hx-card hx-${pos}${cor(x, x.i)[2] ? ' hx-lt' : ''}" href="#/curso/${esc(x.k)}" style="${grad(cor(x, x.i))}"><span class="hx-wm">${icoOf(x.c.icon)}</span>
       <span class="hx-tag">Curso essencial</span><b>${esc(x.c.title)}</b><span class="hx-d">${esc(x.por)}</span>
       <span class="hx-meta"><span>${n} aulas${f ? ' · ' + pct + '%' : ''}</span><i>${f ? 'Continuar' : 'Começar'}</i></span><span class="hx-bar" style="width:${pct}%"></span></a>`; };
-  const extra = (pos, ic, t, d, h, g) => `<a class="hx-card hx-${pos} hx-extra${g[2] ? ' hx-lt' : ''}" href="${h}" style="${grad(g)}"><span class="hx-wm">${icoOf(ic)}</span><span class="hx-tag">E mais</span><b>${esc(t)}</b><span class="hx-d">${esc(d)}</span><span class="hx-meta"><span>&nbsp;</span><i>Abrir</i></span></a>`;
+  const extra = (pos, ic, tag, t, d, h, g, acao) => `<a class="hx-card hx-${pos} hx-extra${g[2] ? ' hx-lt' : ''}" href="${h}" style="${grad(g)}"><span class="hx-wm">${icoOf(ic)}</span><span class="hx-tag">${esc(tag)}</span><b>${esc(t)}</b><span class="hx-d">${esc(d)}</span><span class="hx-meta"><span>&nbsp;</span><i>${esc(acao || 'Abrir')}</i></span></a>`;
+  const nTot = (C.languages || []).length + (C.complementary || []).length + Object.values(C.tracks).reduce((a, x) => a + x.courses.length, 0);
+  // O primeiro card é sempre "Cursos personalizados": é o destaque do site (a pessoa pede o curso que quiser). Os cursos essenciais vêm depois.
+  const primeiro = ['sparkles', 'Peça o que quiser', 'Cursos personalizados', 'Quer aprender algo que não está na lista? Conte o que você sonha em aprender e o IAlvorecer cria um curso completo, com carinho, só para você e no seu ritmo.', '#/seu', ['#58c79e', '#1f7f78'], 'Pedir meu curso'];
+  const cards = [{ ex: primeiro }, ...lista];
   const paginas = [];
-  for (let i = 0; i < lista.length; i += 4) paginas.push(lista.slice(i, i + 4).map((x, k) => curso(x, POS[k])));
+  for (let i = 0; i < cards.length; i += 4) paginas.push(cards.slice(i, i + 4).map((x, k) => x.ex ? extra(POS[k], ...x.ex) : curso(x, POS[k])));
   const ult = paginas[paginas.length - 1], falt = 4 - ult.length;
-  const ex = [['layout-grid', 'Ver todas as áreas', 'Idiomas, tecnologia, saúde, finanças e muito mais para explorar.', '#/cursos', ['#5b9be8', '#157a80']], ['languages', 'Idiomas', 'Do zero ao fluente, com conversação e correção.', '#/idiomas', ['#3f86c8', '#12476f']], ['sparkles', 'Peça um curso', 'O IAlvorecer cria um curso do seu jeito.', '#/seu', ['#58c79e', '#1f7f78']], ['heart-handshake', 'Cuidar de mim', 'Desabafo, alimentação e treino.', '#/cuidar', ['#3fc47a', '#0e7490']]];
-  for (let k = 0; k < falt; k++) { const e = ex[k]; ult.push(extra(POS[4 - falt + k], e[0], e[1], e[2], e[3], e[4])); }
-  const nomes = paginas.map((_, n) => n === 0 ? 'Os mais essenciais' : n === paginas.length - 1 ? 'E mais para explorar' : 'Continue depois');
-  const curtos = paginas.map((_, n) => n === 0 ? 'Essenciais' : n === paginas.length - 1 ? 'Explorar' : 'Continue depois');
+  const ex = [['layout-grid', `${nTot} cursos`, 'Ver todas as áreas', 'Idiomas, tecnologia, saúde, finanças, cuidados e muito mais: tudo o que dá para aprender, num só lugar.', '#/cursos', ['#5b9be8', '#157a80']], ['languages', `${(C.languages || []).length} idiomas`, 'Idiomas', 'Do zero ao fluente, com conversação por voz e correção.', '#/idiomas', ['#3f86c8', '#12476f']], ['heart-handshake', 'Cuide de você', 'Cuidar de mim', 'Desabafo, alimentação, água e treino no seu ritmo.', '#/cuidar', ['#3fc47a', '#0e7490']]];
+  for (let k = 0; k < falt; k++) { const e = ex[k]; ult.push(extra(POS[4 - falt + k], ...e)); }
+  const nomes = paginas.map((_, n) => n === 0 ? 'Para começar' : n === paginas.length - 1 ? 'E mais para explorar' : 'Continue depois');
+  const curtos = paginas.map((_, n) => n === 0 ? 'Começar' : n === paginas.length - 1 ? 'Explorar' : 'Continue depois');
   const pg = paginas.map((p, n) => `<div class="hx-pag${n ? ' next' : ' on'}" data-pag="${n}">${p.join('')}</div>`).join('');
   return `
   <div class="hx-cuid"><div class="hx-cuid-t"><b>${esc(CE.eyebrow)}</b><span>o básico, em ordem</span></div><div class="hx-cuid-l">${CE.etapas.map((e, i) => `<a class="hx-cu" href="${esc(e.h)}" title="${esc(e.por)}"><span class="hx-cu-i">${icoOf(e.i || 'circle')}</span><span class="hx-cu-n">${i + 1}</span><b>${esc(e.curto || e.t)}</b></a>`).join('')}</div></div>
@@ -117,8 +121,8 @@ export function ligarHome(root) {
   const ctrl = root.querySelector('.hx-ctrl'); let tent = 0;
   const revelar = () => { // os botões só aparecem quando a página terminou de carregar e os ícones existem (no máximo 5 s de espera)
     if (!root.isConnected || root._hxFim !== fim) return;
-    const pronto = document.readyState === 'complete' && [...ctrl.querySelectorAll('.hx-sq')].every(b => b.querySelector('svg'));
-    if (pronto || ++tent > 50) { ctrl.classList.remove('carregando'); definir(inicial, false); } else setTimeout(revelar, 100);
+    const pronto = [...ctrl.querySelectorAll('.hx-sq')].every(b => b.querySelector('svg'));
+    if (pronto || ++tent > 20) { ctrl.classList.remove('carregando'); definir(inicial, false); } else setTimeout(revelar, 100);
   };
   revelar();
   let x0 = null, y0 = null, arrastou = false; const st = root.querySelector('.hx-grid');

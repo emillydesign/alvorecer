@@ -1,7 +1,8 @@
 import { $, $$, esc, md, uid, today, ym, weekday, fmtDay, fmtShort, fmtMonth, holiday, isRestDay, setStudyDays, getStudyDays, prevStudyDay, weekStart, addDays, daysBetween, norm, schedule, isDue, shuffle } from './util.js';
 import { DemoStore, SupabaseStore, defaultState } from './store.js?v=63';
 import { ic, icoOf, initFx } from './fx.js?v=63';
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const SB_CDN = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+let sbMod = null; const loadSb = () => (sbMod ||= import(SB_CDN));
 import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=63';
 let sb = null;
 const authStorage = {
@@ -122,7 +123,9 @@ function addCards(list, key, source) {
 // ---------- roteamento ----------
 const routes = { tempo: async () => { const m = await import('./tempo.js?v=2'); m.initTempo({ S, AI, app, toast }); return m.tempo(); }, agenda: async (t) => { const m = await import('./agenda.js?v=72'); m.initAgenda({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.agenda(t); }, 'boas-vindas': boasVindas, nivelamento, cronograma, mentoria, seu, cuidar: (s) => cuidar(s), cuidados: async (s) => { const m = await import('./cuidados.js?v=72'); m.initCuidados({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.cuidados(s); }, sobre, apoiar, '': home, idiomas, cursos, trilha, curso, aula, conversa, memorizacao, revisao, teste, historico, ajustes, guia };
 let cleanup = null;
+let navTok = 0, navFeito = 0;
 async function router() {
+  const tok = ++navTok;
   cleanup?.(); cleanup = null; stopSpeaking(); closeAreas(); aplicarDias();
   const parts = location.hash.replace(/^#\/?/, '').split('/').map(decodeURIComponent);
   const fn = routes[parts[0]] || home;
@@ -141,7 +144,10 @@ async function router() {
   window.scrollTo(0, 0);
   app.classList.remove('enter'); void app.offsetWidth; app.classList.add('enter');
   if (S.readonly && (['aula', 'conversa', 'revisao', 'teste', 'nivelamento', 'boas-vindas'].includes(parts[0]) || (parts[0] === 'mentoria' && parts[1] === 'sessao'))) { app.innerHTML = lockedHTML(); return; }
-  try { await fn(...parts.slice(1)); } catch (e) { console.error(e); app.innerHTML = errBox(e); }
+  try { await fn(...parts.slice(1)); } catch (e) { console.error(e); if (tok >= navFeito) app.innerHTML = errBox(e); }
+  // cliques em sequência: se uma tela mais lenta terminou depois de uma mais nova, ela desenhou por cima; refaz a tela do endereço atual
+  if (tok < navFeito) return router();
+  navFeito = tok;
 }
 function updateAreaTab() { const id = C.tracks[S.state.area]?.area ? S.state.area : 'design'; const t = C.tracks[id]; const el = $('#areaTab'); if (el) { el.textContent = t.name; el.href = '#/trilha/' + id; } }
 function closeAreas() { $('#areasPop')?.remove(); $('#popOv')?.remove(); }
@@ -150,18 +156,42 @@ function openAreas() {
   const areas = Object.entries(C.tracks).filter(([, t]) => t.area);
   const cur = C.tracks[S.state.area]?.area ? S.state.area : 'design';
   const nCus = (S.state.custom || []).length;
+  // Um atalho (link) para cada coisa que o site tem: nada fica escondido. Mesma lista no botão Áreas do topo e em "Todas as áreas".
+  const L = (href, ic, nome, sub, g, pat) => `<a class="atile ${pat || 'pat-dots'}" href="${href}" style="${grad(g)}"><i>${icoOf(ic)}</i><div><b>${esc(nome)}</b><br><small>${esc(sub)}</small></div></a>`;
+  const sec = t => `<h4 class="ap-sec">${t}</h4>`;
+  const cuid = [['pele', 'sparkles', 'Pele', 'rotina, ácidos e protetor', ['#86efac', '#0ea5e9']], ['unhas', 'hand', 'Unhas', 'cuidados e fortalecimento', ['#fbcfe8', '#6366f1']], ['cabelo', 'scissors', 'Cabelo', 'do seu tipo de fio', ['#fde68a', '#14b8a6']], ['higiene', 'droplets', 'Higiene e cheiro', 'banho, desodorante, hálito', ['#7dd3fc', '#4f46e5']], ['perfumes', 'spray-can', 'Perfumes', 'notas olfativas', ['#f9a8d4', '#7c3aed']], ['estilo', 'shirt', 'Estilo e moda', 'o seu jeito de se vestir', ['#fdba74', '#ec4899']], ['musica', 'music', 'Música', 'descobertas pro seu gosto', ['#a5b4fc', '#14b8a6']]];
   document.body.insertAdjacentHTML('beforeend', `<div class="pop-overlay" id="popOv"></div><div class="areas-pop" id="areasPop">
-    <div class="row"><h3>Áreas de interesse</h3><span class="spacer"></span><button class="iconbtn" id="apX">✕</button></div>
-    <p class="small muted">Escolha a área que aparece no seu menu. Tecnologia &amp; IA e Idiomas ficam sempre lá. Quer algo mais específico? Peça ao IAlvorecer e o curso vai para <b>Seu Alvorecer</b>.</p>
-    <div class="atiles">${areas.map(([id, t]) => `<button class="atile pat-dots ${id === cur ? 'on' : ''}" data-area="${id}" style="${grad(t.g)}"><i>${icoOf(t.icon)}</i><div><b>${esc(t.name)}</b><br><small>${t.courses.length} cursos</small></div></button>`).join('')}
-      <a class="atile pat-rings" href="#/seu" style="background:linear-gradient(150deg,#fcd34d,#14b8a6)"><i>✦</i><div><b>Seu Alvorecer</b><br><small>${nCus} ${nCus === 1 ? 'curso personalizado' : 'cursos personalizados'}</small></div></a>
-      <a class="atile pat-waves" href="#/cuidar" style="background:linear-gradient(150deg,#86efac,#6366f1)"><i>${icoOf('heart-handshake')}</i><div><b>Cuidar de mim</b><br><small>desabafo, alimentação, treino</small></div></a>
-      <a class="atile pat-dots" href="#/cuidados" style="background:linear-gradient(150deg,#fbcfe8,#14b8a6)"><i>${icoOf('sparkles')}</i><div><b>Cuidados</b><br><small>pele, unhas, cabelo, cheiro</small></div></a>
-      <a class="atile pat-grid" href="#/agenda" style="background:linear-gradient(150deg,#fde68a,#0ea5e9)"><i>${icoOf('calendar-check')}</i><div><b>Agenda</b><br><small>rotina e checklist do dia</small></div></a>
+    <div class="row"><h3>Todas as áreas</h3><span class="spacer"></span><button class="iconbtn" id="apX">✕</button></div>
+    <p class="small muted">Tudo o que o IAlvorecer tem, num só lugar. Ao escolher uma <b>área de interesse</b>, ela passa a aparecer no seu menu. Quer algo mais específico? Peça ao IAlvorecer e o curso vai para <b>Seu Alvorecer</b>.</p>
+    ${sec('Aprender')}
+    <div class="atiles">
+      ${L('#/idiomas', 'languages', 'Idiomas', `${C.languages.length} idiomas, do zero ao fluente`, ['#2dd4bf', '#2563eb'], 'pat-rings')}
+      ${L('#/trilha/tech', 'cpu', 'Tecnologia & IA', `${C.tracks.tech.courses.length} cursos + mentoria`, C.tracks.tech.g, 'pat-grid')}
+      ${areas.map(([id, t]) => `<button class="atile pat-dots ${id === cur ? 'on' : ''}" data-area="${id}" style="${grad(t.g)}"><i>${icoOf(t.icon)}</i><div><b>${esc(t.name)}</b><br><small>${t.courses.length} cursos</small></div></button>`).join('')}
+      ${L('#/seu', 'sparkles', 'Cursos personalizados', `${nCus} ${nCus === 1 ? 'curso seu' : 'cursos seus'} · peça o que quiser`, ['#fcd34d', '#14b8a6'], 'pat-rings')}
+      ${L('#/cursos', 'layout-grid', 'Todos os cursos', 'a lista completa por área', ['#5b9be8', '#157a80'], 'pat-grid')}
+      ${L('#/memorizacao', 'repeat-2', 'Memorização', 'revisar o que você aprendeu', ['#93c5fd', '#0f766e'], 'pat-dots')}
+      ${L('#/historico', 'history', 'Histórico', 'seu caminho até aqui', ['#bae6fd', '#4f46e5'], 'pat-waves')}
+    </div>
+    ${sec('Cuidar de você')}
+    <div class="atiles">
+      ${L('#/cuidar', 'heart-handshake', 'Cuidar de mim', 'desabafo, alimentação, treino', ['#86efac', '#6366f1'], 'pat-waves')}
+      ${L('#/cuidar/desabafo', 'message-circle-heart', 'Desabafo', 'um espaço para ser ouvida(o)', ['#5eead4', '#6366f1'], 'pat-dots')}
+      ${L('#/cuidar/alimentacao', 'salad', 'Alimentação & água', 'plano, água do dia, foto do prato', ['#86efac', '#0ea5e9'], 'pat-rings')}
+      ${L('#/cuidar/treino', 'dumbbell', 'Treino', 'em casa ou na academia', ['#7dd3fc', '#4f46e5'], 'pat-grid')}
+      ${L('#/cuidados', 'sparkles', 'Cuidados', 'pele, unhas, cabelo, cheiro', ['#fbcfe8', '#14b8a6'], 'pat-dots')}
+      ${cuid.map(([id, ic, n, sub, g]) => L('#/cuidados/' + id, ic, n, sub, g, 'pat-dots')).join('')}
+    </div>
+    ${sec('Rotina e carreira')}
+    <div class="atiles">
+      ${L('#/agenda', 'calendar-check', 'Agenda', 'rotina e checklist do dia', ['#fde68a', '#0ea5e9'], 'pat-grid')}
+      ${L('#/tempo', 'hourglass', 'Mais tempo para você', 'trabalho melhor, mais tempo livre', ['#fdba74', '#0d9488'], 'pat-rings')}
+      ${L('#/mentoria', 'compass', 'Mentoria de carreira', 'gratuita, com a IA', ['#a7f3d0', '#2563eb'], 'pat-waves')}
       <button class="atile pat-grid" id="apAsk" style="background:linear-gradient(150deg,#a5b4fc,#0ea5e9)"><i>＋</i><div><b>Pedir um curso</b><br><small>pelo IAlvorecer</small></div></button>
     </div></div>`);
   $('#apX').onclick = closeAreas; $('#popOv').onclick = closeAreas;
   $$('[data-area]', $('#areasPop')).forEach(b => b.onclick = () => { S.state.area = b.dataset.area; S.saveState(); closeAreas(); location.hash = '#/trilha/' + b.dataset.area; });
+  $$('a.atile', $('#areasPop')).forEach(a => a.addEventListener('click', () => { if (a.getAttribute('href') === location.hash) closeAreas(); }));
   $('#apAsk').onclick = () => { closeAreas(); openAssistant('Quero um curso de '); };
 }
 
@@ -242,7 +272,7 @@ async function home() {
     <div class="stat"><b>${S.srs.length}</b><span>palavras na memória</span></div>
     <div class="stat"><b>${S.state.streak.best || 0}</b><span>recorde de dias seguidos</span></div>
   </div></section>`;
-  import('./essencial.js?v=21').then(E => { const el = $('#homeTopo'); if (el) { el.innerHTML = E.homeHTML({ C, S, esc, icoOf, grad, saudacao: hello + (name ? ', ' + name : ''), dia: fmtDay(t) + (rest ? (hol ? ' · ' + hol + ': ' : ' · ') + 'dia de descanso' : '') }); const b = $('#homeStart3'); if (b) b.onclick = () => abrirComecar(); E.ligarHome(el); } }).catch(() => { });
+  import('./essencial.js?v=23').then(E => { const el = $('#homeTopo'); if (el) { el.innerHTML = E.homeHTML({ C, S, esc, icoOf, grad, saudacao: hello + (name ? ', ' + name : ''), dia: fmtDay(t) + (rest ? (hol ? ' · ' + hol + ': ' : ' · ') + 'dia de descanso' : '') }); const b = $('#homeStart3'); if (b) b.onclick = () => abrirComecar(); E.ligarHome(el); } }).catch(() => { });
   window.IAPers && IAPers.home();
   $('#homeAsst').onclick = () => openAssistant();
   $('#homeAreas').onclick = () => openAreas();
@@ -1451,7 +1481,7 @@ function extraHTML(lesson, d) {
 
 // ---------- AVALIAÇÕES, ERROS E CONTATO ----------
 let sbPub = null;
-const getSb = () => sb || (sbPub ||= createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } }));
+const getSb = async () => sb || (sbPub ||= (await loadSb()).createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } }));
 // ---------- MARCAR CONVERSAÇÃO ----------
 const convOrd = (a, b) => (a.d + String(a.h).padStart(2, '0')).localeCompare(b.d + String(b.h).padStart(2, '0'));
 function convLangs() {
@@ -1527,7 +1557,7 @@ function openFeedback(kind = 'avaliacao') {
     if (kind === 'avaliacao' && !nota) return toast('Escolha de 1 a 5 estrelas.');
     if (kind !== 'avaliacao' && !msg) return toast('Escreva sua mensagem.');
     e.target.disabled = true; e.target.innerHTML = '<span class="spin"></span>';
-    const { error } = await getSb().from('feedback').insert({ tipo: kind, nota: nota || null, mensagem: msg || null, email: ov.querySelector('#fbe').value.trim() || null, pagina: location.hash.slice(0, 120) });
+    const { error } = (await getSb()).from('feedback').insert({ tipo: kind, nota: nota || null, mensagem: msg || null, email: ov.querySelector('#fbe').value.trim() || null, pagina: location.hash.slice(0, 120) });
     if (error) { e.target.disabled = false; e.target.textContent = 'Enviar'; return toast('Não consegui enviar agora. Tente de novo ou escreva para ' + CONTATO, 7000); }
     ov.querySelector('.modal-box').innerHTML = `<div class="lock" style="margin:10px auto"><div class="ci">💛</div><h2>Obrigada!</h2><p class="muted" style="margin-top:10px">Sua mensagem chegou para a Emilly. Ela quer muito poder ajudar e melhorar o IAlvorecer para todo mundo.</p><button class="btn btn-pink" data-close style="margin-top:18px">Fechar</button></div>`;
   };
@@ -1764,15 +1794,18 @@ async function boot() {
   vozBar();
   document.addEventListener('click', e => { const b = e.target.closest('[data-fb]'); if (b) { e.preventDefault(); openFeedback(b.dataset.fb); } if (e.target.closest('[data-reload]')) location.reload(); if (e.target.closest('[data-back]')) history.back(); const cp = e.target.closest('[data-copy]'); if (cp) { navigator.clipboard.writeText(cp.dataset.copy); cp.textContent = 'Copiado ✓'; } const ag = e.target.closest('[data-agenda]'); if (ag) { e.preventDefault(); openAgendaConversa(ag.dataset.agenda || ''); } const ii = e.target.closest('[data-iainfo]'); if (ii) { e.preventDefault(); iaInfo(ii.dataset.iainfo); } if (e.target.closest('[data-comoentrar]')) { e.preventDefault(); comoEntrar(); } });
   window.addEventListener('ia-uso', () => document.querySelectorAll('.ia-meter').forEach(el => el.outerHTML = iaMeterHTML()));
-  C = await (await fetch('data/catalog.json', { cache: 'no-cache' })).json();
   const qs = new URLSearchParams(location.search);
   const demo = qs.has('demo') || qs.has('visita');
+  const catP = fetch('data/catalog.json', { cache: 'no-cache' }).then(r => r.json());
+  if (!demo) loadSb().catch(() => { }); // baixa a biblioteca da conta em paralelo com o catálogo
+  C = await catP;
   if (demo) {
     const { demoData, demoAI } = await import('./demo.js?v=63');
     S = new DemoStore(() => demoData(C)); S.demoAI = demoAI;
     if (qs.has('visita')) S.readonly = true;
     document.body.insertAdjacentHTML('beforeend', S.readonly ? '<a class="demo-badge" href="./">👁 Modo visitante · Criar conta</a>' : '<div class="demo-badge">DEMONSTRAÇÃO</div>');
   } else {
+    const { createClient } = await loadSb();
     sb = createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { storage: authStorage, persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
     let recovering = /type=recovery/.test(location.hash);
     sb.auth.onAuthStateChange(ev => { if (ev === 'PASSWORD_RECOVERY') { recovering = true; newPasswordScreen(); } });
