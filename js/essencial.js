@@ -53,23 +53,70 @@ export function homeHTML({ C, S, esc, icoOf, grad, saudacao, dia }) {
   <div class="hx-stage"><div class="hx-grid">${pg}
     <div class="hx-centro"><span class="hx-dust" aria-hidden="true">${Array.from({ length: 16 }, (_, i) => `<i style="left:${(i * 37 + 8) % 96}%;animation-delay:-${(i * 2.3) % 14}s;animation-duration:${9 + (i * 5) % 8}s"></i>`).join('')}</span><span class="hx-c-ic">${icoOf('compass')}</span><h2>Encontre o trabalho ideal para você</h2><a class="hx-c-b1" href="#/mentoria">Conheça a mentoria gratuita</a></div>
   </div></div>
-  <div class="hx-ctrl"><div class="hx-bar2"><button type="button" class="hx-sq" id="hxPrev" aria-label="Cursos anteriores">${icoOf('chevron-left')}</button><div class="hx-tabs" role="tablist">${paginas.map((_, n) => `<button type="button" role="tab" class="hx-tab${n ? '' : ' on'}" data-go="${n}" aria-label="Cursos ${n + 1} de ${paginas.length}"></button>`).join('')}</div><button type="button" class="hx-sq hx-sq-go" id="hxNext" aria-label="Próximos cursos">${icoOf('chevron-right')}</button></div><span id="hxNome" data-nomes="${esc(JSON.stringify(nomes))}" hidden></span></div>`;
+  <div class="hx-ctrl"><div class="hx-bar2"><button type="button" class="hx-sq" id="hxPrev" aria-label="Cursos anteriores">${icoOf('chevron-left')}</button><div class="hx-tabs" role="tablist">${paginas.map((_, n) => `<button type="button" role="tab" class="hx-tab${n ? '' : ' on'}" data-go="${n}" aria-label="Cursos ${n + 1} de ${paginas.length}"></button>`).join('')}</div><button type="button" class="hx-sq hx-pp" id="hxPausa" aria-label="Pausar a troca automática" title="Pausar">${icoOf('pause')}</button><button type="button" class="hx-sq hx-pp" id="hxPlay" aria-label="Retomar a troca automática" title="Continuar">${icoOf('play')}</button><button type="button" class="hx-sq hx-sq-go" id="hxNext" aria-label="Próximos cursos">${icoOf('chevron-right')}</button></div><span id="hxNome" data-nomes="${esc(JSON.stringify(nomes))}" hidden></span></div>`;
 }
 
 export function ligarHome(root) {
   const pags = [...root.querySelectorAll('.hx-pag')], dots = [...root.querySelectorAll('.hx-tab')], nome = root.querySelector('#hxNome');
   if (!pags.length) return;
-  const nomes = JSON.parse(nome.dataset.nomes || '[]'); let at = 0;
-  const prev = root.querySelector('#hxPrev'), next = root.querySelector('#hxNext');
-  const ir = n => {
-    n = (n + pags.length) % pags.length; at = n;
-    pags.forEach((p, i) => { p.classList.toggle('on', i === n); p.classList.toggle('prev', i < n); p.classList.toggle('next', i > n); });
-    dots.forEach((d, i) => d.classList.toggle('on', i === n)); nome.textContent = nomes[n] || '';
+  if (root._hxFim) root._hxFim(); // se a tela inicial for desenhada de novo, encerra o relógio da vez anterior (evita trocas duplicadas e rápidas)
+  const N = pags.length, PARADA = 7000; // tempo parado em cada grupo de cursos (ms)
+  const nomes = JSON.parse(nome.dataset.nomes || '[]'); let at = 0, saindo = -1;
+  const prev = root.querySelector('#hxPrev'), next = root.querySelector('#hxNext'), pausa = root.querySelector('#hxPausa'), play = root.querySelector('#hxPlay');
+  const lado = (p, d) => { p.classList.remove('prev', 'next'); p.classList.add(d > 0 ? 'next' : 'prev'); };
+  // d > 0: anda para a direita (o grupo novo entra pela direita); d < 0: só quando a pessoa clica para voltar
+  const ir = (n, d) => {
+    n = (n + N) % N; if (n === at || N < 2) return;
+    d = d || 1; const velho = at; at = n;
+    // quem vai entrar (e os escondidos) espera do lado de onde vem, sem animar; assim nunca "volta" voando de um lado a outro
+    pags.forEach((p, i) => { if (i !== velho && (i === n || i !== saindo)) { p.classList.add('sem-anim'); lado(p, d); } });
+    void root.offsetWidth;
+    pags.forEach(p => p.classList.remove('sem-anim'));
+    pags.forEach((p, i) => { p.classList.toggle('on', i === n); if (i === n) p.classList.remove('prev', 'next'); else if (i === velho) lado(p, -d); });
+    saindo = velho;
+    dots.forEach((x, i) => x.classList.toggle('on', i === n)); nome.textContent = nomes[n] || '';
   };
-  dots.forEach(d => d.onclick = () => ir(+d.dataset.go));
-  next.onclick = () => ir(at + 1);
-  prev.onclick = () => ir(at - 1);
-  let x0 = null; const st = root.querySelector('.hx-grid');
-  st.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
-  st.addEventListener('touchend', e => { if (x0 == null) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 50) ir(at + (dx < 0 ? 1 : -1)); x0 = null; });
+  // Troca automática: para sempre para a direita, com pausa longa entre um grupo e outro
+  let rodando = false, t = 0, suspenso = false;
+  const celular = () => window.matchMedia('(max-width:900px)').matches;
+  const reduz = () => window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const agendar = () => { clearTimeout(t); if (rodando && !suspenso) t = setTimeout(passo, PARADA); };
+  const passo = () => {
+    if (!root.isConnected || !pags[0].isConnected) return fim();
+    if (document.hidden || suspenso) return;
+    ir(at + 1, 1); agendar();
+  };
+  const marcar = () => {
+    pausa.classList.toggle('on', !rodando); play.classList.toggle('on', rodando);
+    pausa.setAttribute('aria-pressed', String(!rodando)); play.setAttribute('aria-pressed', String(rodando));
+  };
+  const definir = (v, salvar) => {
+    rodando = !!v && N > 1; marcar();
+    if (salvar) { try { localStorage.setItem('ia_home_auto', rodando ? '1' : '0'); } catch (e) { } }
+    agendar();
+  };
+  const vis = () => { if (!root.isConnected) return fim(); if (document.hidden) clearTimeout(t); else agendar(); };
+  const fim = () => { clearTimeout(t); document.removeEventListener('visibilitychange', vis); };
+  root._hxFim = fim; document.addEventListener('visibilitychange', vis);
+  // manual: o clique move na hora e reinicia a contagem da pausa (se estiver pausado, continua pausado)
+  const manual = (n, d) => { ir(n, d); agendar(); };
+  dots.forEach(d => d.onclick = () => { const n = +d.dataset.go; manual(n, n > at ? 1 : -1); });
+  next.onclick = () => manual(at + 1, 1);
+  prev.onclick = () => manual(at - 1, -1);
+  pausa.onclick = () => definir(false, true);
+  play.onclick = () => definir(true, true);
+  // parado enquanto o mouse ou o dedo estão sobre os cursos (sobre os botões não: senão o Play pareceria não funcionar)
+  const palco = root.querySelector('.hx-stage');
+  palco.addEventListener('mouseenter', () => { suspenso = true; clearTimeout(t); });
+  palco.addEventListener('mouseleave', () => { suspenso = false; agendar(); });
+  let salvo = null; try { salvo = localStorage.getItem('ia_home_auto'); } catch (e) { }
+  definir(salvo ? salvo === '1' : !(celular() || reduz()), false); // começa rodando, exceto no celular (sem efeito de slide) ou com "reduzir movimento"
+  let x0 = null, y0 = null, arrastou = false; const st = root.querySelector('.hx-grid');
+  st.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; suspenso = true; clearTimeout(t); }, { passive: true });
+  st.addEventListener('touchend', e => {
+    suspenso = false; if (x0 == null) return agendar();
+    const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0; x0 = null;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) { arrastou = true; setTimeout(() => { arrastou = false; }, 400); manual(at + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1); } else agendar();
+  });
+  st.addEventListener('click', e => { if (arrastou) { e.preventDefault(); e.stopPropagation(); } }, true); // deslizar o dedo não deve abrir um curso sem querer
 }
