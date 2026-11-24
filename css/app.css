@@ -1220,22 +1220,19 @@ a.dock-tag:hover{transform:translateY(-3px);border-color:transparent;box-shadow:
 .dock .fab::before,.dock .fab::after{border-radius:var(--rq)}
 .dock .fab:hover{box-shadow:0 0 0 4px rgba(7,24,34,.85),0 16px 44px rgba(var(--sky-rgb),.5)}
 
-/* card do modo visitante: mesma linguagem do card central da home */
-.dock{align-items:flex-end}
-.dock-tag.dock-visita{isolation:isolate;overflow:hidden;flex-direction:column;align-items:stretch;gap:12px;width:252px;height:auto;padding:14px;border:2px solid transparent;border-radius:var(--rq);color:#fff;background:linear-gradient(160deg,color-mix(in srgb,var(--bg-c) 88%,var(--bg-b)),var(--bg-c) 55%,color-mix(in srgb,var(--bg-c) 72%,#021826)) padding-box,linear-gradient(135deg,rgb(var(--mint-rgb)),rgba(var(--text-rgb),.15) 45%,rgb(var(--sky-rgb))) border-box;box-shadow:0 0 0 5px rgba(var(--bg-rgb),.75),0 20px 48px rgba(0,0,0,.5),0 0 36px rgba(var(--mint-rgb),.22)}
-.dock-visita::after{content:"";position:absolute;z-index:-1;left:50%;top:-80px;width:260px;height:150px;margin-left:-130px;background:radial-gradient(ellipse,rgba(var(--mint-rgb),.34),transparent 70%);pointer-events:none}
-.dv-top{display:flex;align-items:center;gap:12px}
-.dv-ic{flex:none;width:40px;height:40px;color:#fff;filter:drop-shadow(0 0 10px rgba(var(--mint-rgb),.85))}
-.dv-ic svg{display:block;width:100%;height:100%;stroke-width:1.4}
+/* card do modo visitante: linguagem do card central, na mesma altura do botão do assistente */
+.dock-tag.dock-visita{isolation:isolate;overflow:hidden;gap:10px;height:56px;padding:0 9px 0 12px;border:2px solid transparent;border-radius:var(--rq);color:#fff;background:linear-gradient(160deg,color-mix(in srgb,var(--bg-c) 88%,var(--bg-b)),var(--bg-c) 55%,color-mix(in srgb,var(--bg-c) 72%,#021826)) padding-box,linear-gradient(135deg,rgb(var(--mint-rgb)),rgba(var(--text-rgb),.15) 45%,rgb(var(--sky-rgb))) border-box;box-shadow:0 0 26px rgba(var(--mint-rgb),.25)}
+.dock-visita::after{content:"";position:absolute;z-index:-1;left:-40px;top:-50px;width:160px;height:100px;background:radial-gradient(ellipse,rgba(var(--mint-rgb),.32),transparent 70%);pointer-events:none}
+.dv-ic{flex:none;width:30px;height:30px;color:#fff;filter:drop-shadow(0 0 8px rgba(var(--mint-rgb),.85))}
+.dv-ic svg{display:block;width:100%;height:100%;stroke-width:1.5}
 .dv-ic svg circle{stroke:rgb(var(--mint-rgb))}
-.dv-tx{display:flex;flex-direction:column;gap:3px;min-width:0}
-.dock-visita .dv-tx small{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:rgb(var(--mint-rgb))}
+.dv-tx{display:flex;flex-direction:column;gap:3px;white-space:nowrap}
+.dock-visita .dv-tx small{display:flex;align-items:center;gap:6px;font-size:10px;line-height:1;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgb(var(--mint-rgb))}
 .dv-ponto{width:6px;height:6px;border-radius:50%;background:rgb(var(--mint-rgb));box-shadow:0 0 8px rgb(var(--mint-rgb))}
-.dock-visita .dv-tx b{font-family:var(--h);font-size:15px;line-height:1.2;color:#fff}
-.dv-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 12px;border-radius:var(--rq);font-size:13.5px;font-weight:800;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.45);background:linear-gradient(135deg,color-mix(in srgb,var(--mint) 72%,#065a58),color-mix(in srgb,var(--sky) 72%,#065a58));border:1px solid rgba(var(--text-rgb),.95);box-shadow:0 0 0 3px rgba(var(--mint-rgb),.2),0 8px 20px rgba(var(--mint-rgb),.4)}
+.dock-visita .dv-tx b{font-family:var(--h);font-size:14px;line-height:1.2;letter-spacing:0;text-transform:none;color:#fff}
+.dv-btn{flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:var(--rq);color:#fff;background:linear-gradient(135deg,color-mix(in srgb,var(--mint) 72%,#065a58),color-mix(in srgb,var(--sky) 72%,#065a58));border:1px solid rgba(var(--text-rgb),.95);box-shadow:0 0 12px rgba(var(--mint-rgb),.5)}
 .dv-btn svg{width:16px;height:16px;transition:transform .35s var(--ease)}
-a.dock-visita:hover{border-color:transparent;box-shadow:0 0 0 5px rgba(var(--bg-rgb),.75),0 22px 52px rgba(0,0,0,.55),0 0 48px rgba(var(--mint-rgb),.4)}
-a.dock-visita:hover .dv-btn svg{transform:translateX(4px)}
-@media (max-width:980px){.dock-tag.dock-visita{width:218px;padding:11px;gap:9px}.dv-ic{width:32px;height:32px}.dock-visita .dv-tx b{font-size:13px}.dv-btn{padding:8px 10px;font-size:12.5px}}
-@media (max-width:340px){.dock-tag.dock-visita{width:190px}.dv-ic{display:none}}
-@media (max-width:980px){.dock-visita .dv-tx b{display:none}.dv-top{justify-content:center;gap:8px}.dv-ic{width:20px;height:20px}.dock-tag.dock-visita{width:196px;padding:10px;gap:8px}}
+a.dock-visita:hover{border-color:transparent;box-shadow:0 0 34px rgba(var(--mint-rgb),.45)}
+a.dock-visita:hover .dv-btn svg{transform:translateX(3px)}
+@media (max-width:980px){.dock-tag.dock-visita{height:52px;gap:9px}.dv-ic{width:26px;height:26px}.dock-visita .dv-tx b{font-size:13px}}
+@media (max-width:340px){.dv-ic{display:none}}
