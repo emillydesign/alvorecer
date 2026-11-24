@@ -1208,3 +1208,14 @@ a.dock-tag:hover .dock-tag-go{transform:translateX(3px) scale(1.1);opacity:1}
 @media (prefers-reduced-motion:reduce){.dock .fab::before,.dock .fab::after,.dock-tag::before{animation:none}}
 /* card Cuidados essenciais sem o texto de apoio: título centralizado no bloco */
 .hx-cuid-t{justify-content:center}
+/* dock: mesma linguagem do card central da home (sólido escuro, borda em degradê, cantos quadrados) */
+.dock-tag{height:56px;padding:0 16px 0 14px;border:2px solid transparent;border-radius:var(--rq);background:linear-gradient(#0c2230,#0c2230) padding-box,linear-gradient(135deg,rgb(var(--mint-rgb)),rgb(var(--sky-rgb)) 55%,#ffd58a) border-box;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:0 0 0 4px rgba(7,24,34,.85),0 16px 40px rgba(0,0,0,.45);color:#f1fbf6}
+.dock-tag::before{display:none}
+.dock-tag>i,.dock-tag>svg{color:#ffd58a}
+.dock-tag-t b{color:#f1fbf6;letter-spacing:.12em}
+.dock-tag-t small{color:#bfe3d6;font-weight:600}
+.dock-tag .dock-tag-go{color:rgb(var(--mint-rgb));opacity:1}
+a.dock-tag:hover{transform:translateY(-3px);border-color:transparent;box-shadow:0 0 0 4px rgba(7,24,34,.85),0 0 28px rgba(var(--mint-rgb),.35),0 18px 44px rgba(0,0,0,.5)}
+.dock .fab{border-radius:var(--rq);box-shadow:0 0 0 4px rgba(7,24,34,.85),0 14px 36px rgba(var(--mint-rgb),.3)}
+.dock .fab::before,.dock .fab::after{border-radius:var(--rq)}
+.dock .fab:hover{box-shadow:0 0 0 4px rgba(7,24,34,.85),0 16px 44px rgba(var(--sky-rgb),.5)}
