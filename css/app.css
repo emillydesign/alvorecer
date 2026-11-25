@@ -1421,7 +1421,7 @@ html::-webkit-scrollbar-track{background:linear-gradient(180deg,var(--bg-a),var(
 .tm-sub{font-size:14px;margin:18px 0 0}
 .tm-pn .tm-grid{gap:8px;margin:10px 0 14px}
 .tm-pn .tm-card{padding:8px 4px 9px;border-radius:var(--rq)}
-.tm-pn .tm-card img{max-width:60px}
+.tm-pn .tm-card img{width:100%;max-width:84px;height:auto;aspect-ratio:1;object-fit:cover;flex:none}
 .tm-det{margin-top:8px;padding:11px 13px;border:1px solid var(--line2);border-radius:var(--rq)}
 .tm-det summary{cursor:pointer;font-weight:600;font-size:14px}
 .tm-det[open] summary{margin-bottom:10px}

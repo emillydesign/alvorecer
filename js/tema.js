@@ -27,6 +27,7 @@
 
   var VARS = ['--bg-a', '--bg-b', '--bg-c', '--bg', '--bg2', '--bg-rgb', '--text-rgb', '--modal-rgb', '--text', '--muted', '--dim',
     '--mint', '--violet', '--pink2', '--mint-rgb', '--sky', '--blue', '--sky-rgb', '--blue-rgb'];
+  for (var kv = 0; kv < 12; kv++) VARS.push('--k' + kv + 'a', '--k' + kv + 'b'); // cards da primeira seção
 
   /* ---------- conversões de cor ---------- */
   function hexToRgb(h) { if (typeof h !== 'string' || !HEX.test(h)) return null; var n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
@@ -131,6 +132,18 @@
     return o;
   }
 
+  /* cards da primeira seção: tons vizinhos das cores do fundo, sempre com texto branco legível */
+  function cardsHome(c, d) {
+    var base = [c.b, c.c].map(function (h) { return rgbToHsl.apply(null, hexToRgb(h)); }), giro = [0, 8, -10, 14, -5, 11];
+    for (var i = 0; i < 12; i++) {
+      var x = base[i % 2], h = (x[0] + giro[(i >> 1) % 6] + (i % 2 ? 4 : -4) + 360) % 360;
+      var s = x[1] < 10 ? x[1] : Math.max(30, Math.min(58, x[1] * 0.85)), l = 54 - (i % 3) * 3;
+      var hex = function (ll) { return rgbToHex.apply(null, hslToRgb(Math.round(h), Math.round(s), ll)); };
+      while (l > 25 && contraste(hex(l), '#ffffff') < 3.6) l--;
+      d['--k' + i + 'a'] = hex(l); d['--k' + i + 'b'] = hex(Math.max(18, Math.round(l * 0.5)));
+    }
+  }
+
   /* ---------- de 6 cores para todas as variáveis do CSS ---------- */
   function derivar(c) {
     var A = hexToRgb(c.a), B = hexToRgb(c.b), C = hexToRgb(c.c), T = hexToRgb(c.text), M = hexToRgb(c.accent), S = hexToRgb(c.sky);
@@ -143,6 +156,7 @@
     d['--mint'] = c.accent; d['--violet'] = c.accent; d['--pink2'] = c.accent; d['--mint-rgb'] = M.join(',');
     d['--sky'] = c.sky; d['--blue'] = c.sky; d['--sky-rgb'] = S.join(',');
     d['--blue-rgb'] = mix(C, S, 0.45).join(',');
+    cardsHome(c, d);
     return d;
   }
 

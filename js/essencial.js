@@ -35,11 +35,13 @@ export function homeHTML({ C, S, esc, icoOf, grad, saudacao, dia }) {
   const PAL = { 'dinheiro-basico': ['#34c28a', '#0f5e55'], 'primeiros-socorros': ['#4fb6d6', '#0f5f78'], 'direitos-cidadania': ['#60a5fa', '#0f766e'], 'saude-emocional': ['#4fd1b5', '#17756f'], 'pensamento-critico': ['#4a8fe0', '#13467a'], 'comunicacao': ['#5fc79a', '#1a6f86'], 'cozinhar-basico': ['#6cc27a', '#1f7a5a'], 'decisoes': ['#3fb3e8', '#1d6a9c'], 'planeta-comunidade': ['#2fbfa8', '#0e6270'] };
   const FALL = [['#34c28a', '#0f5e55'], ['#4fb6d6', '#0f5f78'], ['#4a8fe0', '#13467a'], ['#5fc79a', '#1a6f86']];
   const cor = (x, i) => PAL[x.c.id] || FALL[i % FALL.length];
+  // nos outros temas, a cor do card vem das cores do site (js/tema.js); no padrão, vale a paleta acima
+  let nk = 0; const tom = g => { const k = nk++ % 12; return grad([`var(--k${k}a,${g[0]})`, `var(--k${k}b,${g[1]})`]); };
   const curso = (x, pos) => { const f = feitas(x.k), n = (x.c.lessons || []).length, pct = n ? Math.round(f / n * 100) : 0;
-    return `<a class="hx-card hx-${pos}${cor(x, x.i)[2] ? ' hx-lt' : ''}" href="#/curso/${esc(x.k)}" style="${grad(cor(x, x.i))}"><span class="hx-wm">${icoOf(x.c.icon)}</span>
+    return `<a class="hx-card hx-${pos}${cor(x, x.i)[2] ? ' hx-lt' : ''}" href="#/curso/${esc(x.k)}" style="${tom(cor(x, x.i))}"><span class="hx-wm">${icoOf(x.c.icon)}</span>
       <span class="hx-tag">Curso essencial</span><b>${esc(x.c.title)}</b><span class="hx-d">${esc(x.por)}</span>
       <span class="hx-meta"><span>${n} aulas${f ? ' · ' + pct + '%' : ''}</span><i>${f ? 'Continuar' : 'Começar'}</i></span><span class="hx-bar" style="width:${pct}%"></span></a>`; };
-  const extra = (pos, ic, tag, t, d, h, g, acao) => `<a class="hx-card hx-${pos} hx-extra${g[2] ? ' hx-lt' : ''}" href="${h}" style="${grad(g)}"><span class="hx-wm">${icoOf(ic)}</span><span class="hx-tag">${esc(tag)}</span><b>${esc(t)}</b><span class="hx-d">${esc(d)}</span><span class="hx-meta"><span>&nbsp;</span><i>${esc(acao || 'Abrir')}</i></span></a>`;
+  const extra = (pos, ic, tag, t, d, h, g, acao) => `<a class="hx-card hx-${pos} hx-extra${g[2] ? ' hx-lt' : ''}" href="${h}" style="${tom(g)}"><span class="hx-wm">${icoOf(ic)}</span><span class="hx-tag">${esc(tag)}</span><b>${esc(t)}</b><span class="hx-d">${esc(d)}</span><span class="hx-meta"><span>&nbsp;</span><i>${esc(acao || 'Abrir')}</i></span></a>`;
   const nTot = (C.languages || []).length + (C.complementary || []).length + Object.values(C.tracks).reduce((a, x) => a + x.courses.length, 0);
   // O primeiro card é sempre "Cursos personalizados": é o destaque do site (a pessoa pede o curso que quiser). Os cursos essenciais vêm depois.
   const primeiro = ['sparkles', 'Peça o que quiser', 'Cursos personalizados', 'Quer aprender algo que não está na lista? Conte o que você sonha em aprender e o IAlvorecer cria um curso completo.', '#/seu', ['#58c79e', '#1f7f78'], 'Pedir meu curso'];

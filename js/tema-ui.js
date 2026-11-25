@@ -54,8 +54,8 @@ function abrir() {
   ov.innerHTML = `<div class="asst-h"><span class="asst-logo" aria-hidden="true"></span><b class="brand asst-nome" id="tmTitulo">Aparência</b><span class="spacer"></span><button type="button" class="iconbtn" data-tm-fechar title="Fechar" aria-label="Fechar"><i data-lucide="x"></i></button></div>
   <div class="tm-corpo">
     ${temDock ? `<button type="button" class="tm-custom" data-pers-open data-pers-aqui><span class="tm-ic2"><i data-lucide="layout-dashboard"></i></span><span class="tm-custom-tx"><b>Personalizar o site</b><small>Mova, pinte e esconda os blocos vendo o site</small></span></button>` : ''}
+    <button type="button" class="tm-custom" data-tm-tudo><span class="tm-ic2"><i data-lucide="rotate-ccw"></i></span><span class="tm-custom-tx"><b>Voltar ao padrão</b><small>Restaura as cores e a organização originais</small></span></button>
     <button type="button" class="tm-custom" data-tm-toggle><span class="tm-custom-ic"><i data-lucide="palette"></i></span><span class="tm-custom-tx"><b>Criar a sua paleta</b><small>Escolha as cores no círculo cromático</small></span></button>
-    <button type="button" class="tm-custom" data-tm-reset><span class="tm-ic2"><i data-lucide="rotate-ccw"></i></span><span class="tm-custom-tx"><b>Usar as cores padrão</b><small>Volta às cores originais do IAlvorecer</small></span></button>
     <h3 class="tm-sub">Paletas prontas</h3>
     <div class="tm-grid">${cards}</div>
     <details class="tm-det"><summary>Cores salvas</summary><div class="sv" data-saves></div></details>
@@ -136,6 +136,10 @@ function clique(e) {
   if (e.target.closest('[data-tm-fechar]')) return fechar();
   const card = e.target.closest('[data-tid]');
   if (card) { T.usarPreset(card.dataset.tid); cores = { ...T.coresAtuais() }; marcarCards(); pintarEditor(); aviso(); return; }
+  if (e.target.closest('[data-tm-tudo]')) {
+    if (!confirm('Voltar as cores e a organização do site ao padrão? Para guardar o visual atual, salve antes em "Cores salvas" e "Organizações salvas".')) return;
+    T.restaurar(); window.IAPers?.padrao(); cores = { ...T.coresAtuais() }; marcarCards(); return;
+  }
   if (e.target.closest('[data-tm-reset]')) { T.restaurar(); cores = { ...T.coresAtuais() }; marcarCards(); pintarEditor(); aviso(); return; }
   if (e.target.closest('[data-tm-toggle]')) return abrirEditor();
 }
