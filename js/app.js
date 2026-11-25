@@ -11,7 +11,7 @@ const authStorage = {
   setItem(k, v) { try { this._s()?.setItem(k, v); } catch { } },
   removeItem(k) { try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch { } }
 };
-import { makeAI, NoKeyError } from './ai.js?v=64';
+import { makeAI, NoKeyError } from './ai.js?v=65';
 import { speak, stopSpeaking, pauseSpeaking, resumeSpeaking, onSpeechState, speechState, listen, canListen, canSpeak } from './speech.js?v=69';
 import { initSaude, cuidar, startAgua } from './saude.js?v=73';
 import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=63';
@@ -1192,7 +1192,7 @@ function openAssistant(prefill = '') {
     $('#asstS').onclick = () => asstSend();
     import('./asst-voz.js?v=2').then(V => { if (!$('#asstMic')) return; asst.voz = V; V.iniciar({ mic: $('#asstMic'), ta: $('#asstT'), idioma: asstIdioma(), enviar: () => asstSend(true), toast }); asstRender(); }).catch(() => { });
     $('#asstT').onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); asstSend(); } };
-    import('./asst-chat.js?v=4').then(M => { if (!$('#asstM')) return; asst.chat = M; M.iniciar(asstDeps); }).catch(() => toast('Não consegui abrir a conversa. Tente de novo.'));
+    import('./asst-chat.js?v=5').then(M => { if (!$('#asstM')) return; asst.chat = M; M.iniciar(asstDeps); }).catch(() => toast('Não consegui abrir a conversa. Tente de novo.'));
     try { lucide.createIcons(); } catch (e) { }
   }
   if (prefill && !LS.get('ia_asst_rascunho')) { const t = $('#asstT'); t.value = prefill; t.focus(); t.setSelectionRange(prefill.length, prefill.length); }
@@ -1210,8 +1210,8 @@ const asstDeps = {
     S.state = snap.state; S.state.backups = resto; S.srs = snap.srs || []; Object.assign(S.config, snap.config || {});
     S.saveState(); S.saveSrs(); S.saveConfig(); await S.flush(); refreshView(); return true;
   },
-  async perguntar(history) {
-    const r = await AI.assistant({ history, context: asstContext() });
+  async perguntar(history, avaliacoes) {
+    const r = await AI.assistant({ history, context: asstContext(), avaliacoes });
     const acts = (r.actions || []).filter(a => a && a.type), go = acts.find(a => a.type === 'open_page');
     const PAGES = { cuidar: '#/cuidar', desabafo: '#/cuidar/desabafo', alimentacao: '#/cuidar/alimentacao', treino: '#/cuidar/treino', sobre: '#/sobre', apoiar: '#/apoiar', mentoria_sessao: '#/mentoria/sessao', mentoria: '#/mentoria', cronograma: '#/cronograma', seu: '#/seu', ajustes: '#/ajustes', historico: '#/historico', idiomas: '#/idiomas', memorizacao: '#/memorizacao' };
     if (go && PAGES[go.page]) { location.hash = PAGES[go.page]; if (go.page === 'mentoria_sessao') closeAssistant(); }

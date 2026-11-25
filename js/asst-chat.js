@@ -1,5 +1,6 @@
 // Conversa do chat do IAlvorecer: balões, histórico salvo, edição com versões e ações das mensagens. Só carrega quando o chat abre.
 import { esc } from './util.js';
+import { MOTIVOS, registrar, esquecer, paraIA } from './asst-aval.js?v=1';
 
 const ARQ = 'chat.json', LOCAL = 'ia_chat_visita';
 const OPCOES = ['Modificar meu cronograma', 'Criar um curso personalizado', 'Reiniciar um curso', 'Ajustar meu perfil'];
@@ -15,20 +16,20 @@ const IC = {
 };
 const INICIO = 'Olá! Eu sou o IAlvorecer. Por onde você quer começar? Selecione uma das opções abaixo, envie uma mensagem ou acione o assistente por voz para enviar o seu pedido.';
 const NOTA = 'Avalie as mensagens clicando nos botões positivo ou negativo abaixo para nos ajudar a melhorar.';
-let D = null, msgs = [], pronto = false, ocupado = false, editando = -1, dono = null;
+let D = null, aval = [], msgs = [], pronto = false, ocupado = false, editando = -1, dono = null;
 
 const local = () => D.S.readonly || D.S.isDemo;
 function salvar() {
-  const dados = { msgs: msgs.filter(m => m.role !== 'typing') };
+  const dados = { aval, msgs: msgs.filter(m => m.role !== 'typing') };
   try { if (local()) localStorage.setItem(LOCAL, JSON.stringify(dados)); else Promise.resolve(D.S.write(ARQ, dados)).catch(() => { }); } catch { }
 }
 async function ler() {
-  try { return (local() ? JSON.parse(localStorage.getItem(LOCAL)) : await D.S.read(ARQ))?.msgs || []; } catch { return []; }
+  try { const d = local() ? JSON.parse(localStorage.getItem(LOCAL)) : await D.S.read(ARQ); return { msgs: d?.msgs || [], aval: Array.isArray(d?.aval) ? d.aval : [] }; } catch { return { msgs: [], aval: [] }; }
 }
 export async function iniciar(deps) {
   D = deps; editando = -1;
-  if (dono !== D.S) { dono = D.S; pronto = false; msgs = []; }
-  if (!pronto) { const m = await ler(); if (!pronto) { msgs = m; msgs.forEach(x => { if (x.inicio) x.text = INICIO; }); pronto = true; } }
+  if (dono !== D.S) { dono = D.S; pronto = false; msgs = []; aval = []; }
+  if (!pronto) { const m = await ler(); if (!pronto) { msgs = m.msgs; aval = m.aval; msgs.forEach(x => { if (x.inicio) x.text = INICIO; }); pronto = true; } }
   if (!msgs.length) {
     msgs = [{ role: 'typing' }]; desenhar();
     await new Promise(r => setTimeout(r, 1800));
@@ -52,7 +53,7 @@ function html(m, i) {
   const acts = m.actions?.length ? `<div class="act"><b>${m.applied ? '✓ Feito' : m.canceled ? 'Cancelado' : 'Posso fazer isto:'}</b><ul>${m.actions.map(a => `<li>${esc(D.describeAction(a))}</li>`).join('')}</ul>${m.applied || m.canceled ? '' : `<div class="row"><button class="btn btn-pink btn-sm" data-a="aplicar" data-i="${i}">Aplicar</button><button class="btn btn-ghost btn-sm" data-a="cancelar" data-i="${i}">Agora não</button></div>`}</div>` : '';
   const ops = m.inicio ? `<div class="opcoes">${OPCOES.map(o => `<button type="button" data-a="opcao" data-t="${esc(o)}"><span>${o}</span>${svg(IC.mais)}</button>`).join('')}<button type="button" data-a="outro"><span>Outro - Envie seu pedido</span>${svg(IC.baixo)}</button></div>` : '';
   const ouvir = D.voz() ? '<button type="button" data-ouvir></button>' : '';
-  const barra = `<div class="msg-acoes">${botao('copiar', i, 'Copiar', 'copiar')}${ouvir}${botao('sim', i, 'Gostei', 'sim', `aria-pressed="${m.voto === 1}"`)}${botao('nao', i, 'Não gostei', 'nao', `aria-pressed="${m.voto === -1}"`)}${versoes(i)}</div>`;
+  const barra = `<div class="msg-acoes">${botao('copiar', i, 'Copiar', 'copiar')}${ouvir}${botao('sim', i, 'Gostei', 'sim', `aria-pressed="${m.voto === 1}"`)}${botao('nao', i, 'Não gostei', 'nao', `aria-pressed="${m.voto === -1}"`)}${versoes(i)}</div>${m.voto === -1 && !m.inicio ? `<div class="msg-motivos" role="group" aria-label="O que não ficou bom?"><small>O que não ficou bom?</small>${MOTIVOS.map((t, k) => `<button type="button" data-a="motivo" data-i="${i}" data-m="${k}" aria-pressed="${m.motivo === t}">${t}</button>`).join('')}</div>` : ''}`;
   return `<div class="msg ai">${esc(m.text)}${m.inicio ? `<small class="msg-nota">${NOTA}</small>` : ''}</div>${ops ? ops + barra + acts : barra + acts}`;
 }
 function destacarCampo() { // "Outro": leva a pessoa ao campo de mensagem normal
@@ -61,16 +62,24 @@ function destacarCampo() { // "Outro": leva a pessoa ao campo de mensagem normal
   const tirar = () => { t.classList.remove('destaque'); t.removeEventListener('input', tirar); t.removeEventListener('blur', tirar); };
   t.addEventListener('input', tirar); t.addEventListener('blur', tirar);
 }
-export function desenhar() {
+export function desenhar(manter) {
   const topo = document.getElementById('asstUndo');
   if (topo) { topo.innerHTML = svg(IC.voltar); topo.onclick = () => { if (!ocupado && pronto) confirmarTudo(); }; }
   const box = document.getElementById('asstM'); if (!box) return;
+  const pos = box.scrollTop;
   box.innerHTML = msgs.map(html).join('');
   const ia = msgs.filter(m => m.role === 'ai'), V = D.voz();
   box.querySelectorAll('[data-ouvir]').forEach((b, i) => { b.dataset.texto = ia[i].text; b.onclick = () => V.ouvir(ia[i].text, D.idioma()); });
   V?.pintar();
   box.onclick = clique;
-  box.scrollTop = box.scrollHeight;
+  box.scrollTop = manter === true ? pos : box.scrollHeight;
+}
+function avaliar(i) { // guarda a avaliação para as próximas respostas da IA
+  const m = msgs[i];
+  if (!m.inicio && !m.erro) { m.aid ||= Date.now().toString(36) + Math.random().toString(36).slice(2, 6); aval = registrar(aval, m, msgs[i - 1]?.role === 'me' ? msgs[i - 1].text : ''); }
+  salvar(); desenhar(true);
+  const el = document.querySelector(`#asstM [data-a="nao"][data-i="${i}"]`)?.parentElement.nextElementSibling;
+  if (el?.classList.contains('msg-motivos')) el.scrollIntoView({ block: 'nearest' });
 }
 async function clique(e) {
   const b = e.target.closest('[data-a]'); if (!b) return;
@@ -79,7 +88,8 @@ async function clique(e) {
   if (a === 'outro') return destacarCampo();
   if (ocupado) return;
   if (a === 'opcao') return enviar(b.dataset.t);
-  if (a === 'sim' || a === 'nao') { const v = a === 'sim' ? 1 : -1; m.voto = m.voto === v ? 0 : v; }
+  if (a === 'sim' || a === 'nao') { const v = a === 'sim' ? 1 : -1; m.voto = m.voto === v ? 0 : v; m.motivo = ''; return avaliar(i); }
+  else if (a === 'motivo') { const t = MOTIVOS[+b.dataset.m]; m.motivo = m.motivo === t ? '' : t; return avaliar(i); }
   else if (a === 'editar') editando = i;
   else if (a === 'cancela-edit') editando = -1;
   else if (a === 'salva-edit') {
@@ -117,7 +127,7 @@ async function voltarPara(i, backup) {
   ocupado = true;
   try {
     if (backup && !(await D.restaurar(backup))) { D.toast('Não encontrei a cópia anterior da página, então nada foi alterado.', 6000); ocupado = false; return; }
-    msgs = msgs.slice(0, i); editando = -1; salvar();
+    aval = esquecer(aval, msgs.slice(i)); msgs = msgs.slice(0, i); editando = -1; salvar();
   } catch (err) { D.toast('⚠️ ' + err.message, 6000); }
   ocupado = false;
   if (msgs.length) desenhar(); else iniciar(D);
@@ -147,8 +157,8 @@ async function responder(text, extra, porVoz) {
   if (d) { location.hash = d.h; r = { text: `Abrindo ${d.t}. ${d.d}` }; }
   else if (D.S.readonly) r = { text: 'No modo visitante dá pra explorar tudo, mas para conversar comigo, fazer aulas e salvar seu progresso é preciso criar uma conta grátis. É rapidinho!' };
   else {
-    try { r = await D.perguntar(msgs.filter(m => m.role === 'me' || m.role === 'ai').slice(-16).map(m => ({ role: m.role, text: m.text }))); }
-    catch (err) { r = { text: '⚠️ ' + err.message }; }
+    try { r = await D.perguntar(msgs.filter(m => m.role === 'me' || m.role === 'ai').slice(-16).map(m => ({ role: m.role, text: m.text })), paraIA(aval)); }
+    catch (err) { r = { text: '⚠️ ' + err.message, erro: true }; }
   }
   msgs = msgs.filter(m => m.role !== 'typing'); msgs.push({ role: 'ai', ...r });
   if (minha.vers) minha.vers[minha.cur] = { text, resto: [] };
