@@ -133,14 +133,15 @@ async function router() {
   let navKey = parts[0] || 'home';
   if (parts[0] === 'trilha') navKey = parts[1] === 'tech' ? 'tech' : 'area';
   else if (['curso', 'aula', 'conversa', 'nivelamento'].includes(parts[0])) { const k = parts[1] || ''; navKey = k.startsWith('trk:') ? (trk(k.slice(4))?.track === 'tech' ? 'tech' : 'area') : k.startsWith('cus:') ? 'seu' : 'idiomas'; }
-  else if (['revisao', 'teste'].includes(parts[0])) navKey = 'memorizacao';
+  else if (['revisao', 'teste'].includes(parts[0])) navKey = 'idiomas';
   else if (parts[0] === 'cronograma') navKey = 'idiomas';
   else if (parts[0] === 'mentoria') navKey = 'tech';
-  else if (parts[0] === 'cuidar' || parts[0] === 'cuidados' || parts[0] === 'compras' || parts[0] === 'agenda') navKey = 'seu';
+  else if (parts[0] === 'cuidar' || parts[0] === 'cuidados' || parts[0] === 'compras') navKey = 'seu';
+  else if (parts[0] === 'memorizacao') navKey = 'idiomas';
   if (parts[0] === 'trilha' && parts[1] && parts[1] !== 'tech' && C.tracks[parts[1]]?.area && S.state.area !== parts[1]) { S.state.area = parts[1]; S.saveState(); }
   updateAreaTab();
-  $$('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === navKey || (a.dataset.nav === 'cursos' && ['tech', 'area', 'seu'].includes(navKey))));
-  $('#areasBtn')?.classList.toggle('on', navKey === 'seu');
+  $$('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === navKey || (a.dataset.nav === 'cursos' && ['tech', 'area', 'seu', 'idiomas'].includes(navKey))));
+  $('#areasBtn')?.classList.toggle('on', ['seu', 'tech', 'area', 'idiomas', 'cursos'].includes(navKey));
   window.scrollTo(0, 0);
   app.classList.remove('enter'); void app.offsetWidth; app.classList.add('enter');
   if (S.readonly && (['aula', 'conversa', 'revisao', 'teste', 'nivelamento', 'boas-vindas'].includes(parts[0]) || (parts[0] === 'mentoria' && parts[1] === 'sessao'))) { app.innerHTML = lockedHTML(); return; }
@@ -172,7 +173,6 @@ function todasAreasHTML(grade) {
       ${areas.map(([id, t]) => `<button class="atile pat-dots ${id === cur ? 'on' : ''}" data-area="${id}" style="${grad(t.g)}"><i>${icoOf(t.icon)}</i><div><b>${esc(t.name)}</b><br><small>${t.courses.length} cursos</small></div></button>`).join('')}
       ${L('#/seu', 'sparkles', 'Cursos personalizados', `${nCus} ${nCus === 1 ? 'curso seu' : 'cursos seus'} · peça o que quiser`, ['#fcd34d', '#14b8a6'], 'pat-rings')}
       ${L('#/cursos', 'layout-grid', 'Todos os cursos', 'a lista completa por área', ['#5b9be8', '#157a80'], 'pat-grid')}
-      ${L('#/memorizacao', 'repeat-2', 'Memorização', 'revisar o que você aprendeu', ['#93c5fd', '#0f766e'], 'pat-dots')}
       ${L('#/historico', 'history', 'Histórico', 'seu caminho até aqui', ['#bae6fd', '#4f46e5'], 'pat-waves')}
     </div>
     ${sec('Cuidar de você')}
@@ -340,6 +340,7 @@ async function idiomas() {
     </div>
   </div>
   <div class="row" style="margin-top:16px">
+    <a class="btn btn-ghost" href="#/memorizacao"><i data-lucide="repeat-2"></i> Memorização${due ? ` · ${due} para revisar` : ''}</a>
     <a class="btn btn-ghost" href="#/cronograma">📅 Ver cronograma</a>
     <button class="btn btn-ghost" id="chgSched">✦ Mudar algo no cronograma</button>
     <a class="btn btn-ghost" href="#/nivelamento/${key}">🧪 Teste de nivelamento</a>
@@ -780,7 +781,7 @@ async function memorizacao() {
   const by = {};
   for (const c of S.srs) { const b = (by[c.course] ||= { total: 0, due: 0, learned: 0 }); b.total++; if (isDue(c)) b.due++; if ((c.interval || 0) >= 21) b.learned++; }
   const tests = evs.filter(e => e.type === 'test').sort((a, b) => b.ts.localeCompare(a.ts)).slice(0, 5);
-  app.innerHTML = `
+  app.innerHTML = `<a class="back" href="#/idiomas">Idiomas</a>
   <div class="eyebrow">Memorização</div><h1 style="margin:6px 0 6px">Lembrar para sempre</h1>
   <p class="muted">Repetição espaçada: cada palavra volta no momento certo, logo antes de você esquecer. Erros das aulas e conversas também viram cartões.</p>
   <div class="journey section">

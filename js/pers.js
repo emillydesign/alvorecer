@@ -11,9 +11,7 @@
     ['cuidar', 'Cuidar de mim'], ['sobre', 'Sobre o IAlvorecer'], ['numeros', 'Seus números']
   ];
   var TOPO = [
-    ['home', 'Início', '[data-nav="home"]'], ['tech', 'Tecnologia & IA', '[data-nav="tech"]'],
-    ['idiomas', 'Idiomas', '[data-nav="idiomas"]'], ['memorizacao', 'Memorização', '[data-nav="memorizacao"]'],
-    ['historico', 'Histórico', '[data-nav="historico"]'], ['area', 'Sua área de interesse', '[data-nav="area"]'],
+    ['home', 'Início', '[data-nav="home"]'], ['historico', 'Histórico', '[data-nav="historico"]'], ['agenda', 'Agenda', '[data-nav="agenda"]'],
     ['areas', 'Botão Áreas', '#areasBtn'], ['ajuda', 'Botão Como entrar', '#dock [data-comoentrar]'],
     ['cores', 'Botão Cores do site', '#dock [data-tema-open]']
   ];
