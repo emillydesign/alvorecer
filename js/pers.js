@@ -19,7 +19,7 @@
 
   var PAGINAS = [['home', 'Início'], ['idiomas', 'Idiomas'], ['trilha/tech', 'Tecnologia & IA'], ['cursos', 'Todas as áreas'], ['memorizacao', 'Memorização'], ['seu', 'Seu Alvorecer'], ['cuidar', 'Cuidar de mim'], ['cuidados', 'Cuidados'], ['mentoria', 'Mentoria de carreira'], ['sobre', 'Sobre'], ['historico', 'Histórico'], ['agenda', 'Agenda'], ['cronograma', 'Cronograma'], ['cuidar/alimentacao', 'Alimentação & água'], ['cuidar/treino', 'Treino'], ['apoiar', 'Apoiar']];
   var PAG = /^(home|idiomas|cursos|memorizacao|seu|cuidar|cuidar\/(alimentacao|treino)|cuidados(\/[a-z]{1,20})?|compras\/[a-z]{1,20}|mentoria|sobre|historico|agenda|cronograma|tempo|apoiar|trilha\/[a-z0-9-]{1,40}|curso\/[a-z]{2,5}:[\w-]{1,60})$/;
-  var ITENS = 'h1,h2,h3,.eyebrow,p.muted,.btn,.panel,.stat,.step,.task,.lesson,.ccard,.area,.atile,.cta-band,.feature,.journey-card,.streak,.act,.tabs,.chip,.chead,.cp-card,.cp-bloco,.back,.row';
+  var ITENS = 'h1,h2,h3,.eyebrow,p.muted,.btn,.panel,.stat,.step,.task,.lesson,.ccard,.area,.atile,.cta-band,.feature,.journey-card,.streak,.act,.tabs,.chip,.chead,.ia-cx,.cp-card,.cp-bloco,.back,.row';
   var DOCK = [['uso', '.dock-tag'], ['ajuda', '[data-comoentrar]'], ['cores', '[data-tema-open]'], ['fab', '#fab']];
   function idOk(id) { return typeof id === 'string' && id.length > 0 && id.length <= 160 && id !== '__proto__'; }
   // área aberta agora: 'home', uma das áreas editáveis ou '' (sem edição)

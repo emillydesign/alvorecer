@@ -192,12 +192,7 @@ async function home() {
   app.innerHTML = `
   <section class="home-topo" id="homeTopo"></section>
 
-  <section class="section" data-bloco="ia"><div class="section-head"><div><div class="eyebrow">Sua IA</div><h2 style="margin-top:8px">Como funciona o seu limite de IA</h2></div><button class="btn btn-ghost btn-sm" data-iainfo>Entender tudo</button></div>
-    <div class="grid g3">
-      <div class="panel"><h3>Seu uso hoje</h3><div style="margin-top:14px">${iaMeterHTML()}</div><p class="small muted" style="margin-top:12px">O IAlvorecer é gratuito para todo mundo, então cada pessoa tem uma quantidade de usos por dia. Renova todo dia à meia-noite.</p></div>
-      <div class="panel"><h3>O que gasta</h3><div style="margin-top:12px">${CUSTOS.slice(0, 4).map(([a, c, i]) => `<div class="row small" style="padding:7px 0;border-bottom:1px solid var(--line)"><span>${i} ${a}</span><span class="spacer"></span><b>${c}</b></div>`).join('')}</div><button class="btn btn-ghost btn-sm" data-iainfo style="margin-top:12px">Ver tudo</button></div>
-      <div class="panel"><h3>Quer usar mais?</h3><p class="small muted" style="margin:10px 0 14px">Conecte a sua própria IA (Google Gemini, grátis) e use sem o limite do site. Leva 2 minutos e ela continua tão carinhosa e inteligente quanto aqui.</p><button class="btn btn-pink btn-sm" data-iainfo="conectar">Conectar minha IA</button></div>
-    </div></section>
+  <section class="section" data-bloco="ia">${iaSecaoHTML()}</section>
 
   <section class="section" data-bloco="metodo"><div class="section-head"><div><div class="eyebrow">Método</div><h2 style="margin-top:8px">Como funciona</h2></div></div>
     <div class="grid g4 how">
@@ -1400,6 +1395,18 @@ function iaMeterHTML() {
   return `<div class="ia-meter"><div class="row"><b style="font-size:26px;font-family:var(--h)">${resto}</b><span class="muted small" style="align-self:end;margin-bottom:5px">usos disponíveis hoje</span><span class="spacer"></span><span class="small dim">${n} de ${LIMITE_IA} usados</span></div>
     <div class="progress" style="margin-top:10px;background:rgba(255,255,255,.08)"><i style="width:${pct}%;background:${pct > 85 ? 'linear-gradient(90deg,#ffc876,#ff7a85)' : 'linear-gradient(90deg,var(--mint),var(--sky))'}"></i></div>${S?.isDemo ? '<div class="small dim" style="margin-top:6px">(exemplo)</div>' : ''}</div>`;
 }
+// seção do limite na página inicial: um card só, com o que sobra hoje e o que fazer
+function iaSecaoHTML() {
+  const propria = S?.config?.geminiKey && !S.isDemo;
+  const resto = LIMITE_IA - Math.min(S?.iaUso?.n || 0, LIMITE_IA), pct = propria ? 100 : Math.round(resto / LIMITE_IA * 100), pouco = !propria && pct < 15;
+  const titulo = propria ? 'Você usa a sua própria IA' : S?.readonly ? `Cada conta tem ${LIMITE_IA} usos de IA por dia` : resto ? `Você ainda tem ${resto} ${resto === 1 ? 'uso' : 'usos'} de IA hoje` : 'Seus usos de IA de hoje acabaram';
+  const texto = propria ? 'Sem o limite do site. Os usos contam na sua cota grátis do Google.' : resto ? 'É grátis para todo mundo e renova à meia-noite. Cada ação com IA costuma gastar 1 uso.' : 'Eles voltam à meia-noite. Até lá, tudo que não usa IA continua funcionando.';
+  return `<div class="ia-cx${pouco ? ' pouco' : ''}"><span class="dv-po" aria-hidden="true">${[8, 27, 46, 63, 79, 93].map((l, k) => `<i style="left:${l}%;animation-delay:-${k * 1.2}s;animation-duration:${6 + k % 3}s"></i>`).join('')}</span>
+    <div class="ia-anel" role="img" aria-label="${propria ? 'Sem o limite do site' : pct + '% disponível hoje'}"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52"/><circle class="v" cx="60" cy="60" r="52" pathLength="100" style="stroke-dasharray:${pct} 100;opacity:${pct ? 1 : 0}"/></svg><span><b>${propria ? '∞' : pct + '%'}</b><small>${propria ? 'sem limite' : 'disponível'}</small></span></div>
+    <div class="ia-tx"><div class="eyebrow">Sua IA</div><h2>${titulo}</h2><p class="muted">${texto}${S?.isDemo ? ' (exemplo)' : ''}</p>
+      <dl class="ia-lista"><div><dt>Gasta</dt><dd>Conversar, criar aulas e corrigir exercícios</dd></div><div><dt>Não gasta</dt><dd>Aulas prontas, revisões e histórico</dd></div></dl></div>
+    <div class="ia-bt">${propria ? '' : '<button class="btn btn-pink" data-iainfo="conectar">Conectar minha IA</button><small>Grátis e sem o limite do site</small>'}<button class="btn btn-ghost" data-iainfo>Como funciona</button></div></div>`;
+}
 // botão do dock (conta própria): anel com a % de usos de IA já gasta hoje
 function dockUso() {
   const b = $('#dockUso'); if (!b) return;
@@ -1762,6 +1769,7 @@ async function boot() {
   vozBar();
   document.addEventListener('click', e => { const b = e.target.closest('[data-fb]'); if (b) { e.preventDefault(); openFeedback(b.dataset.fb); } if (e.target.closest('[data-reload]')) location.reload(); if (e.target.closest('[data-back]')) history.back(); const cp = e.target.closest('[data-copy]'); if (cp) { navigator.clipboard.writeText(cp.dataset.copy); cp.textContent = 'Copiado ✓'; } const ag = e.target.closest('[data-agenda]'); if (ag) { e.preventDefault(); openAgendaConversa(ag.dataset.agenda || ''); } const ii = e.target.closest('[data-iainfo]'); if (ii) { e.preventDefault(); iaInfo(ii.dataset.iainfo); } if (e.target.closest('[data-comoentrar]')) { e.preventDefault(); comoEntrar(); } });
   window.addEventListener('ia-uso', () => document.querySelectorAll('.ia-meter').forEach(el => el.outerHTML = iaMeterHTML()));
+  window.addEventListener('ia-uso', () => document.querySelectorAll('.ia-cx').forEach(el => { el.outerHTML = iaSecaoHTML(); }));
   const qs = new URLSearchParams(location.search);
   const demo = qs.has('demo') || qs.has('visita');
   const catP = fetch('data/catalog.json', { cache: 'no-cache' }).then(r => r.json());
