@@ -193,7 +193,7 @@
     e.preventDefault();
     editar(b.hasAttribute('data-pers-aqui') ? undefined : '#/');
   });
-  function editar(hash) { return import('./pers-edit.js?v=3').then(function (m) { m.iniciar(hash); }).catch(function () { }); }
+  function editar(hash) { return import('./pers-edit.js?v=4').then(function (m) { m.iniciar(hash); }).catch(function () { }); }
 
   // as telas são desenhadas de novo a cada visita: reaplica o que a pessoa escolheu
   var espera = false;

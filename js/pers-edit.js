@@ -147,7 +147,7 @@ function clique(e) {
   if (pop && !t.closest('[data-pe="cor"]')) fecharCor();
   if (!t.closest(AREA)) return;
   if (pular) { pular = false; e.preventDefault(); e.stopPropagation(); return; }
-  if (e.isTrusted === false || t.closest('#hxPrev,#hxNext,.hx-tab')) return; // trocar de grupo no carrossel continua funcionando
+  if (e.isTrusted === false || t.closest('#hxPrev,#hxNext,.hx-tab,.ax-nav button')) return; // trocar de grupo no carrossel continua funcionando
   e.preventDefault(); e.stopPropagation(); // editando: nada abre nem navega
   const b = t.closest('[data-pe]');
   if (b) return acaoBloco(b.dataset.pe, b.closest('.pe-alvo'), b);

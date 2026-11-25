@@ -151,74 +151,30 @@ async function router() {
   navFeito = tok;
 }
 function updateAreaTab() { const id = C.tracks[S.state.area]?.area ? S.state.area : 'design'; const t = C.tracks[id]; const el = $('#areaTab'); if (el) { el.textContent = t.name; el.href = '#/trilha/' + id; } }
-function closeAreas() { $('#areasPop')?.remove(); $('#popOv')?.remove(); }
-// Lista completa do que o site tem: um atalho para cada coisa, inclusive as áreas escondidas (cuidados, cursos essenciais...).
-// Mesma lista no botão Áreas do topo, no card "Ver todas as áreas" do início e na página Cursos.
-function todasAreasHTML(grade) {
-  const areas = Object.entries(C.tracks).filter(([, t]) => t.area);
-  const cur = C.tracks[S.state.area]?.area ? S.state.area : 'design';
-  const nCus = (S.state.custom || []).length;
-  const ga = grade ? ' style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))"' : '';
-  const L = (href, ic, nome, sub, g, pat) => `<a class="atile ${pat || 'pat-dots'}" href="${href}" style="${grad(g)}"><i>${icoOf(ic)}</i><div><b>${esc(nome)}</b><br><small>${esc(sub)}</small></div></a>`;
-  const sec = t => `<h4 class="ap-sec">${t}</h4>`;
-  const cuid = [['pele', 'sparkles', 'Pele', 'rotina, ácidos e protetor', ['#86efac', '#0ea5e9']], ['unhas', 'hand', 'Unhas', 'cuidados e fortalecimento', ['#fbcfe8', '#6366f1']], ['cabelo', 'scissors', 'Cabelo', 'do seu tipo de fio', ['#fde68a', '#14b8a6']], ['higiene', 'droplets', 'Higiene e cheiro', 'banho, desodorante, hálito', ['#7dd3fc', '#4f46e5']], ['perfumes', 'spray-can', 'Perfumes', 'notas olfativas', ['#f9a8d4', '#7c3aed']], ['estilo', 'shirt', 'Estilo e moda', 'o seu jeito de se vestir', ['#fdba74', '#ec4899']], ['musica', 'music', 'Música', 'descobertas pro seu gosto', ['#a5b4fc', '#14b8a6']]];
-  const achar = k => { const id = k.replace(/^trk:/, ''); for (const t of Object.values(C.tracks)) { const c = t.courses.find(x => x.id === id); if (c) return c; } return null; };
-  const ess = (C.essencial?.itens || []).map(it => ({ k: it.k, c: achar(it.k) })).filter(x => x.c);
-  const etapas = C.cuidadosEssenciais?.etapas || [];
-  return `
-    ${sec('Aprender')}
-    <div class="atiles"${ga}>
-      ${L('#/idiomas', 'languages', 'Idiomas', `${C.languages.length} idiomas, do zero ao fluente`, ['#2dd4bf', '#2563eb'], 'pat-rings')}
-      ${L('#/trilha/tech', 'cpu', 'Tecnologia & IA', `${C.tracks.tech.courses.length} cursos + mentoria`, C.tracks.tech.g, 'pat-grid')}
-      ${areas.map(([id, t]) => `<button class="atile pat-dots ${id === cur ? 'on' : ''}" data-area="${id}" style="${grad(t.g)}"><i>${icoOf(t.icon)}</i><div><b>${esc(t.name)}</b><br><small>${t.courses.length} cursos</small></div></button>`).join('')}
-      ${L('#/seu', 'sparkles', 'Cursos personalizados', `${nCus} ${nCus === 1 ? 'curso seu' : 'cursos seus'} · peça o que quiser`, ['#fcd34d', '#14b8a6'], 'pat-rings')}
-      ${L('#/cursos', 'layout-grid', 'Todos os cursos', 'a lista completa por área', ['#5b9be8', '#157a80'], 'pat-grid')}
-      ${L('#/historico', 'history', 'Histórico', 'seu caminho até aqui', ['#bae6fd', '#4f46e5'], 'pat-waves')}
-    </div>
-    ${sec('Cuidar de você')}
-    <div class="atiles"${ga}>
-      ${L('#/cuidar', 'heart-handshake', 'Cuidar de mim', 'desabafo, alimentação, treino', ['#86efac', '#6366f1'], 'pat-waves')}
-      ${L('#/cuidar/desabafo', 'message-circle-heart', 'Desabafo', 'um espaço para ser ouvida(o)', ['#5eead4', '#6366f1'], 'pat-dots')}
-      ${L('#/cuidar/alimentacao', 'salad', 'Alimentação & água', 'plano, água do dia, foto do prato', ['#86efac', '#0ea5e9'], 'pat-rings')}
-      ${L('#/cuidar/treino', 'dumbbell', 'Treino', 'em casa ou na academia', ['#7dd3fc', '#4f46e5'], 'pat-grid')}
-      ${L('#/cuidados', 'sparkles', 'Cuidados', 'pele, unhas, cabelo, cheiro', ['#fbcfe8', '#14b8a6'], 'pat-dots')}
-      ${cuid.map(([id, ic, n, sub, g]) => L('#/cuidados/' + id, ic, n, sub, g, 'pat-dots')).join('')}
-    </div>
-    ${sec('Rotina e carreira')}
-    <div class="atiles"${ga}>
-      ${L('#/agenda', 'calendar-check', 'Agenda', 'rotina e checklist do dia', ['#fde68a', '#0ea5e9'], 'pat-grid')}
-      ${L('#/tempo', 'hourglass', 'Mais tempo para você', 'trabalho melhor, mais tempo livre', ['#fdba74', '#0d9488'], 'pat-rings')}
-      ${L('#/mentoria', 'compass', 'Mentoria de carreira', 'gratuita, com a IA', ['#a7f3d0', '#2563eb'], 'pat-waves')}
-      <button class="atile pat-grid" id="apAsk" style="background:linear-gradient(150deg,#a5b4fc,#0ea5e9)"><i>＋</i><div><b>Pedir um curso</b><br><small>pelo IAlvorecer</small></div></button>
-    </div>
-    ${sec('Cursos essenciais')}
-    <div class="atiles"${ga}>
-      ${ess.map(x => L('#/curso/' + x.k, x.c.icon || 'book-open', x.c.title, x.c.sub || '', x.c.g || ['#34c28a', '#0f5e55'], 'pat-dots')).join('')}
-    </div>
-    ${sec('Cuidados essenciais, em etapas')}
-    <div class="atiles"${ga}>
-      ${etapas.map(e => L(e.h, e.i || 'circle', e.curto || e.t, e.t, ['#4fd1b5', '#17756f'], 'pat-waves')).join('')}
-    </div>
-    ${sec('Sobre o site')}
-    <div class="atiles"${ga}>
-      ${L('#/guia', 'book-open', 'Guia', 'como usar o IAlvorecer', ['#93c5fd', '#0f766e'], 'pat-dots')}
-      ${L('#/sobre', 'info', 'Sobre', 'quem faz e por quê', ['#bae6fd', '#4f46e5'], 'pat-waves')}
-      ${L('#/apoiar', 'heart', 'Apoiar', 'ajude o projeto a continuar', ['#a7f3d0', '#2563eb'], 'pat-rings')}
-    </div>`;
-}
-function ligarAreas(root, fechar) {
-  $$('[data-area]', root).forEach(b => b.onclick = () => { S.state.area = b.dataset.area; S.saveState(); fechar(); location.hash = '#/trilha/' + b.dataset.area; });
-  $$('a.atile', root).forEach(a => a.addEventListener('click', () => { if (a.getAttribute('href') === location.hash) fechar(); }));
-  const ask = $('#apAsk', root); if (ask) ask.onclick = () => { fechar(); openAssistant('Quero um curso de '); };
-}
+function closeAreas() { $('#areasPop')?.remove(); $('#popOv')?.remove(); document.body.classList.remove('areas-on'); document.removeEventListener('keydown', escAreas); }
+function escAreas(e) { if (e.key === 'Escape') { closeAreas(); $('#areasBtn')?.focus(); } }
+// Áreas (js/areas.js): mesma tela no botão do topo, no card "Ver todas as áreas" do início e na página Cursos.
+const areasCtx = () => ({
+  C, S, esc, icoOf,
+  recentes() { // últimos cursos estudados que ainda têm aula pela frente
+    return Object.entries(S.state.courses || {}).map(([k, s]) => ({ k, em: Object.values(s.done || {}).reduce((m, x) => (x.date || '') > m ? x.date : m, '') }))
+      .filter(x => x.em).sort((x, y) => y.em.localeCompare(x.em)).map(({ k }) => {
+        try { const d = course(k), nx = nextLesson(k); return d && nx ? { h: `#/aula/${k}/${nx.id}`, t: d.title, d: `Aula ${nx.n}: ${nx.title}`, pct: Math.round(progress(k) * 100) } : null; } catch { return null; }
+      }).filter(Boolean).slice(0, 3);
+  },
+  criar(t) {
+    if (!t) return openAssistant('Quero um curso de ');
+    openAssistant();
+    let n = 0; const tentar = () => { if (!$('#asst') || n++ > 40) return; if (asst.chat?.enviar(`Quero criar um curso novo sobre: ${t}`) === undefined) setTimeout(tentar, 250); };
+    tentar();
+  }
+});
 function openAreas() {
   if ($('#areasPop')) return closeAreas();
-  document.body.insertAdjacentHTML('beforeend', `<div class="pop-overlay" id="popOv"></div><div class="areas-pop" id="areasPop">
-    <div class="row"><h3>Todas as áreas</h3><span class="spacer"></span><button class="iconbtn" id="apX">✕</button></div>
-    <p class="small muted">Tudo o que o IAlvorecer tem, num só lugar. Ao escolher uma <b>área de interesse</b>, ela passa a aparecer no seu menu. Quer algo mais específico? Peça ao IAlvorecer e o curso vai para <b>Seu Alvorecer</b>.</p>
-    ${todasAreasHTML()}</div>`);
-  $('#apX').onclick = closeAreas; $('#popOv').onclick = closeAreas;
-  ligarAreas($('#areasPop'), closeAreas);
+  document.body.insertAdjacentHTML('beforeend', '<div class="pop-overlay" id="popOv"></div><div class="areas-pop ax-cx" id="areasPop" role="dialog" aria-label="Áreas"></div>');
+  document.body.classList.add('areas-on'); window.dispatchEvent(new CustomEvent('ia-painel', { detail: 'areas' }));
+  $('#popOv').onclick = closeAreas; document.addEventListener('keydown', escAreas);
+  import('./areas.js?v=1').then(M => { const el = $('#areasPop'); if (el) M.montar(el, areasCtx(), { pop: true, fechar: closeAreas }); }).catch(() => { closeAreas(); toast('Não consegui abrir as áreas. Tente de novo.'); });
 }
 
 // ---------- INÍCIO ----------
@@ -363,9 +319,9 @@ async function trilha(tid = 'design') {
 }
 async function cursos() {
   app.innerHTML = `<div class="eyebrow">Cursos</div><h1 style="margin:6px 0 10px">Tudo o que dá pra aprender</h1>
-  <p class="small muted" style="margin-bottom:6px">Tudo o que o IAlvorecer tem, num só lugar. Quer algo mais específico? Peça ao IAlvorecer e o curso vai para <b>Seu Alvorecer</b>.</p>
-  <div id="todasAreas">${todasAreasHTML(true)}</div>`;
-  ligarAreas($('#todasAreas'), () => { });
+  <p class="small muted" style="margin-bottom:18px">Tudo o que o IAlvorecer tem, num só lugar. Se não achar o que procura, peça e o curso é criado para você.</p>
+  <div id="todasAreas"></div>`;
+  const M = await import('./areas.js?v=1'), el = $('#todasAreas'); if (el) M.montar(el, areasCtx());
 }
 
 // ---------- CURSO ----------
@@ -1214,7 +1170,7 @@ function destinoVisual(t) {
 }
 const asstDeps = {
   get S() { return S; }, toast: (...a) => toast(...a), describeAction: a => describeAction(a), applyActions: a => applyActions(a),
-  voz: () => asst.voz, idioma: () => asstIdioma(), limpar: () => asst.rasc?.depoisDeEnviar(), destino: t => destinoVisual(t) || asst.voz?.acharDestino(t, { C, S }),
+  voz: () => asst.voz, idioma: () => asstIdioma(), limpar: () => asst.rasc?.depoisDeEnviar(), destino: t => /^Quero criar um curso novo sobre: /.test(t) ? null : destinoVisual(t) || asst.voz?.acharDestino(t, { C, S }),
   // volta a página ao estado salvo antes de uma mudança feita pelo chat
   async restaurar(id) {
     const lista = S.state.backups || [], i = lista.findIndex(b => b.id === id); if (i < 0) return false;
