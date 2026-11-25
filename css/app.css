@@ -1576,10 +1576,12 @@ body.areas-on .dock{opacity:0;pointer-events:none}
 .tm-aj .grid.g2{grid-template-columns:1fr;gap:0}
 .tm-aj .panel h3{font-size:16.5px}
 
-/* logo: ondas de luz difusas saem de trás do nome e um brilho percorre as letras no mesmo ritmo */
-.tb-eco{position:absolute;left:50%;top:50%;z-index:-1;width:300px;height:64px;margin:-32px 0 0 -150px;border-radius:50%;pointer-events:none;background:radial-gradient(closest-side,transparent 30%,rgba(var(--mint-rgb),.5) 62%,rgba(var(--sky-rgb),.22) 78%,transparent);filter:blur(5px);opacity:0;animation:tbEco 5.6s ease-out infinite}
+/* logo: a luz nasce atrás do meio do nome, passa por trás de cada letra até as pontas e se espalha (só clareia, nunca cobre as letras) */
+.tb-eco{position:absolute;left:50%;top:50%;z-index:-1;width:300px;height:64px;margin:-32px 0 0 -150px;border-radius:50%;pointer-events:none;background:radial-gradient(closest-side,rgba(var(--mint-rgb),.1) 20%,rgba(var(--mint-rgb),.3) 60%,rgba(var(--sky-rgb),.14) 80%,transparent);filter:blur(9px);opacity:0;animation:tbEco 5.6s ease-out infinite}
 .tb-eco+.tb-eco{animation-delay:2.8s}
-@keyframes tbEco{0%{transform:scale(.3,.4);opacity:0}18%{opacity:.8}100%{transform:scale(1.9,1.5);opacity:0}}
-.tb-brilho{position:absolute;left:30px;top:0;font-style:normal;white-space:nowrap;pointer-events:none;color:transparent;-webkit-text-fill-color:transparent;background:linear-gradient(100deg,transparent 42%,rgb(var(--mint-rgb)) 48%,rgb(var(--sky-rgb)) 53%,transparent 59%) 120% 0/320% 100% no-repeat;-webkit-background-clip:text;background-clip:text;animation:tbBrilho 5.6s ease-in-out infinite}
-@keyframes tbBrilho{0%{background-position:120% 0}55%,100%{background-position:-20% 0}}
-@media (prefers-reduced-motion:reduce){.tb-eco,.tb-brilho{animation:none}}
+@keyframes tbEco{0%{transform:scale(.35,.5);opacity:0}22%{opacity:.8}100%{transform:scale(2,1.4);opacity:0}}
+.tb-halo{position:absolute;left:30px;top:0;z-index:-1;font-style:normal;white-space:nowrap;pointer-events:none}
+.tb-halo b{font-weight:inherit;color:transparent;text-shadow:0 0 8px rgba(var(--text-rgb),.55),0 0 16px rgba(var(--mint-rgb),.85),0 0 26px rgb(var(--sky-rgb));opacity:0;animation:tbHalo 2.8s ease-in-out var(--d) infinite}
+.tb-halo b:nth-child(-n+2){text-shadow:0 0 16px rgba(var(--mint-rgb),.4),0 0 28px rgba(var(--sky-rgb),.45)}
+@keyframes tbHalo{0%,62%,100%{opacity:0}26%{opacity:.95}}
+@media (prefers-reduced-motion:reduce){.tb-eco,.tb-halo b{animation:none}}
