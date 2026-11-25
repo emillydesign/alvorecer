@@ -1591,3 +1591,7 @@ body.areas-on .dock{opacity:0;pointer-events:none}
 button,a{touch-action:manipulation}
 button svg,button>i,a svg,.hx-wm{pointer-events:none}
 body.pers-edit .dock [data-pg],body.pers-edit .mainnav [data-pg],body.pers-edit .hx-cu{touch-action:none}
+
+/* assistente e Ajustes/Aparência somem e voltam junto com os botões de baixo */
+.asst{transition:opacity .35s,transform .45s var(--ease),visibility .35s}
+body.na-home:not(.rolou):not(.pers-edit) .asst,body.areas-on .asst{opacity:0;visibility:hidden;pointer-events:none;transform:translateY(14px)}
