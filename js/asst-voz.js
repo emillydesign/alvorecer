@@ -9,7 +9,7 @@ const IC = {
 const svg = p => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
 let atual = null, parar = null, off = null; // mensagem sendo lida e microfone ativo
 
-function pintar() {
+export function pintar() {
   const e = speechState();
   document.querySelectorAll('#asstM [data-ouvir]').forEach(b => {
     const meu = atual && b.dataset.texto === atual;
@@ -22,16 +22,6 @@ export function ouvir(texto, idioma) {
   if (atual === texto && e === 'playing') return pauseSpeaking();
   if (atual === texto && e === 'paused') return resumeSpeaking();
   atual = texto; speak(texto, idioma).then(() => { if (atual === texto) { atual = null; pintar(); } }); pintar();
-}
-// coloca o fone embaixo de cada resposta
-export function enfeitar(msgs, idioma) {
-  if (!canSpeak) return;
-  const ia = msgs.filter(m => m.role === 'ai');
-  document.querySelectorAll('#asstM .msg.ai').forEach((el, i) => {
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'asst-ouvir'; b.dataset.ouvir = ''; b.dataset.texto = ia[i]?.text || '';
-    b.onclick = () => ouvir(b.dataset.texto, idioma); el.appendChild(b);
-  });
-  pintar();
 }
 export function iniciar({ mic, ta, idioma, enviar, toast }) {
   off?.(); off = onSpeechState(pintar);

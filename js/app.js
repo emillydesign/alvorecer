@@ -1186,49 +1186,34 @@ function openAssistant(prefill = '') {
     import('./asst-rascunho.js?v=1').then(R => { if ($('#asstT')) asst.rasc = R.iniciarRascunho({ ta: $('#asstT'), prefill }); }).catch(() => { });
     $('#asstUndo').onclick = () => doUndo();
     $('#asstS').onclick = () => asstSend();
-    import('./asst-voz.js?v=1').then(V => { if (!$('#asstMic')) return; asst.voz = V; V.iniciar({ mic: $('#asstMic'), ta: $('#asstT'), idioma: asstIdioma(), enviar: () => asstSend(true), toast }); asstRender(); }).catch(() => { });
+    import('./asst-voz.js?v=2').then(V => { if (!$('#asstMic')) return; asst.voz = V; V.iniciar({ mic: $('#asstMic'), ta: $('#asstT'), idioma: asstIdioma(), enviar: () => asstSend(true), toast }); asstRender(); }).catch(() => { });
     $('#asstT').onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); asstSend(); } };
-    if (!asst.msgs.length) asst.msgs.push({ role: 'ai', text: `Oi${S.state.profile.name ? ', ' + S.state.profile.name : ''}! Posso tirar dúvidas sobre o IAlvorecer ou mudar seus estudos: cronograma, dias, nível, temas das aulas, e-mails… Tudo o que eu mudar pode ser desfeito no botão ↶.`, sugs: ['Mudar os dias do meu cronograma', 'Quero aulas de 15 minutos', 'Pausar e-mails até segunda', 'Como funciona a prova de nível?', 'Reiniciar o curso de inglês'] });
-    asstRender();
+    import('./asst-chat.js?v=1').then(M => { if (!$('#asstM')) return; asst.chat = M; M.iniciar(asstDeps); }).catch(() => toast('Não consegui abrir a conversa. Tente de novo.'));
     try { lucide.createIcons(); } catch (e) { }
   }
   if (prefill && !LS.get('ia_asst_rascunho')) { const t = $('#asstT'); t.value = prefill; t.focus(); t.setSelectionRange(prefill.length, prefill.length); }
 }
-function asstRender() {
-  const box = $('#asstM'); if (!box) return;
-  box.innerHTML = asst.msgs.map((m, i) => {
-    if (m.role === 'me') return `<div class="msg me">${esc(m.text)}</div>`;
-    if (m.role === 'typing') return '<div class="typing">Pensando…</div>';
-    return `<div class="msg ai">${esc(m.text)}</div>${m.sugs ? `<div class="sugs">${m.sugs.map(s => `<button data-sug="${esc(s)}">${esc(s)}</button>`).join('')}</div>` : ''}${m.actions?.length ? `<div class="act"><b>${m.applied ? '✓ Feito' : m.canceled ? 'Cancelado' : 'Posso fazer isto:'}</b><ul>${m.actions.map(a => `<li>${esc(describeAction(a))}</li>`).join('')}</ul>${m.applied ? `<button class="btn btn-ghost btn-sm" data-undo="${i}">↶ Desfazer</button>` : m.canceled ? '' : `<div class="row"><button class="btn btn-pink btn-sm" data-apply="${i}">Aplicar</button><button class="btn btn-ghost btn-sm" data-cancel="${i}">Cancelar</button></div>`}</div>` : ''}`;
-  }).join('');
-  asst.voz?.enfeitar(asst.msgs, asstIdioma());
-  box.scrollTop = box.scrollHeight;
-  $$('[data-sug]', box).forEach(b => b.onclick = () => { $('#asstT').value = b.dataset.sug; asstSend(); });
-  $$('[data-apply]', box).forEach(b => b.onclick = async () => { const m = asst.msgs[+b.dataset.apply]; b.disabled = true; b.innerHTML = '<span class="spin"></span>'; try { await applyActions(m.actions); m.applied = true; toast('Alteração aplicada ✓'); } catch (e) { toast('⚠️ ' + e.message, 6000); } asstRender(); });
-  $$('[data-cancel]', box).forEach(b => b.onclick = () => { asst.msgs[+b.dataset.cancel].canceled = true; asstRender(); });
-  $$('[data-undo]', box).forEach(b => b.onclick = async () => { await doUndo(); asst.msgs[+b.dataset.undo].applied = false; asst.msgs[+b.dataset.undo].canceled = true; asstRender(); });
-}
-async function asstSend(porVoz) {
-  const t = $('#asstT'), text = t.value.trim(); if (!text) return;
-  const falar = () => { const m = asst.msgs[asst.msgs.length - 1]; if (asst.voz && m?.role === 'ai' && (porVoz === true || asst.voz.lerSempre())) asst.voz.ouvir(m.text, asstIdioma()); };
-  // pedidos de abrir um curso ou área: resolvidos na hora, sem gastar IA
-  const d = asst.voz?.acharDestino(text, { C, S });
-  if (d) { t.value = ''; asst.rasc?.depoisDeEnviar(); asst.msgs.push({ role: 'me', text }, { role: 'ai', text: `Abrindo ${d.t}. ${d.d}` }); location.hash = d.h; asstRender(); return falar(); }
-  if (S.readonly) { t.value = ''; asst.msgs.push({ role: 'me', text }, { role: 'ai', text: 'No modo visitante dá pra explorar tudo, mas para conversar comigo, fazer aulas e salvar seu progresso é preciso criar uma conta grátis. É rapidinho!' }); return asstRender(); }
-  t.value = ''; asst.rasc?.depoisDeEnviar(); asst.msgs.forEach(m => delete m.sugs);
-  asst.msgs.push({ role: 'me', text }); asst.msgs.push({ role: 'typing' }); asstRender();
-  try {
-    const hist = asst.msgs.filter(m => m.role === 'me' || m.role === 'ai').slice(-16);
-    const r = await AI.assistant({ history: hist, context: asstContext() });
-    asst.msgs = asst.msgs.filter(m => m.role !== 'typing');
-    const acts = (r.actions || []).filter(a => a && a.type);
-    const go = acts.find(a => a.type === 'open_page');
+const asstRender = () => asst.chat?.desenhar();
+const asstSend = porVoz => asst.chat?.enviar(undefined, porVoz);
+const asstDeps = {
+  get S() { return S; }, toast: (...a) => toast(...a), describeAction: a => describeAction(a), applyActions: a => applyActions(a),
+  voz: () => asst.voz, idioma: () => asstIdioma(), limpar: () => asst.rasc?.depoisDeEnviar(), destino: t => asst.voz?.acharDestino(t, { C, S }),
+  // volta a página ao estado salvo antes de uma mudança feita pelo chat
+  async restaurar(id) {
+    const lista = S.state.backups || [], i = lista.findIndex(b => b.id === id); if (i < 0) return false;
+    const snap = await S.read(`backups/${id}.json`); if (!snap) return false;
+    const resto = lista.slice(i + 1);
+    S.state = snap.state; S.state.backups = resto; S.srs = snap.srs || []; Object.assign(S.config, snap.config || {});
+    S.saveState(); S.saveSrs(); S.saveConfig(); await S.flush(); refreshView(); return true;
+  },
+  async perguntar(history) {
+    const r = await AI.assistant({ history, context: asstContext() });
+    const acts = (r.actions || []).filter(a => a && a.type), go = acts.find(a => a.type === 'open_page');
     const PAGES = { cuidar: '#/cuidar', desabafo: '#/cuidar/desabafo', alimentacao: '#/cuidar/alimentacao', treino: '#/cuidar/treino', sobre: '#/sobre', apoiar: '#/apoiar', mentoria_sessao: '#/mentoria/sessao', mentoria: '#/mentoria', cronograma: '#/cronograma', seu: '#/seu', ajustes: '#/ajustes', historico: '#/historico', idiomas: '#/idiomas', memorizacao: '#/memorizacao' };
-    asst.msgs.push({ role: 'ai', text: r.reply || 'Certo!', actions: acts.filter(a => a.type !== 'open_page') });
     if (go && PAGES[go.page]) { location.hash = PAGES[go.page]; if (go.page === 'mentoria_sessao') closeAssistant(); }
-  } catch (e) { asst.msgs = asst.msgs.filter(m => m.role !== 'typing'); asst.msgs.push({ role: 'ai', text: '⚠️ ' + e.message }); }
-  asstRender(); falar();
-}
+    return { text: r.reply || 'Certo!', actions: acts.filter(a => a.type !== 'open_page') };
+  }
+};
 
 // ---------- SEU ALVORECER (cursos personalizados) ----------
 const BLOCK = /(porn|sexo|sexual|erotic|nude|nudez|fetiche|onlyfans|\+ ?18|cocaina|heroina|metanfetamina|arma de fogo|armas caseiras|explosiv|bomba caseira|hackear|invadir conta|invasao de sistema|malware|ransomware|clonar cartao|lavagem de dinheiro|falsifica|sonegar|pirataria|cassino|apostas esportivas|tigrinho|assassin|suicid|automutil|nazis|terroris)/;
