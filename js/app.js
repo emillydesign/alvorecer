@@ -1817,7 +1817,7 @@ async function boot() {
   setTimeout(startAgua, 2000);
   // (cliques de avaliação/erro tratados no início do boot)
   $('#topbar').hidden = false; $('#tabbar').hidden = false;
-  document.body.insertAdjacentHTML('beforeend', '<div class="dock" id="dock">' + (window.__dockTag || '') + '<button class="fab" id="fab" type="button" title="Falar com o assistente" aria-label="Falar com o assistente"><i data-lucide="headset"></i></button></div>');
+  document.body.insertAdjacentHTML('beforeend', '<div class="dock" id="dock">' + (window.__dockTag || '') + '<button class="dock-mini" type="button" data-comoentrar title="Como entrar" aria-label="Como entrar"><i data-lucide="circle-help"></i></button><button class="dock-mini" type="button" data-tema-open title="Cores do site" aria-label="Cores do site"><i data-lucide="palette"></i></button>' + '<button class="fab" id="fab" type="button" title="Falar com o assistente" aria-label="Falar com o assistente"><i data-lucide="headset"></i></button></div>');
   try { lucide.createIcons(); } catch (e) { }
   addEventListener('scroll', () => document.body.classList.toggle('rolou', scrollY > 30), { passive: true });
   $('#fab').onclick = () => toggleAssistant();

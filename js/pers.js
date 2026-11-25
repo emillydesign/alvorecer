@@ -14,8 +14,8 @@
     ['home', 'Início', '[data-nav="home"]'], ['tech', 'Tecnologia & IA', '[data-nav="tech"]'],
     ['idiomas', 'Idiomas', '[data-nav="idiomas"]'], ['memorizacao', 'Memorização', '[data-nav="memorizacao"]'],
     ['historico', 'Histórico', '[data-nav="historico"]'], ['area', 'Sua área de interesse', '[data-nav="area"]'],
-    ['areas', 'Botão Áreas', '#areasBtn'], ['ajuda', 'Botão Como entrar', '.topright [data-comoentrar]'],
-    ['cores', 'Botão Cores do site', '.topright [data-tema-open]']
+    ['areas', 'Botão Áreas', '#areasBtn'], ['ajuda', 'Botão Como entrar', '#dock [data-comoentrar]'],
+    ['cores', 'Botão Cores do site', '#dock [data-tema-open]']
   ];
   var IDS = BLOCOS.map(function (b) { return b[0]; }), TIDS = TOPO.map(function (t) { return t[0]; });
 
