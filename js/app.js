@@ -1206,7 +1206,7 @@ function destinoVisual(t) {
   const n = String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   if (!/\b(edit|mud|alter|troc|personaliz|reorganiz|organiz|mex)[a-z]*\b.*\b(visual|aparencia|layout|blocos?)\b/.test(n) && !/\bpersonaliz(ar|e|a) (o |meu )?site\b/.test(n)) return null;
   const P = window.IAPers; if (!P) return null;
-  const achado = /\b(inicio|pagina inicial|home)\b/.test(n) ? { h: '#/', t: 'Início' } : asst.voz?.acharDestino('abrir ' + t, { C, S });
+  const achado = /\b(inicio|pagina inicial|home)\b/.test(n) ? { h: '#/', t: 'Início' } : P.PAGINAS.filter(([id, nome]) => id !== 'home' && n.includes(nome.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''))).map(([id, nome]) => ({ h: '#/' + id, t: nome }))[0] || asst.voz?.acharDestino('abrir ' + t, { C, S });
   if (achado && !P.pagina(achado.h)) return { h: location.hash, t: achado.t, texto: `Ainda não dá para editar o visual de ${achado.t}. Dá para editar Início, Idiomas, as áreas de cursos, Memorização, Seu Alvorecer, Cuidar de mim, Cuidados, Mentoria e Sobre.` };
   const h = achado ? achado.h : P.pagina() ? location.hash || '#/' : '#/';
   return { h, t: achado?.t || 'a área', texto: `Abri ${achado?.t || 'a área'} com a edição do visual ligada. Use os botões de cada bloco e, no fim, toque em Concluir.`, depois: () => P.editar(h) };

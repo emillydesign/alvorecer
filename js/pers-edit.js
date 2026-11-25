@@ -19,6 +19,10 @@ const IC = {
 const botao = (a, ic, t) => `<button type="button" data-pe="${a}" title="${t}" aria-label="${t}">${svg(IC[ic])}</button>`;
 
 export function iniciar(hash) {
+  if (!P.grupo) { // o navegador misturou arquivos antigos e novos: atualiza a página uma vez
+    let ja = true; try { ja = sessionStorage.getItem('ia_pers_rec'); sessionStorage.setItem('ia_pers_rec', '1'); } catch { }
+    if (!ja) location.reload(); return;
+  }
   try { window.dispatchEvent(new CustomEvent('ia-painel', { detail: 'editar' })); } catch { }
   if (typeof hash === 'string' && hash !== location.hash) location.hash = hash;
   else if (!P.pagina()) location.hash = '#/';
