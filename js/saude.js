@@ -1,5 +1,6 @@
 // Cuidar de mim: desabafo, alimentação + água + foto do prato, treino.
 // IA de apoio: NÃO substitui psicólogo, nutricionista, educador físico ou médico.
+import { cartaoCompras } from './compras.js?v=1';
 import { $, $$, esc, md as mdBase, today, uid, addDays } from './util.js';
 import { listen, canListen, stopSpeaking } from './speech.js?v=69';
 
@@ -167,7 +168,7 @@ async function alimentacao(tab = 'plano') {
   const c = calc(), h = H();
   const hoje = h.food[today()] || [];
   const total = hoje.reduce((a, x) => a + (+x.kcal || 0), 0);
-  X.app.innerHTML = head('Alimentação & Água', 'Comer bem, do seu jeito', 'Sem dieta da moda e sem cortar o que você gosta: a ideia é entender, ajustar aos poucos e criar hábitos que duram.') + AVISO +
+  X.app.innerHTML = head('Alimentação & Água', 'Comer bem, do seu jeito', 'Sem dieta da moda e sem cortar o que você gosta: a ideia é entender, ajustar aos poucos e criar hábitos que duram.') + AVISO + cartaoCompras('alimentacao') +
     (c ? '' : `<div class="panel" style="margin-bottom:24px"><h3>Primeiro, seu perfil</h3><p class="small muted" style="margin:6px 0 16px">Com idade, altura, peso e rotina eu consigo calcular suas calorias e sua água.</p>${perfilForm()}</div>`) +
     `<div class="tabs">${[['plano', 'Plano alimentar'], ['foto', 'Foto do prato'], ['calorias', 'Aprender calorias'], ['agua', 'Água'], ['chat', 'Falar com o IAlvorecer']].map(([k, l]) => `<button data-tab="${k}" class="${k === tab ? 'on' : ''}">${l}</button>`).join('')}</div><div id="nt"></div>`;
   if (!c) bindPerfil();
@@ -279,7 +280,7 @@ function compress(file) {
 // ---------- TREINO ----------
 async function treino(tab = 'plano') {
   const h = H(), t = h.treinoPerfil || {};
-  X.app.innerHTML = head('Treino', 'Movimento que cabe na sua vida', 'Treino montado para o seu objetivo, corpo, tempo e lugar, com segurança e progressão.') + AVISO +
+  X.app.innerHTML = head('Treino', 'Movimento que cabe na sua vida', 'Treino montado para o seu objetivo, corpo, tempo e lugar, com segurança e progressão.') + AVISO + cartaoCompras('treino') +
     `<div class="tabs">${[['plano', 'Meu treino'], ['chat', 'Falar com o IAlvorecer']].map(([k, l]) => `<button data-tab="${k}" class="${k === tab ? 'on' : ''}">${l}</button>`).join('')}</div><div id="tr"></div>`;
   $$('[data-tab]').forEach(b => b.onclick = () => treino(b.dataset.tab));
   const el = $('#tr');

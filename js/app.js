@@ -13,7 +13,7 @@ const authStorage = {
 };
 import { makeAI, NoKeyError } from './ai.js?v=64';
 import { speak, stopSpeaking, pauseSpeaking, resumeSpeaking, onSpeechState, speechState, listen, canListen, canSpeak } from './speech.js?v=69';
-import { initSaude, cuidar, startAgua } from './saude.js?v=72';
+import { initSaude, cuidar, startAgua } from './saude.js?v=73';
 import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=63';
 
 let C, S, AI;
@@ -121,7 +121,7 @@ function addCards(list, key, source) {
 }
 
 // ---------- roteamento ----------
-const routes = { tempo: async () => { const m = await import('./tempo.js?v=2'); m.initTempo({ S, AI, app, toast }); return m.tempo(); }, agenda: async (t) => { const m = await import('./agenda.js?v=72'); m.initAgenda({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.agenda(t); }, 'boas-vindas': boasVindas, nivelamento, cronograma, mentoria, seu, cuidar: (s) => cuidar(s), cuidados: async (s) => { const m = await import('./cuidados.js?v=72'); m.initCuidados({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.cuidados(s); }, sobre, apoiar, '': home, idiomas, cursos, trilha, curso, aula, conversa, memorizacao, revisao, teste, historico, ajustes, guia };
+const routes = { tempo: async () => { const m = await import('./tempo.js?v=2'); m.initTempo({ S, AI, app, toast }); return m.tempo(); }, agenda: async (t) => { const m = await import('./agenda.js?v=72'); m.initAgenda({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.agenda(t); }, 'boas-vindas': boasVindas, nivelamento, cronograma, mentoria, seu, cuidar: (s) => cuidar(s), cuidados: async (s) => { const m = await import('./cuidados.js?v=73'); m.initCuidados({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.cuidados(s); }, compras: async (id) => { const m = await import('./compras.js?v=1'); m.paginaCompras(app, id); }, sobre, apoiar, '': home, idiomas, cursos, trilha, curso, aula, conversa, memorizacao, revisao, teste, historico, ajustes, guia };
 let cleanup = null;
 let navTok = 0, navFeito = 0;
 async function router() {
@@ -136,7 +136,7 @@ async function router() {
   else if (['revisao', 'teste'].includes(parts[0])) navKey = 'memorizacao';
   else if (parts[0] === 'cronograma') navKey = 'idiomas';
   else if (parts[0] === 'mentoria') navKey = 'tech';
-  else if (parts[0] === 'cuidar' || parts[0] === 'cuidados' || parts[0] === 'agenda') navKey = 'seu';
+  else if (parts[0] === 'cuidar' || parts[0] === 'cuidados' || parts[0] === 'compras' || parts[0] === 'agenda') navKey = 'seu';
   if (parts[0] === 'trilha' && parts[1] && parts[1] !== 'tech' && C.tracks[parts[1]]?.area && S.state.area !== parts[1]) { S.state.area = parts[1]; S.saveState(); }
   updateAreaTab();
   $$('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === navKey || (a.dataset.nav === 'cursos' && ['tech', 'area', 'seu'].includes(navKey))));
@@ -396,6 +396,7 @@ async function curso(key) {
     <div class="lessons">${ls.map(l => { const dn = s.done[l.id]; const cur = nx && nx.id === l.id; return `<a class="lesson ${cur ? 'current' : ''}" href="#/aula/${key}/${l.id}"><span class="n">Aula ${l.n}</span><span class="ti">${esc(l.title)}${l.sub ? `<small>${esc(l.sub)}</small>` : ''}</span>${dn ? `<span class="st ok">✓ ${dn.score ?? ''}%</span>` : cur ? '<span class="st next">Próxima</span>' : ''}</a>`; }).join('')}</div></div>` : ''}
   ${isLang ? `<div class="section panel"><h3>Ajustar nível</h3><p class="muted small" style="margin:6px 0 12px">Se as aulas estiverem fáceis ou difíceis demais, troque o nível. Seu histórico não se perde.</p>
     <div class="row"><select id="lvsel" style="max-width:260px">${C.levels.map(l => `<option ${l === s.level ? 'selected' : ''} value="${l}">${l} · ${lvName(l)}</option>`).join('')}</select><button class="btn btn-ghost btn-sm" id="lvgo">Trocar nível</button><a class="btn btn-ghost btn-sm" href="#/nivelamento/${key}">Fazer teste de nivelamento</a></div></div>` : ''}`;
+  import('./compras.js?v=1').then(M => { const g = M.guiaDoCurso(key), h = app.querySelector('.chead'); if (g && h && location.hash.endsWith('/curso/' + key) && !app.querySelector('.cp-card')) h.insertAdjacentHTML('afterend', M.cartaoCompras(g)); }).catch(() => { });
   $('#plan')?.addEventListener('click', async e => {
     e.target.disabled = true; e.target.innerHTML = '<span class="spin"></span> Montando…';
     try { await makePlan(key); curso(key); } catch (er) { app.insertAdjacentHTML('beforeend', errBox(er)); e.target.disabled = false; e.target.textContent = 'Montar meu plano'; }
@@ -498,7 +499,8 @@ async function aula(key, id) {
     .then(c => { lesson.conversation = c; S.putLesson(key, L.cacheId || L.id, lesson); }).finally(() => { convJob = null; });
   if (isLangC && !lesson.conversation) setTimeout(() => { if (!lesson.conversation && location.hash.includes('/aula/')) preparo().then(P => P.podePreparar(S, LIMITE_IA) && convFor()).catch(() => { }); }, 2500); // já deixa a conversação pronta enquanto a pessoa lê a aula
   let step = 0;
-  const tabs = isLangC ? [['aula', 'Aula'], ['vocab', 'Vocabulário'], ['ex', 'Exercícios'], ['conv', 'Conversação'], ['mais', 'Para ir além']] : [['aula', 'Aula'], ['vocab', 'Termos'], ['ex', 'Exercícios'], ['valor', 'Seu valor'], ...(d.ia ? [['economia', 'Economia de uso']] : []), ['mais', 'Para ir além']];
+  const gCompras = { 'trk:sol-protetor': 'sol', 'trk:cozinhar-basico': 'alimentacao' }[key];
+  const tabs = isLangC ? [['aula', 'Aula'], ['vocab', 'Vocabulário'], ['ex', 'Exercícios'], ['conv', 'Conversação'], ['mais', 'Para ir além']] : [['aula', 'Aula'], ['vocab', 'Termos'], ['ex', 'Exercícios'], ['valor', 'Seu valor'], ...(d.ia ? [['economia', 'Economia de uso']] : []), ...(gCompras ? [['compras', 'Comprar bem']] : []), ['mais', 'Para ir além']];
   const bodyLoc = !isLangC && d.contentLang && d.contentLang !== 'pt' ? loc : 'pt-BR';
   const plain = t => String(t || '').replace(/```[\s\S]*?```/g, ' ').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/^\s*(?:[-*•]|\d+[.)])\s+/gm, '').replace(/[`*_#>|]/g, '').replace(/\s+/g, ' ').trim();
   function lessonSegments() { // o que a IA lê quando a pessoa toca em "Ouvir a aula"
@@ -556,6 +558,9 @@ async function aula(key, id) {
     } else if (tab === 'valor') {
       body.innerHTML = '<span class="spin"></span>';
       import('./valor.js?v=63').then(V => { if (body.isConnected) body.innerHTML = V.valorHTML(d.track) + `<div class="row" style="margin-top:26px"><button class="btn btn-pink" data-step="${tabs.length - 1}">${tabs[tabs.length - 1][1]}</button></div>`; $$('[data-step]').forEach(b => b.onclick = () => { step = +b.dataset.step; render(); window.scrollTo(0, 0); }); }).catch(() => { if (body.isConnected) body.innerHTML = '<p class="muted">Não consegui abrir agora. Tente de novo.</p>'; });
+    } else if (tab === 'compras') {
+      body.innerHTML = '<span class="spin"></span>';
+      import('./compras.js?v=1').then(E => { if (body.isConnected) body.innerHTML = E.comprasHTML(gCompras) + `<div class="row" style="margin-top:26px"><button class="btn btn-pink" data-step="${tabs.length - 1}">${tabs[tabs.length - 1][1]}</button></div>`; E.ligarCompras(body); $$('[data-step]').forEach(b => b.onclick = () => { step = +b.dataset.step; render(); window.scrollTo(0, 0); }); }).catch(() => { if (body.isConnected) body.innerHTML = '<p class="muted">Não consegui abrir agora. Tente de novo.</p>'; });
     } else if (tab === 'economia') { // arquivo à parte: só carrega quando a pessoa abre esta aba
       body.innerHTML = '<span class="spin"></span>';
       import('./economia.js?v=1').then(E => { if (body.isConnected) body.innerHTML = E.economiaHTML() + `<div class="row" style="margin-top:26px"><button class="btn btn-pink" data-step="${tabs.length - 1}">${tabs[tabs.length - 1][1]}</button></div>`; $$('[data-step]').forEach(b => b.onclick = () => { step = +b.dataset.step; render(); window.scrollTo(0, 0); }); }).catch(() => { if (body.isConnected) body.innerHTML = '<p class="muted">Não consegui abrir agora. Tente de novo.</p>'; });
@@ -1187,7 +1192,7 @@ function openAssistant(prefill = '') {
     $('#asstS').onclick = () => asstSend();
     import('./asst-voz.js?v=2').then(V => { if (!$('#asstMic')) return; asst.voz = V; V.iniciar({ mic: $('#asstMic'), ta: $('#asstT'), idioma: asstIdioma(), enviar: () => asstSend(true), toast }); asstRender(); }).catch(() => { });
     $('#asstT').onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); asstSend(); } };
-    import('./asst-chat.js?v=2').then(M => { if (!$('#asstM')) return; asst.chat = M; M.iniciar(asstDeps); }).catch(() => toast('Não consegui abrir a conversa. Tente de novo.'));
+    import('./asst-chat.js?v=3').then(M => { if (!$('#asstM')) return; asst.chat = M; M.iniciar(asstDeps); }).catch(() => toast('Não consegui abrir a conversa. Tente de novo.'));
     try { lucide.createIcons(); } catch (e) { }
   }
   if (prefill && !LS.get('ia_asst_rascunho')) { const t = $('#asstT'); t.value = prefill; t.focus(); t.setSelectionRange(prefill.length, prefill.length); }
@@ -1428,7 +1433,8 @@ function dockUso() {
   const t = propria ? 'Sua própria IA' : `${100 - pct}% disponível`, sub = propria ? 'sem limite do site' : `restam ${resto} usos hoje`;
   b.classList.toggle('alto', pct > 85);
   b.title = 'Seu uso de IA hoje'; b.setAttribute('aria-label', `Seu uso de IA hoje: ${t}, ${sub}`);
-  b.innerHTML = `<span class="du-anel"><svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15.5"/><circle class="du-v" cx="18" cy="18" r="15.5" pathLength="100" style="stroke-dasharray:${pct} 100;opacity:${pct ? 1 : 0}"/></svg><em>${propria ? '∞' : pct + '%'}</em></span><span class="du-t"><b>${t}</b><small>${sub}</small></span>`;
+  const po = b.querySelector('.dv-po')?.outerHTML || '';
+  b.innerHTML = `${po}<span class="du-anel"><svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15.5"/><circle class="du-v" cx="18" cy="18" r="15.5" pathLength="100" style="stroke-dasharray:${pct} 100;opacity:${pct ? 1 : 0}"/></svg><em>${propria ? '∞' : pct + '%'}</em></span><span class="du-t"><b>${t}</b><small>${sub}</small></span>`;
 }
 function iaInfo(foco) {
   const ov = openInfo(`<div class="eyebrow">Sua IA</div><h2 style="margin:10px 0 8px">Como funciona o seu limite de IA</h2>
@@ -1814,7 +1820,7 @@ async function boot() {
   setTimeout(startAgua, 2000);
   // (cliques de avaliação/erro tratados no início do boot)
   $('#topbar').hidden = false; $('#tabbar').hidden = false;
-  if (!S.readonly) window.__dockTag = '<button class="dock-tag dock-visita dock-uso" id="dockUso" type="button"></button>';
+  if (!S.readonly) window.__dockTag = '<button class="dock-tag dock-visita dock-uso" id="dockUso" type="button"><span class="dv-po" aria-hidden="true"><i style="left:6%;animation-delay:-0.0s;animation-duration:5s"></i><i style="left:35%;animation-delay:-1.3s;animation-duration:8s"></i><i style="left:64%;animation-delay:-2.6s;animation-duration:7s"></i><i style="left:93%;animation-delay:-3.9s;animation-duration:6s"></i><i style="left:27%;animation-delay:-5.2s;animation-duration:5s"></i><i style="left:56%;animation-delay:-6.5s;animation-duration:8s"></i><i style="left:85%;animation-delay:-0.8s;animation-duration:7s"></i><i style="left:19%;animation-delay:-2.1s;animation-duration:6s"></i><i style="left:48%;animation-delay:-3.4s;animation-duration:5s"></i><i style="left:77%;animation-delay:-4.7s;animation-duration:8s"></i></span></button>';
   document.body.insertAdjacentHTML('beforeend', '<div class="dock" id="dock">' + (window.__dockTag || '') + '<button class="dock-mini" type="button" data-comoentrar title="Como entrar" aria-label="Como entrar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.2 8.4a3.9 3.9 0 0 1 7.6 1.2c0 2.6-3.8 3-3.8 5.4"/><path d="M12 19.5h.01" stroke-width="2.8"/></svg></button><button class="dock-mini" type="button" data-tema-open title="Cores do site" aria-label="Cores do site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h9M18 6h2M4 12h2M11 12h9M4 18h9M18 18h2"/><circle cx="15.5" cy="6" r="2.3"/><circle cx="8.5" cy="12" r="2.3"/><circle cx="15.5" cy="18" r="2.3"/></svg></button>' + '<button class="fab" id="fab" type="button" title="Falar com o assistente" aria-label="Falar com o assistente"><i data-lucide="headset"></i><span class="fab-dot" aria-hidden="true"></span></button></div>');
   try { lucide.createIcons(); } catch (e) { }
   addEventListener('scroll', () => document.body.classList.toggle('rolou', scrollY > 30), { passive: true });

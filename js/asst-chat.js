@@ -13,6 +13,8 @@ const IC = {
   mais: '<path d="M12 5v14M5 12h14"/>',
   baixo: '<path d="M12 5v14M6 13l6 6 6-6"/>'
 };
+const INICIO = 'Olá! Eu sou o IAlvorecer. Por onde você quer começar? Selecione uma das opções abaixo, envie uma mensagem ou acione o assistente por voz para enviar o seu pedido.';
+const NOTA = 'A qualquer momento, avalie as mensagens no botão positivo ou negativo abaixo delas para ajudar a melhorar o site.';
 let D = null, msgs = [], pronto = false, ocupado = false, editando = -1, dono = null;
 
 const local = () => D.S.readonly || D.S.isDemo;
@@ -26,12 +28,11 @@ async function ler() {
 export async function iniciar(deps) {
   D = deps; editando = -1;
   if (dono !== D.S) { dono = D.S; pronto = false; msgs = []; }
-  if (!pronto) { const m = await ler(); if (!pronto) { msgs = m; pronto = true; } }
+  if (!pronto) { const m = await ler(); if (!pronto) { msgs = m; msgs.forEach(x => { if (x.inicio) x.text = INICIO; }); pronto = true; } }
   if (!msgs.length) {
     msgs = [{ role: 'typing' }]; desenhar();
     await new Promise(r => setTimeout(r, 1800));
-    const nome = D.S.state.profile.name;
-    msgs = [{ role: 'ai', inicio: true, text: `Oi${nome ? ', ' + nome : ''}! Eu sou o IAlvorecer. Posso tirar dúvidas e ajustar seus estudos. Por onde quer começar?` }];
+    msgs = [{ role: 'ai', inicio: true, text: INICIO }];
     salvar();
   }
   desenhar();
@@ -52,7 +53,7 @@ function html(m, i) {
   const ops = m.inicio ? `<div class="opcoes"><small>Toque em uma opção para enviar</small>${OPCOES.map(o => `<button type="button" data-a="opcao" data-t="${esc(o)}"><span>${o}</span>${svg(IC.mais)}</button>`).join('')}<button type="button" data-a="outro"><span>Outro - Envie seu pedido</span>${svg(IC.baixo)}</button></div>` : '';
   const ouvir = D.voz() ? '<button type="button" data-ouvir></button>' : '';
   const barra = `<div class="msg-acoes">${botao('copiar', i, 'Copiar', 'copiar')}${ouvir}${botao('sim', i, 'Gostei', 'sim', `aria-pressed="${m.voto === 1}"`)}${botao('nao', i, 'Não gostei', 'nao', `aria-pressed="${m.voto === -1}"`)}${versoes(i)}</div>`;
-  return `<div class="msg ai">${esc(m.text)}</div>${ops ? ops + barra + acts : barra + acts}`;
+  return `<div class="msg ai">${esc(m.text)}${m.inicio ? `<small class="msg-nota">${NOTA}</small>` : ''}</div>${ops ? ops + barra + acts : barra + acts}`;
 }
 function destacarCampo() { // "Outro": leva a pessoa ao campo de mensagem normal
   const t = document.getElementById('asstT'); if (!t) return;

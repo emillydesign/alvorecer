@@ -1,6 +1,7 @@
 // Cuidados: pele, unhas, cabelo e higiene/cheiro. Arquivo à parte: só carrega quando a pessoa abre #/cuidados.
 // IA de apoio: NÃO substitui dermatologista, médico ou outros profissionais.
 import { $, $$, esc, md } from './util.js';
+import { temCompras, comprasHTML, cartaoCompras, ligarCompras } from './compras.js?v=1';
 
 let X; // contexto: { S, AI, app, toast, setCleanup }
 export function initCuidados(ctx) { X = ctx; }
@@ -112,11 +113,13 @@ export async function cuidados(sub) {
 // ---------- área ----------
 function area(id, tab = 'guia') {
   const a = AREAS[id], d = A(id);
-  const tabs = d.guia ? [['guia', 'Seu guia'], ...(a.lazer ? [] : [['estudos', 'Pesquisas científicas']]), ['chat', 'Conversar'], ['perfil', 'Refazer perguntas']] : [];
+  const tabs = d.guia ? [['guia', 'Seu guia'], ...(a.lazer ? [] : [['estudos', 'Pesquisas científicas']]), ['chat', 'Conversar'], ...(temCompras(id) ? [['compras', 'Comprar bem']] : []), ['perfil', 'Refazer perguntas']] : temCompras(id) ? [['perfil', 'Montar meu guia'], ['compras', 'Comprar bem']] : [];
+  if (!d.guia && tab === 'guia') tab = 'perfil';
   X.app.innerHTML = head('Cuidados', esc(a.nome), esc(a.sub)) + (a.lazer ? AVISO_LAZER : AVISO) +
-    (d.guia ? `<div class="tabs">${tabs.map(([k, l]) => `<button data-tab="${k}" class="${k === tab ? 'on' : ''}">${l}</button>`).join('')}</div>` : '') + '<div id="ct"></div>';
+    (tabs.length ? `<div class="tabs">${tabs.map(([k, l]) => `<button data-tab="${k}" class="${k === tab ? 'on' : ''}">${l}</button>`).join('')}</div>` : '') + '<div id="ct"></div>';
   $$('[data-tab]').forEach(b => b.onclick = () => area(id, b.dataset.tab));
   const el = $('#ct');
+  if (tab === 'compras') { el.innerHTML = comprasHTML(id); return ligarCompras(el); }
   if (!d.guia || tab === 'perfil') return perguntas(id, el);
   if (tab === 'estudos') return estudos(id, el);
   if (tab === 'chat') return conversa(id, el);
@@ -171,6 +174,7 @@ function guia(id, el) {
     <div class="panel"><p style="margin:0">${comDestaques(g.resumo, g.estudos)}</p></div>
     ${(g.secoes || []).map(s => `<div class="panel" style="margin-top:18px"><h3>${esc(s.titulo)}</h3>${comDestaques(s.texto, g.estudos)}${(s.passos || []).length ? `<ol>${s.passos.map(p => `<li>${comDestaques(p, g.estudos)}</li>`).join('')}</ol>` : ''}</div>`).join('')}
     ${id === 'pele' ? `<div class="panel" style="margin-top:18px"><h3>Para todo mundo: não estoure espinhas e cravos</h3><p>Mexer pode piorar a inflamação, espalhar bactérias e deixar manchas e cicatrizes. Se incomoda muito, limpe com cuidado e procure um profissional para fazer a extração do jeito certo.</p></div>` : ''}
+    ${cartaoCompras(id)}
     ${AREAS[id].lazer ? '' : `<div class="panel" style="margin-top:18px"><h3>Quando procurar um profissional</h3>${md(String(g.quando || 'Se algo piorar, doer ou não melhorar, procure a UBS ou um profissional de saúde.'))}</div>
     <p class="small muted" style="margin-top:16px">Palavras sublinhadas têm pesquisas científicas ligadas a elas (veja a aba Pesquisas científicas).</p>`}`;
 }
