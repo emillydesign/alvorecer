@@ -9,8 +9,9 @@ const IC = {
   sim: '<path d="M7 11v10H3V11zM7 11l4-8a3 3 0 0 1 3 3v3h5a2 2 0 0 1 2 2.3l-1.4 8a2 2 0 0 1-2 1.7H7"/>',
   nao: '<path d="M17 13V3h4v10zM17 13l-4 8a3 3 0 0 1-3-3v-3H5a2 2 0 0 1-2-2.3l1.4-8a2 2 0 0 1 2-1.7H17"/>',
   editar: '<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
-  voltar: '<path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/>',
-  seta: '<path d="M5 12h14M13 6l6 6-6 6"/>'
+  voltar: '<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
+  mais: '<path d="M12 5v14M5 12h14"/>',
+  baixo: '<path d="M12 5v14M6 13l6 6 6-6"/>'
 };
 let D = null, msgs = [], pronto = false, ocupado = false, editando = -1, dono = null;
 
@@ -48,11 +49,20 @@ function html(m, i) {
     return `<div class="msg me">${esc(m.text)}</div><div class="msg-acoes me">${botao('editar', i, 'Editar', 'editar')}${botao('copiar', i, 'Copiar', 'copiar')}${botao('voltar', i, 'Voltar ao que era antes desta mensagem', 'voltar')}</div>`;
   }
   const acts = m.actions?.length ? `<div class="act"><b>${m.applied ? '✓ Feito' : m.canceled ? 'Cancelado' : 'Posso fazer isto:'}</b><ul>${m.actions.map(a => `<li>${esc(D.describeAction(a))}</li>`).join('')}</ul>${m.applied || m.canceled ? '' : `<div class="row"><button class="btn btn-pink btn-sm" data-a="aplicar" data-i="${i}">Aplicar</button><button class="btn btn-ghost btn-sm" data-a="cancelar" data-i="${i}">Agora não</button></div>`}</div>` : '';
-  const ops = m.inicio ? `<div class="opcoes"><small>Toque em uma opção para enviar</small>${OPCOES.map(o => `<button type="button" data-a="opcao" data-t="${esc(o)}"><span>${o}</span>${svg(IC.seta)}</button>`).join('')}</div>` : '';
+  const ops = m.inicio ? `<div class="opcoes"><small>Toque em uma opção para enviar</small>${OPCOES.map(o => `<button type="button" data-a="opcao" data-t="${esc(o)}"><span>${o}</span>${svg(IC.mais)}</button>`).join('')}<button type="button" data-a="outro"><span>Outro - Envie seu pedido</span>${svg(IC.baixo)}</button></div>` : '';
   const ouvir = D.voz() ? '<button type="button" data-ouvir></button>' : '';
-  return `<div class="msg ai">${esc(m.text)}</div><div class="msg-acoes">${botao('copiar', i, 'Copiar', 'copiar')}${ouvir}${botao('sim', i, 'Gostei', 'sim', `aria-pressed="${m.voto === 1}"`)}${botao('nao', i, 'Não gostei', 'nao', `aria-pressed="${m.voto === -1}"`)}${versoes(i)}</div>${acts}${ops}`;
+  const barra = `<div class="msg-acoes">${botao('copiar', i, 'Copiar', 'copiar')}${ouvir}${botao('sim', i, 'Gostei', 'sim', `aria-pressed="${m.voto === 1}"`)}${botao('nao', i, 'Não gostei', 'nao', `aria-pressed="${m.voto === -1}"`)}${versoes(i)}</div>`;
+  return `<div class="msg ai">${esc(m.text)}</div>${ops ? ops + barra + acts : barra + acts}`;
+}
+function destacarCampo() { // "Outro": leva a pessoa ao campo de mensagem normal
+  const t = document.getElementById('asstT'); if (!t) return;
+  t.focus(); t.classList.remove('destaque'); void t.offsetWidth; t.classList.add('destaque');
+  const tirar = () => { t.classList.remove('destaque'); t.removeEventListener('input', tirar); t.removeEventListener('blur', tirar); };
+  t.addEventListener('input', tirar); t.addEventListener('blur', tirar);
 }
 export function desenhar() {
+  const topo = document.getElementById('asstUndo');
+  if (topo) { topo.innerHTML = svg(IC.voltar); topo.onclick = () => { if (!ocupado && pronto) confirmarTudo(); }; }
   const box = document.getElementById('asstM'); if (!box) return;
   box.innerHTML = msgs.map(html).join('');
   const ia = msgs.filter(m => m.role === 'ai'), V = D.voz();
@@ -65,6 +75,7 @@ async function clique(e) {
   const b = e.target.closest('[data-a]'); if (!b) return;
   const a = b.dataset.a, i = +b.dataset.i, m = msgs[i];
   if (a === 'copiar') return navigator.clipboard?.writeText(m.text).then(() => D.toast('Mensagem copiada ✓'), () => D.toast('Não consegui copiar.'));
+  if (a === 'outro') return destacarCampo();
   if (ocupado) return;
   if (a === 'opcao') return enviar(b.dataset.t);
   if (a === 'sim' || a === 'nao') { const v = a === 'sim' ? 1 : -1; m.voto = m.voto === v ? 0 : v; }
@@ -92,20 +103,33 @@ async function clique(e) {
   }
   salvar(); desenhar();
 }
-function confirmar(i) {
+// todas as cópias de segurança criadas pelo chat, inclusive em versões antigas de mensagens editadas
+const copias = lista => lista.flatMap(m => [...(m.backup && m.applied ? [m.backup] : []), ...(m.vers || []).flatMap(v => copias(v?.resto || []))]);
+function aviso(titulo, texto, botaoOk, aoConfirmar) {
   const cx = document.getElementById('asst'); if (!cx || cx.querySelector('.asst-conf')) return;
-  const feito = msgs.slice(i).find(m => m.backup && m.applied);
-  cx.insertAdjacentHTML('beforeend', `<div class="asst-conf" role="alertdialog" aria-label="Voltar ao que era antes"><div><b>Voltar ao que era antes?</b><p>Esta mensagem e as que vieram depois serão excluídas. ${feito ? 'A página volta a como estava antes das mudanças feitas a partir dela, inclusive o progresso registrado depois.' : 'Nenhuma mudança foi feita na página a partir dela.'} <strong>Isso não pode ser desfeito.</strong></p><div><button type="button" data-n>Cancelar</button><button type="button" class="ok" data-s>Voltar</button></div></div></div>`);
+  cx.insertAdjacentHTML('beforeend', `<div class="asst-conf" role="alertdialog" aria-label="${titulo}"><div><b>${titulo}?</b>${texto}<div><button type="button" data-n>Cancelar</button><button type="button" class="ok" data-s>${botaoOk}</button></div></div></div>`);
   const c = cx.querySelector('.asst-conf');
   c.querySelector('[data-n]').onclick = () => c.remove();
-  c.querySelector('[data-s]').onclick = async () => {
-    c.remove(); ocupado = true;
-    try {
-      if (feito && !(await D.restaurar(feito.backup))) { D.toast('Não encontrei a cópia anterior da página, então nada foi alterado.', 6000); ocupado = false; return; }
-      msgs = msgs.slice(0, i); salvar();
-    } catch (err) { D.toast('⚠️ ' + err.message, 6000); }
-    ocupado = false; desenhar();
-  };
+  c.querySelector('[data-s]').onclick = () => { c.remove(); aoConfirmar(); };
+}
+async function voltarPara(i, backup) {
+  ocupado = true;
+  try {
+    if (backup && !(await D.restaurar(backup))) { D.toast('Não encontrei a cópia anterior da página, então nada foi alterado.', 6000); ocupado = false; return; }
+    msgs = msgs.slice(0, i); editando = -1; salvar();
+  } catch (err) { D.toast('⚠️ ' + err.message, 6000); }
+  ocupado = false;
+  if (msgs.length) desenhar(); else iniciar(D);
+}
+function confirmar(i) {
+  const feito = msgs.slice(i).find(m => m.backup && m.applied);
+  aviso('Voltar ao que era antes', `<p>Esta mensagem e as que vieram depois serão excluídas. ${feito ? 'A página volta a como estava antes das mudanças feitas a partir dela, inclusive o progresso registrado depois.' : 'Nenhuma mudança foi feita na página a partir dela.'} <strong>Isso não pode ser desfeito.</strong></p>`, 'Voltar', () => voltarPara(i, feito?.backup));
+}
+function confirmarTudo() {
+  const i = msgs.findIndex(m => m.role === 'me');
+  if (i < 0) return D.toast('Ainda não há nada para desfazer no chat.');
+  const ids = new Set(copias(msgs)), mais = (D.S.state.backups || []).filter(b => ids.has(b.id)).pop(); // a mais antiga
+  aviso('Desfazer tudo do chat', `<p>Este botão desfaz <strong>tudo</strong> o que foi feito no chat: as mensagens são excluídas${ids.size ? ' e a página volta a como estava antes da primeira mudança feita por aqui, inclusive o progresso registrado depois' : ''}. <strong>Isso não pode ser desfeito.</strong></p><p>Para desfazer uma única mensagem, use o botão ${svg(IC.voltar)} logo abaixo da mensagem que você quer desfazer.</p>`, 'Desfazer tudo', () => voltarPara(i, mais?.id));
 }
 export function enviar(texto, porVoz) {
   const t = document.getElementById('asstT'), text = String(texto ?? t?.value ?? '').trim();

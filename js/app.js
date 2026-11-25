@@ -1178,17 +1178,16 @@ function toggleAssistant() { if ($('#asst')) { closeAssistant(); return; } openA
 function openAssistant(prefill = '') {
   carregaMem();
   if (!$('#asst')) {
-    document.body.insertAdjacentHTML('beforeend', `<div class="asst" id="asst"><div class="asst-h"><span class="asst-logo" aria-hidden="true"></span><b>IAlvorecer</b><span class="spacer"></span><button class="iconbtn" id="asstUndo" title="Desfazer a última alteração">↶</button><button class="iconbtn" id="asstX" title="Fechar">✕</button></div><div class="asst-m" id="asstM"></div><div class="asst-c"><textarea id="asstT" rows="1" placeholder="Mensagem"></textarea><button id="asstMic" type="button" title="Falar" aria-label="Falar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5"/></svg></button><button id="asstS" type="button" title="Enviar" aria-label="Enviar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4Z"/></svg></button></div></div>`);
+    document.body.insertAdjacentHTML('beforeend', `<div class="asst" id="asst"><div class="asst-h"><span class="asst-logo" aria-hidden="true"></span><b class="brand asst-nome"><em>IA</em>lvorecer<span>.</span></b><span class="spacer"></span><button class="iconbtn" id="asstUndo" title="Desfazer tudo do chat" aria-label="Desfazer tudo do chat"></button><button class="iconbtn" id="asstX" title="Fechar">✕</button></div><div class="asst-m" id="asstM"></div><div class="asst-c"><textarea id="asstT" rows="1" placeholder="Mensagem"></textarea><button id="asstMic" type="button" title="Falar" aria-label="Falar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5"/></svg></button><button id="asstS" type="button" title="Enviar" aria-label="Enviar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4Z"/></svg></button></div></div>`);
     { const w = $('#dock')?.offsetWidth; if (w) $('#asst').style.width = `min(${Math.max(w, 300)}px, calc(100vw - 16px))`; }
     $('#asstX').onclick = e => { e.stopPropagation(); closeAssistant(); };
     asst.onKey = e => { if (e.key === 'Escape' && $('#asst')) closeAssistant(); };
     document.addEventListener('keydown', asst.onKey);
     import('./asst-rascunho.js?v=1').then(R => { if ($('#asstT')) asst.rasc = R.iniciarRascunho({ ta: $('#asstT'), prefill }); }).catch(() => { });
-    $('#asstUndo').onclick = () => doUndo();
     $('#asstS').onclick = () => asstSend();
     import('./asst-voz.js?v=2').then(V => { if (!$('#asstMic')) return; asst.voz = V; V.iniciar({ mic: $('#asstMic'), ta: $('#asstT'), idioma: asstIdioma(), enviar: () => asstSend(true), toast }); asstRender(); }).catch(() => { });
     $('#asstT').onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); asstSend(); } };
-    import('./asst-chat.js?v=1').then(M => { if (!$('#asstM')) return; asst.chat = M; M.iniciar(asstDeps); }).catch(() => toast('Não consegui abrir a conversa. Tente de novo.'));
+    import('./asst-chat.js?v=2').then(M => { if (!$('#asstM')) return; asst.chat = M; M.iniciar(asstDeps); }).catch(() => toast('Não consegui abrir a conversa. Tente de novo.'));
     try { lucide.createIcons(); } catch (e) { }
   }
   if (prefill && !LS.get('ia_asst_rascunho')) { const t = $('#asstT'); t.value = prefill; t.focus(); t.setSelectionRange(prefill.length, prefill.length); }
