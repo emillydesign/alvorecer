@@ -16,7 +16,8 @@ let hsv = [0, 0, 1];
 let ov = null, ov2 = null, foco2 = null, foco = null, slot = 'a', cores = null, quadro = 0;
 
 if (T) {
-  document.addEventListener('click', e => { if (e.target.closest('[data-tema-open]')) { e.preventDefault(); abrir(); } });
+  document.addEventListener('click', e => { if (e.target.closest('[data-tema-open]')) { if (document.body.classList.contains("pers-edit")) return; e.preventDefault(); if (ov) fechar(); else abrir(); } });
+  window.addEventListener('ia-painel', e => { if (e.detail !== 'tema') fechar(); });
   window.addEventListener('ia-tema', rotular);
 }
 
@@ -26,6 +27,10 @@ function montarSaves(raiz) {
     carregar: d => { if (d && d.id === 'custom') T.usarPersonalizado(d.c); else if (d && d.id) T.usarPreset(d.id); },
     depois: () => { cores = { ...T.coresAtuais() }; marcarCards(); pintarEditor(); }
   }));
+}
+function montarLayout() {
+  const P = window.IAPers, el = ov.querySelector('[data-saves-pers]');
+  if (P && el) import('./saves.js?v=1').then(m => { if (ov) m.montar(el, 'pers', { atual: () => P.ler(), carregar: d => { P.gravar(d); P.tudo(); } }); });
 }
 function nomeAtual() { return T.nome(T.atual().id); }
 function rotular() { document.querySelectorAll('[data-tema-nome]').forEach(el => { el.textContent = nomeAtual(); }); }
@@ -38,28 +43,30 @@ const num = v => String(v).replace('.', ',');
 
 function abrir() {
   if (ov) return;
+  try { window.dispatchEvent(new CustomEvent('ia-painel', { detail: 'tema' })); } catch { }
   foco = document.activeElement;
   cores = { ...T.coresAtuais() };
   slot = 'a';
   const cards = T.ORDEM.map(id => `<button type="button" class="tm-card" data-tid="${id}" aria-pressed="false"><img src="img/temas/${id}.webp" alt="" width="84" height="84" loading="lazy"><span class="tm-nome">${T.nome(id)}</span>${id === 'morning' ? '<small>padrão</small>' : ''}<i class="tm-ok" data-lucide="check"></i></button>`).join('');
   ov = document.createElement('div');
-  ov.className = 'tm-ov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-labelledby', 'tmTitulo');
-  ov.innerHTML = `<div class="tm-box">
-    <button type="button" class="iconbtn tm-x" data-tm-fechar aria-label="Fechar"><i data-lucide="x"></i></button>
-    <div class="eyebrow">Aparência</div>
-    <h2 id="tmTitulo" style="margin:10px 0 6px">Cores do site</h2>
-    <p class="muted small">Escolha uma paleta pronta ou crie a sua. A escolha fica salva só neste aparelho.</p>
+  ov.className = 'asst tm-pn'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-labelledby', 'tmTitulo');
+  const temDock = !!document.getElementById('dock');
+  ov.innerHTML = `<div class="asst-h"><span class="asst-logo" aria-hidden="true"></span><b class="brand asst-nome" id="tmTitulo">Aparência</b><span class="spacer"></span><button type="button" class="iconbtn" data-tm-fechar title="Fechar" aria-label="Fechar"><i data-lucide="x"></i></button></div>
+  <div class="tm-corpo">
+    ${temDock ? `<button type="button" class="tm-custom" data-pers-open data-pers-aqui><span class="tm-ic2"><i data-lucide="layout-dashboard"></i></span><span class="tm-custom-tx"><b>Personalizar o site</b><small>Mova, pinte e esconda os blocos vendo o site</small></span></button>` : ''}
+    <button type="button" class="tm-custom" data-tm-toggle><span class="tm-custom-ic"><i data-lucide="palette"></i></span><span class="tm-custom-tx"><b>Criar a sua paleta</b><small>Escolha as cores no círculo cromático</small></span></button>
+    <button type="button" class="tm-custom" data-tm-reset><span class="tm-ic2"><i data-lucide="rotate-ccw"></i></span><span class="tm-custom-tx"><b>Usar as cores padrão</b><small>Volta às cores originais do IAlvorecer</small></span></button>
+    <h3 class="tm-sub">Paletas prontas</h3>
     <div class="tm-grid">${cards}</div>
-    <button type="button" class="tm-custom" data-tm-toggle aria-haspopup="dialog"><span class="tm-custom-ic"><i data-lucide="palette"></i></span><span class="tm-custom-tx"><b>Personalizar cores</b><small>Abra o círculo cromático e crie a sua paleta</small></span><i class="tm-custom-go" data-lucide="plus"></i></button>
-    <div class="sv" data-saves></div>
-    <div class="tm-foot"><button type="button" class="btn btn-ghost btn-sm" data-tm-reset><i data-lucide="rotate-ccw"></i> Restaurar padrão</button><button type="button" class="btn btn-pink btn-sm" data-tm-fechar>Concluir</button></div>
+    <details class="tm-det"><summary>Cores salvas</summary><div class="sv" data-saves></div></details>
+    ${temDock ? '<details class="tm-det"><summary>Organizações salvas</summary><div class="sv" data-saves-pers></div></details>' : ''}
   </div>`;
   document.body.appendChild(ov);
+  { const w = document.getElementById('dock')?.offsetWidth; if (w) ov.style.width = `min(${Math.max(w, 300)}px, calc(100vw - 16px))`; }
   ov.addEventListener('click', clique);
   ov.addEventListener('input', digitou);
-  ov.addEventListener('keydown', teclado);
   document.addEventListener('keydown', esc);
-  marcarCards(); pintarEditor(); montarSaves(ov);
+  marcarCards(); pintarEditor(); montarSaves(ov); montarLayout();
   (ov.querySelector('.tm-card.on') || ov.querySelector('.tm-card'))?.focus();
 }
 
@@ -70,10 +77,9 @@ function abrirEditor() {
   const grp = (g, nome) => `<div class="tm-grp"><span>${nome}</span>${GRUPOS[g].campos.map((f, i) => `<input type="number" inputmode="numeric" data-g="${g}" data-f="${f}" min="0" max="${GRUPOS[g].max[i]}" step="1" aria-label="${nome} ${f.toUpperCase()}">`).join('')}</div>`;
   slot = 'a'; cores = { ...T.coresAtuais() };
   ov2 = document.createElement('div');
-  ov2.className = 'tm-ov tm-ov2'; ov2.setAttribute('role', 'dialog'); ov2.setAttribute('aria-modal', 'true'); ov2.setAttribute('aria-labelledby', 'tmTitulo2');
-  ov2.innerHTML = `<div class="tm-box tm-box2">
-    <button type="button" class="iconbtn tm-x" data-tm-fechar2 aria-label="Fechar"><i data-lucide="x"></i></button>
-    <div class="eyebrow">Personalizar</div>
+  ov2.className = 'tm-v2'; ov2.setAttribute('role', 'group'); ov2.setAttribute('aria-labelledby', 'tmTitulo2');
+  ov2.innerHTML = `<div class="tm-corpo">
+    <button type="button" class="tm-volta" data-tm-fechar2><i data-lucide="chevron-left"></i> Voltar</button>
     <h2 id="tmTitulo2" style="margin:10px 0 14px">Círculo cromático</h2>
     <div class="tm-ed">
       <div class="tm-slots">${slots}</div>
@@ -90,15 +96,12 @@ function abrirEditor() {
     <div class="sv" data-saves></div>
     <div class="tm-foot"><button type="button" class="btn btn-ghost btn-sm" data-tm-reset><i data-lucide="rotate-ccw"></i> Restaurar padrão</button><button type="button" class="btn btn-pink btn-sm" data-tm-fechar2>Concluir</button></div>
   </div>`;
-  document.body.appendChild(ov2);
+  ov.classList.add('editor'); ov.appendChild(ov2);
   montarSaves(ov2);
   ov2.addEventListener('click', e => {
-    if (e.target === ov2 || e.target.closest('[data-tm-fechar2]')) return fecharEditor();
-    if (e.target.closest('[data-tm-reset]')) { T.restaurar(); cores = { ...T.coresAtuais() }; marcarCards(); pintarEditor(); aviso(); return; }
+    if (e.target.closest('[data-tm-fechar2]')) return fecharEditor();
     const sl = e.target.closest('[data-slot]'); if (sl) { slot = sl.dataset.slot; pintarEditor(); }
   });
-  ov2.addEventListener('input', digitou);
-  ov2.addEventListener('keydown', teclado);
   const wh = ov2.querySelector('#tmWheel'); let arr = false;
   wh.addEventListener('pointerdown', e => { arr = true; wh.setPointerCapture(e.pointerId); daRoda(e); });
   wh.addEventListener('pointermove', e => { if (arr) daRoda(e); });
@@ -114,7 +117,7 @@ function abrirEditor() {
 function fecharEditor() {
   if (!ov2) return;
   cancelAnimationFrame(quadro);
-  ov2.remove(); ov2 = null;
+  ov2.remove(); ov2 = null; ov.classList.remove('editor');
   marcarCards();
   if (foco2 && document.contains(foco2)) foco2.focus();
 }
@@ -129,17 +132,8 @@ function fechar() {
   if (foco && document.contains(foco)) foco.focus();
 }
 function esc(e) { if (e.key === 'Escape') { if (ov2) fecharEditor(); else fechar(); } }
-function teclado(e) {
-  if (e.key !== 'Tab') return;
-  const f = [...(ov2 || ov).querySelectorAll('button:not([hidden]), input:not([type=hidden])')].filter(x => x.offsetParent !== null);
-  if (!f.length) return;
-  const a = f[0], z = f[f.length - 1];
-  if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); }
-  else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); }
-}
-
 function clique(e) {
-  if (e.target === ov || e.target.closest('[data-tm-fechar]')) return fechar();
+  if (e.target.closest('[data-tm-fechar]')) return fechar();
   const card = e.target.closest('[data-tid]');
   if (card) { T.usarPreset(card.dataset.tid); cores = { ...T.coresAtuais() }; marcarCards(); pintarEditor(); aviso(); return; }
   if (e.target.closest('[data-tm-reset]')) { T.restaurar(); cores = { ...T.coresAtuais() }; marcarCards(); pintarEditor(); aviso(); return; }

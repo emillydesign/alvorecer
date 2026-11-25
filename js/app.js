@@ -11,7 +11,7 @@ const authStorage = {
   setItem(k, v) { try { this._s()?.setItem(k, v); } catch { } },
   removeItem(k) { try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch { } }
 };
-import { makeAI, NoKeyError } from './ai.js?v=65';
+import { makeAI, NoKeyError } from './ai.js?v=66';
 import { speak, stopSpeaking, pauseSpeaking, resumeSpeaking, onSpeechState, speechState, listen, canListen, canSpeak } from './speech.js?v=69';
 import { initSaude, cuidar, startAgua } from './saude.js?v=73';
 import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=63';
@@ -1178,10 +1178,12 @@ function visualConta() {
 let memMod; // memória geral (arquivo à parte), carregada quando o assistente abre
 const carregaMem = () => memMod ? Promise.resolve(memMod) : import('./memoria.js?v=1').then(m => memMod = m).catch(() => null);
 const asstIdioma = () => ({ en: 'en-US', es: 'es-ES' })[S.state?.profile?.prefs?.contentLang] || 'pt-BR';
+window.addEventListener('ia-painel', e => { if (e.detail !== 'assistente') closeAssistant(); });
 function closeAssistant() { asst.voz?.desligar(); $('#asst')?.remove(); if (asst.onKey) { document.removeEventListener('keydown', asst.onKey); asst.onKey = null; } }
 function toggleAssistant() { if ($('#asst')) { closeAssistant(); return; } openAssistant(); }
 function openAssistant(prefill = '') {
   carregaMem();
+  try { window.dispatchEvent(new CustomEvent('ia-painel', { detail: 'assistente' })); } catch { }
   if (!$('#asst')) {
     document.body.insertAdjacentHTML('beforeend', `<div class="asst" id="asst"><div class="asst-h"><span class="asst-logo" aria-hidden="true"></span><b class="brand asst-nome"><em>IA</em>lvorecer<span>.</span></b><span class="spacer"></span><button class="iconbtn" id="asstUndo" title="Desfazer tudo do chat" aria-label="Desfazer tudo do chat"></button><button class="iconbtn" id="asstX" title="Fechar">✕</button></div><div class="asst-m" id="asstM"></div><div class="asst-c"><textarea id="asstT" rows="1" placeholder="Mensagem"></textarea><button id="asstMic" type="button" title="Falar" aria-label="Falar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5"/></svg></button><button id="asstS" type="button" title="Enviar" aria-label="Enviar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4Z"/></svg></button></div></div>`);
     { const w = $('#dock')?.offsetWidth; if (w) $('#asst').style.width = `min(${Math.max(w, 300)}px, calc(100vw - 16px))`; }
@@ -1192,16 +1194,26 @@ function openAssistant(prefill = '') {
     $('#asstS').onclick = () => asstSend();
     import('./asst-voz.js?v=2').then(V => { if (!$('#asstMic')) return; asst.voz = V; V.iniciar({ mic: $('#asstMic'), ta: $('#asstT'), idioma: asstIdioma(), enviar: () => asstSend(true), toast }); asstRender(); }).catch(() => { });
     $('#asstT').onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); asstSend(); } };
-    import('./asst-chat.js?v=5').then(M => { if (!$('#asstM')) return; asst.chat = M; M.iniciar(asstDeps); }).catch(() => toast('Não consegui abrir a conversa. Tente de novo.'));
+    import('./asst-chat.js?v=6').then(M => { if (!$('#asstM')) return; asst.chat = M; M.iniciar(asstDeps); }).catch(() => toast('Não consegui abrir a conversa. Tente de novo.'));
     try { lucide.createIcons(); } catch (e) { }
   }
   if (prefill && !LS.get('ia_asst_rascunho')) { const t = $('#asstT'); t.value = prefill; t.focus(); t.setSelectionRange(prefill.length, prefill.length); }
 }
 const asstRender = () => asst.chat?.desenhar();
 const asstSend = porVoz => asst.chat?.enviar(undefined, porVoz);
+// "quero editar o visual de Idiomas": leva a pessoa à área já com a edição ligada
+function destinoVisual(t) {
+  const n = String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  if (!/\b(edit|mud|alter|troc|personaliz|reorganiz|organiz|mex)[a-z]*\b.*\b(visual|aparencia|layout|blocos?)\b/.test(n) && !/\bpersonaliz(ar|e|a) (o |meu )?site\b/.test(n)) return null;
+  const P = window.IAPers; if (!P) return null;
+  const achado = /\b(inicio|pagina inicial|home)\b/.test(n) ? { h: '#/', t: 'Início' } : asst.voz?.acharDestino('abrir ' + t, { C, S });
+  if (achado && !P.pagina(achado.h)) return { h: location.hash, t: achado.t, texto: `Ainda não dá para editar o visual de ${achado.t}. Dá para editar Início, Idiomas, as áreas de cursos, Memorização, Seu Alvorecer, Cuidar de mim, Cuidados, Mentoria e Sobre.` };
+  const h = achado ? achado.h : P.pagina() ? location.hash || '#/' : '#/';
+  return { h, t: achado?.t || 'a área', texto: `Abri ${achado?.t || 'a área'} com a edição do visual ligada. Use os botões de cada bloco e, no fim, toque em Concluir.`, depois: () => P.editar(h) };
+}
 const asstDeps = {
   get S() { return S; }, toast: (...a) => toast(...a), describeAction: a => describeAction(a), applyActions: a => applyActions(a),
-  voz: () => asst.voz, idioma: () => asstIdioma(), limpar: () => asst.rasc?.depoisDeEnviar(), destino: t => asst.voz?.acharDestino(t, { C, S }),
+  voz: () => asst.voz, idioma: () => asstIdioma(), limpar: () => asst.rasc?.depoisDeEnviar(), destino: t => destinoVisual(t) || asst.voz?.acharDestino(t, { C, S }),
   // volta a página ao estado salvo antes de uma mudança feita pelo chat
   async restaurar(id) {
     const lista = S.state.backups || [], i = lista.findIndex(b => b.id === id); if (i < 0) return false;
@@ -1212,10 +1224,15 @@ const asstDeps = {
   },
   async perguntar(history, avaliacoes) {
     const r = await AI.assistant({ history, context: asstContext(), avaliacoes });
-    const acts = (r.actions || []).filter(a => a && a.type), go = acts.find(a => a.type === 'open_page');
+    const acts = (r.actions || []).filter(a => a && a.type), go = acts.find(a => a.type === 'open_page'), vis = acts.find(a => a.type === 'edit_visual');
     const PAGES = { cuidar: '#/cuidar', desabafo: '#/cuidar/desabafo', alimentacao: '#/cuidar/alimentacao', treino: '#/cuidar/treino', sobre: '#/sobre', apoiar: '#/apoiar', mentoria_sessao: '#/mentoria/sessao', mentoria: '#/mentoria', cronograma: '#/cronograma', seu: '#/seu', ajustes: '#/ajustes', historico: '#/historico', idiomas: '#/idiomas', memorizacao: '#/memorizacao' };
     if (go && PAGES[go.page]) { location.hash = PAGES[go.page]; if (go.page === 'mentoria_sessao') closeAssistant(); }
-    return { text: r.reply || 'Certo!', actions: acts.filter(a => a.type !== 'open_page') };
+    if (vis && window.IAPers) {
+      const h = '#/' + String(vis.page || '').replace(/^#?\/?/, '').replace(/^home$/, '');
+      if (vis.page === 'cores') setTimeout(() => { if (!document.querySelector('.tm-pn')) document.querySelector('#dock [data-tema-open]')?.click(); }, 1500);
+      else if (IAPers.pagina(h)) setTimeout(() => IAPers.editar(h), 1500);
+    }
+    return { text: r.reply || 'Certo!', actions: acts.filter(a => a.type !== 'open_page' && a.type !== 'edit_visual') };
   }
 };
 

@@ -139,6 +139,7 @@ AÇÕES DISPONÍVEIS (use só quando o aluno pedir uma mudança; use apenas curs
 {"type":"create_course","title":"nome do curso","sub":"subtítulo curto","icon":"um emoji","lessons":["títulos das aulas"],"ctx":"como as aulas devem ser (público, nível, foco, ferramentas grátis)"}
 {"type":"delete_course","course":"cus:id"}
 {"type":"open_page","page":"mentoria_sessao|mentoria|cronograma|seu|cuidar|desabafo|alimentacao|treino|sobre|apoiar|ajustes|historico|idiomas|memorizacao"}  (ex.: "abrir mentoria de carreira" → mentoria_sessao; "falar com o IAlvorecer" é falar com você mesmo; "quero desabafar" → desabafo)
+{"type":"edit_visual","page":"home|idiomas|trilha/ID_DA_AREA|cursos|memorizacao|seu|cuidar|cuidados|mentoria|sobre|cores"}  (quando a pessoa quiser mover, esconder ou colorir blocos: abre a área com a edição do visual ligada, e é ela quem edita; "cores" abre as cores do site. Diga que está abrindo)
 {"type":"add_language","name":"nome do idioma (qualquer idioma real que não esteja na lista)","main":false}
 {"type":"undo"}
 ${ALMA}

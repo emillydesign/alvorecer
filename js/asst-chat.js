@@ -154,7 +154,7 @@ async function responder(text, extra, porVoz) {
   msgs.push(minha, { role: 'typing' }); desenhar();
   let r;
   const d = D.destino(text);
-  if (d) { location.hash = d.h; r = { text: `Abrindo ${d.t}. ${d.d}` }; }
+  if (d) { if (!d.texto) location.hash = d.h; r = { text: d.texto || `Abrindo ${d.t}. ${d.d}` }; }
   else if (D.S.readonly) r = { text: 'No modo visitante dá pra explorar tudo, mas para conversar comigo, fazer aulas e salvar seu progresso é preciso criar uma conta grátis. É rapidinho!' };
   else {
     try { r = await D.perguntar(msgs.filter(m => m.role === 'me' || m.role === 'ai').slice(-16).map(m => ({ role: m.role, text: m.text })), paraIA(aval)); }
@@ -163,5 +163,6 @@ async function responder(text, extra, porVoz) {
   msgs = msgs.filter(m => m.role !== 'typing'); msgs.push({ role: 'ai', ...r });
   if (minha.vers) minha.vers[minha.cur] = { text, resto: [] };
   ocupado = false; salvar(); desenhar();
+  if (d?.depois) return setTimeout(d.depois, 1200);
   const V = D.voz(); if (V && (porVoz || V.lerSempre())) V.ouvir(r.text, D.idioma());
 }
