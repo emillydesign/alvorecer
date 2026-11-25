@@ -1465,3 +1465,17 @@ body.pers-edit .mainnav a,body.pers-edit #areasBtn,body.pers-edit .dock-mini,bod
 [data-pb][data-cor].panel,[data-pb][data-cor].cta-band,[data-pb][data-cor].feature,[data-pb][data-cor] .panel,[data-pb][data-cor] .journey-card,[data-pb][data-cor] .ccard,[data-pb][data-cor] .area,[data-pb][data-cor] .atile,[data-pb][data-cor] .cta-band,[data-pb][data-cor] .stat,[data-pb][data-cor] .task,[data-pc][data-cor][data-cor]{background:var(--pers-cor)!important;background-image:none!important}
 @media (max-width:980px){.pe-bar{flex-wrap:wrap;justify-content:center;gap:8px;top:66px;padding:9px 10px}.pe-dica{display:none}.pe-bar button{padding:8px 10px;font-size:12.5px}body.pers-edit main{padding-top:190px}}
 @media (prefers-reduced-motion:no-preference){.pe-tb{animation:pop .35s var(--ease)}}
+
+/* edição: itens tocáveis (topo, botões de baixo, primeira seção e o resto da tela) */
+body.pers-edit .pe-item{cursor:pointer}
+body.pers-edit .pe-item:hover{outline:1.5px dashed rgba(var(--sky-rgb),.85);outline-offset:2px}
+body.pers-edit .pe-item.pe-sel{outline:2px solid rgb(var(--mint-rgb));outline-offset:3px}
+body.pers-edit .pe-mira{outline:3px solid rgb(var(--mint-rgb))!important;box-shadow:0 0 24px rgba(var(--mint-rgb),.8)!important}
+body.pers-edit [data-pg],body.pers-edit .hx-cu{touch-action:none}
+body.pers-edit [data-pg]{user-select:none}
+.pe-flu{position:fixed;top:0;right:auto;z-index:79}
+.pe-tb button:disabled{opacity:.3}
+[data-pg][data-cor]{background:var(--pers-cor)!important}
+.mainnav [data-pg][data-cor]{color:var(--text)}
+h1[data-pc][data-cor][data-cor],h2[data-pc][data-cor][data-cor],h3[data-pc][data-cor][data-cor],p[data-pc][data-cor][data-cor],.eyebrow[data-pc][data-cor][data-cor]{color:var(--pers-cor)!important;background:none!important;-webkit-text-fill-color:var(--pers-cor)}
+@media (max-width:980px){.pe-dica.viva{display:block;width:100%;max-width:none;text-align:center}}
