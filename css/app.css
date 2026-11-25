@@ -1585,3 +1585,9 @@ body.areas-on .dock{opacity:0;pointer-events:none}
 .tb-halo b:nth-child(-n+2){text-shadow:0 0 16px rgba(var(--mint-rgb),.4),0 0 28px rgba(var(--sky-rgb),.45)}
 @keyframes tbHalo{0%,62%,100%{opacity:0}26%{opacity:.95}}
 @media (prefers-reduced-motion:reduce){.tb-eco,.tb-halo b{animation:none}}
+
+/* cliques: o botão não foge do mouse ao passar por cima, e o ícone nunca "rouba" o clique */
+.dock .fab:hover,.dock-mini:hover,a.dock-tag:hover,.mainnav a:not(.brand):hover,.mainnav .areasbtn:hover{transform:none}
+button,a{touch-action:manipulation}
+button svg,button>i,a svg,.hx-wm{pointer-events:none}
+body.pers-edit .dock [data-pg],body.pers-edit .mainnav [data-pg],body.pers-edit .hx-cu{touch-action:none}

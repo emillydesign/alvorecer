@@ -111,7 +111,7 @@ export function ligarHome(root) {
   root._hxFim = fim; document.addEventListener('visibilitychange', vis);
   // manual: o clique move na hora e reinicia a contagem da pausa (se estiver pausado, continua pausado)
   let ocupado = false; const fila = [];
-  const rodar = fn => { if (ocupado) { if (fila.length < 4) fila.push(fn); return; } ocupado = true; fn(); setTimeout(() => { ocupado = false; const f = fila.shift(); if (f) rodar(f); }, 750); };
+  const rodar = fn => { if (ocupado) { if (fila.length < 2) fila.push(fn); return; } ocupado = true; fn(); setTimeout(() => { ocupado = false; const f = fila.shift(); if (f) rodar(f); }, 220); };
   const manual = fn => { rodar(fn); agendar(); };
   dots.forEach(d => d.onclick = () => manual(() => { const n = +d.dataset.go; ir(n, n > at ? 1 : -1); }));
   next.onclick = () => manual(() => ir(at + 1, 1));

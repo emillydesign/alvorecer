@@ -1,6 +1,6 @@
 import { $, $$, esc, md, uid, today, ym, weekday, fmtDay, fmtShort, fmtMonth, holiday, isRestDay, setStudyDays, getStudyDays, prevStudyDay, weekStart, addDays, daysBetween, norm, schedule, isDue, shuffle } from './util.js';
 import { DemoStore, SupabaseStore, defaultState } from './store.js?v=63';
-import { ic, icoOf, initFx } from './fx.js?v=63';
+import { ic, icoOf, initFx } from './fx.js?v=64';
 const SB_CDN = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 let sbMod = null; const loadSb = () => (sbMod ||= import(SB_CDN));
 import { SUPABASE_URL, SUPABASE_KEY, GOOGLE_ENABLED, SITE_URL } from './config.js?v=63';
@@ -227,7 +227,7 @@ async function home() {
     <div class="stat"><b>${S.srs.length}</b><span>palavras na memória</span></div>
     <div class="stat"><b>${S.state.streak.best || 0}</b><span>recorde de dias seguidos</span></div>
   </div></section>`;
-  import('./essencial.js?v=27').then(E => { const el = $('#homeTopo'); if (el) { el.innerHTML = E.homeHTML({ C, S, esc, icoOf, grad, saudacao: hello + (name ? ', ' + name : ''), dia: fmtDay(t) + (rest ? (hol ? ' · ' + hol + ': ' : ' · ') + 'dia de descanso' : '') }); const b = $('#homeStart3'); if (b) b.onclick = () => abrirComecar(); E.ligarHome(el); } }).catch(() => { });
+  import('./essencial.js?v=28').then(E => { const el = $('#homeTopo'); if (el) { el.innerHTML = E.homeHTML({ C, S, esc, icoOf, grad, saudacao: hello + (name ? ', ' + name : ''), dia: fmtDay(t) + (rest ? (hol ? ' · ' + hol + ': ' : ' · ') + 'dia de descanso' : '') }); const b = $('#homeStart3'); if (b) b.onclick = () => abrirComecar(); E.ligarHome(el); } }).catch(() => { });
   window.IAPers && IAPers.home();
   $('#homeAsst').onclick = () => openAssistant();
 }
@@ -1137,7 +1137,7 @@ let memMod; // memória geral (arquivo à parte), carregada quando o assistente 
 const carregaMem = () => memMod ? Promise.resolve(memMod) : import('./memoria.js?v=1').then(m => memMod = m).catch(() => null);
 const asstIdioma = () => ({ en: 'en-US', es: 'es-ES' })[S.state?.profile?.prefs?.contentLang] || 'pt-BR';
 window.addEventListener('ia-painel', e => { if (e.detail !== 'assistente') closeAssistant(); });
-function closeAssistant() { asst.voz?.desligar(); $('#asst')?.remove(); if (asst.onKey) { document.removeEventListener('keydown', asst.onKey); asst.onKey = null; } }
+function closeAssistant() { try { asst.voz?.desligar(); } catch { } $('#asst')?.remove(); if (asst.onKey) { document.removeEventListener('keydown', asst.onKey); asst.onKey = null; } }
 function toggleAssistant() { if ($('#asst')) { closeAssistant(); return; } openAssistant(); }
 function openAssistant(prefill = '') {
   carregaMem();

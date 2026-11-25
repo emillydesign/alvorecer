@@ -34,6 +34,21 @@ function iconize(root) {
   });
 }
 
+// A biblioteca redesenhava TODOS os ícones a cada chamada (e isso se repetia sem parar, engolindo cliques).
+// Agora só desenha os que ainda não viraram ícone.
+function iconesLeves() {
+  const L = window.lucide; if (!L || L.leve) return;
+  const orig = L.createIcons, leve = function (...a) {
+    if (!document.querySelector('[data-lucide]:not(svg)')) return;
+    document.querySelectorAll('svg[data-lucide]').forEach(s => s.removeAttribute('data-lucide'));
+    const r = orig.apply(L, a);
+    document.querySelectorAll('svg[data-lucide]').forEach(s => s.removeAttribute('data-lucide'));
+    return r;
+  };
+  try { L.createIcons = leve; } catch { }
+  if (L.createIcons !== leve) window.lucide = { ...L, createIcons: leve, leve: true }; else L.leve = true;
+}
+
 let io;
 function reveal() {
   if (!io) io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -6% 0px' });
@@ -56,7 +71,7 @@ function run(tudo) {
     lista.forEach(r => { if (!r.isConnected) return; const c = r.closest?.(SEL); if (c) alvo.add(c); alvo.add(r); });
     alvo.forEach(r => { if (r.isConnected) iconize(r); });
   }
-  try { window.lucide?.createIcons(); } catch { }
+  try { iconesLeves(); window.lucide?.createIcons(); } catch { }
   reveal();
 }
 export function initFx() {
@@ -68,6 +83,6 @@ export function initFx() {
     if (sujos.size && !pending) { pending = true; requestAnimationFrame(() => run(false)); }
   }).observe(document.body, { childList: true, subtree: true });
   // a biblioteca de ícones carrega sem travar a página; quando chega (ou se já chegou), desenha os ícones
-  { const ico = () => { try { window.lucide?.createIcons(); } catch { } }; if (window.lucide) ico(); else document.querySelector('script[src*="lucide"]')?.addEventListener('load', ico); }
+  { const ico = () => { try { iconesLeves(); window.lucide?.createIcons(); } catch { } }; if (window.lucide) ico(); else document.querySelector('script[src*="lucide"]')?.addEventListener('load', ico); }
   run(true);
 }
