@@ -1295,3 +1295,16 @@ button.dock-uso{font:inherit;cursor:pointer;justify-content:flex-start}
 .asst-c{border-top:1px solid rgba(var(--text-rgb),.25)}
 .asst-c textarea{color:#fff;background:rgba(0,0,0,.18);border:1px solid rgba(var(--text-rgb),.45);border-radius:var(--rq)}
 @media (max-width:980px){.asst{right:14px;bottom:140px}}
+
+/* chat com cara de conversa: logo + nome, microfone e enviar iguais, sem barra de rolagem no campo */
+.asst-h{padding:12px 14px;gap:12px}
+.asst-h b{font-size:17px}
+.asst-logo{flex:none;width:42px;height:42px;border-radius:50%;background:var(--logo-ia,url(../img/logo-ia.svg)) center/cover no-repeat;border:1.5px solid rgba(var(--text-rgb),.85)}
+.asst-c{align-items:flex-end}
+.asst-c textarea{flex:1;min-width:0;height:48px;min-height:48px;padding:12px 14px;line-height:22px;resize:none;scrollbar-width:none}
+.asst-c textarea::-webkit-scrollbar{display:none}
+.asst-c button{display:grid;place-items:center;width:48px;height:48px;padding:0;cursor:pointer}
+.asst-c button svg{width:22px;height:22px}
+.asst-c #asstMic.on{background:#35d07f;color:#04261a;box-shadow:0 0 18px rgba(53,208,127,.8)}
+.asst-ouvir{display:flex;align-items:center;justify-content:center;width:30px;height:30px;margin:8px 0 -2px;padding:0;color:#fff;background:transparent;border:1px solid rgba(var(--text-rgb),.4);border-radius:var(--rq);cursor:pointer}
+.asst-ouvir svg{width:16px;height:16px}

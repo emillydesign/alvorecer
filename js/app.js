@@ -1172,25 +1172,21 @@ function visualConta() {
 }
 let memMod; // memória geral (arquivo à parte), carregada quando o assistente abre
 const carregaMem = () => memMod ? Promise.resolve(memMod) : import('./memoria.js?v=1').then(m => memMod = m).catch(() => null);
-let vozMod; // arquivo à parte: só carrega quando a pessoa clica no botão de voz
-async function abrirVozAssistente() {
-  await carregaMem();
-  try { vozMod ||= await import('./voz.js?v=69'); } catch { return toast('Não consegui abrir o assistente de voz agora. Tente de novo.'); }
-  vozMod.abrirVoz({ C, S, AI, esc, md, toast, asstContext, applyActions, describeAction });
-}
-function closeAssistant() { $('#asst')?.remove(); if (asst.onKey) { document.removeEventListener('keydown', asst.onKey); asst.onKey = null; } }
+const asstIdioma = () => ({ en: 'en-US', es: 'es-ES' })[S.state?.profile?.prefs?.contentLang] || 'pt-BR';
+function closeAssistant() { asst.voz?.desligar(); $('#asst')?.remove(); if (asst.onKey) { document.removeEventListener('keydown', asst.onKey); asst.onKey = null; } }
 function toggleAssistant() { if ($('#asst')) { closeAssistant(); return; } openAssistant(); }
 function openAssistant(prefill = '') {
   carregaMem();
   if (!$('#asst')) {
-    document.body.insertAdjacentHTML('beforeend', `<div class="asst" id="asst"><div class="asst-h"><span class="avatar" style="width:40px;height:40px"><i data-lucide="headset"></i></span><div><b>IAlvorecer</b><div class="small muted">Tira dúvidas e ajusta seus estudos</div></div><span class="spacer"></span><button class="iconbtn" id="asstUndo" title="Desfazer a última alteração">↶</button><button class="iconbtn" id="asstX" title="Fechar">✕</button></div><div class="asst-m" id="asstM"></div><div class="asst-c"><textarea id="asstT" rows="1" placeholder="Pergunte ou peça uma mudança…"></textarea><button id="asstS">➤</button></div></div>`);
+    document.body.insertAdjacentHTML('beforeend', `<div class="asst" id="asst"><div class="asst-h"><span class="asst-logo" aria-hidden="true"></span><b>IAlvorecer</b><span class="spacer"></span><button class="iconbtn" id="asstUndo" title="Desfazer a última alteração">↶</button><button class="iconbtn" id="asstX" title="Fechar">✕</button></div><div class="asst-m" id="asstM"></div><div class="asst-c"><textarea id="asstT" rows="1" placeholder="Mensagem"></textarea><button id="asstMic" type="button" title="Falar" aria-label="Falar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5"/></svg></button><button id="asstS" type="button" title="Enviar" aria-label="Enviar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4Z"/></svg></button></div></div>`);
     { const w = $('#dock')?.offsetWidth; if (w) $('#asst').style.width = `min(${Math.max(w, 300)}px, calc(100vw - 16px))`; }
     $('#asstX').onclick = e => { e.stopPropagation(); closeAssistant(); };
     asst.onKey = e => { if (e.key === 'Escape' && $('#asst')) closeAssistant(); };
     document.addEventListener('keydown', asst.onKey);
     import('./asst-rascunho.js?v=1').then(R => { if ($('#asstT')) asst.rasc = R.iniciarRascunho({ ta: $('#asstT'), prefill }); }).catch(() => { });
     $('#asstUndo').onclick = () => doUndo();
-    $('#asstS').onclick = asstSend;
+    $('#asstS').onclick = () => asstSend();
+    import('./asst-voz.js?v=1').then(V => { if (!$('#asstMic')) return; asst.voz = V; V.iniciar({ mic: $('#asstMic'), ta: $('#asstT'), idioma: asstIdioma(), enviar: () => asstSend(true), toast }); asstRender(); }).catch(() => { });
     $('#asstT').onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); asstSend(); } };
     if (!asst.msgs.length) asst.msgs.push({ role: 'ai', text: `Oi${S.state.profile.name ? ', ' + S.state.profile.name : ''}! Posso tirar dúvidas sobre o IAlvorecer ou mudar seus estudos: cronograma, dias, nível, temas das aulas, e-mails… Tudo o que eu mudar pode ser desfeito no botão ↶.`, sugs: ['Mudar os dias do meu cronograma', 'Quero aulas de 15 minutos', 'Pausar e-mails até segunda', 'Como funciona a prova de nível?', 'Reiniciar o curso de inglês'] });
     asstRender();
@@ -1205,14 +1201,19 @@ function asstRender() {
     if (m.role === 'typing') return '<div class="typing">Pensando…</div>';
     return `<div class="msg ai">${esc(m.text)}</div>${m.sugs ? `<div class="sugs">${m.sugs.map(s => `<button data-sug="${esc(s)}">${esc(s)}</button>`).join('')}</div>` : ''}${m.actions?.length ? `<div class="act"><b>${m.applied ? '✓ Feito' : m.canceled ? 'Cancelado' : 'Posso fazer isto:'}</b><ul>${m.actions.map(a => `<li>${esc(describeAction(a))}</li>`).join('')}</ul>${m.applied ? `<button class="btn btn-ghost btn-sm" data-undo="${i}">↶ Desfazer</button>` : m.canceled ? '' : `<div class="row"><button class="btn btn-pink btn-sm" data-apply="${i}">Aplicar</button><button class="btn btn-ghost btn-sm" data-cancel="${i}">Cancelar</button></div>`}</div>` : ''}`;
   }).join('');
+  asst.voz?.enfeitar(asst.msgs, asstIdioma());
   box.scrollTop = box.scrollHeight;
   $$('[data-sug]', box).forEach(b => b.onclick = () => { $('#asstT').value = b.dataset.sug; asstSend(); });
   $$('[data-apply]', box).forEach(b => b.onclick = async () => { const m = asst.msgs[+b.dataset.apply]; b.disabled = true; b.innerHTML = '<span class="spin"></span>'; try { await applyActions(m.actions); m.applied = true; toast('Alteração aplicada ✓'); } catch (e) { toast('⚠️ ' + e.message, 6000); } asstRender(); });
   $$('[data-cancel]', box).forEach(b => b.onclick = () => { asst.msgs[+b.dataset.cancel].canceled = true; asstRender(); });
   $$('[data-undo]', box).forEach(b => b.onclick = async () => { await doUndo(); asst.msgs[+b.dataset.undo].applied = false; asst.msgs[+b.dataset.undo].canceled = true; asstRender(); });
 }
-async function asstSend() {
+async function asstSend(porVoz) {
   const t = $('#asstT'), text = t.value.trim(); if (!text) return;
+  const falar = () => { const m = asst.msgs[asst.msgs.length - 1]; if (asst.voz && m?.role === 'ai' && (porVoz === true || asst.voz.lerSempre())) asst.voz.ouvir(m.text, asstIdioma()); };
+  // pedidos de abrir um curso ou área: resolvidos na hora, sem gastar IA
+  const d = asst.voz?.acharDestino(text, { C, S });
+  if (d) { t.value = ''; asst.rasc?.depoisDeEnviar(); asst.msgs.push({ role: 'me', text }, { role: 'ai', text: `Abrindo ${d.t}. ${d.d}` }); location.hash = d.h; asstRender(); return falar(); }
   if (S.readonly) { t.value = ''; asst.msgs.push({ role: 'me', text }, { role: 'ai', text: 'No modo visitante dá pra explorar tudo, mas para conversar comigo, fazer aulas e salvar seu progresso é preciso criar uma conta grátis. É rapidinho!' }); return asstRender(); }
   t.value = ''; asst.rasc?.depoisDeEnviar(); asst.msgs.forEach(m => delete m.sugs);
   asst.msgs.push({ role: 'me', text }); asst.msgs.push({ role: 'typing' }); asstRender();
@@ -1226,7 +1227,7 @@ async function asstSend() {
     asst.msgs.push({ role: 'ai', text: r.reply || 'Certo!', actions: acts.filter(a => a.type !== 'open_page') });
     if (go && PAGES[go.page]) { location.hash = PAGES[go.page]; if (go.page === 'mentoria_sessao') closeAssistant(); }
   } catch (e) { asst.msgs = asst.msgs.filter(m => m.role !== 'typing'); asst.msgs.push({ role: 'ai', text: '⚠️ ' + e.message }); }
-  asstRender();
+  asstRender(); falar();
 }
 
 // ---------- SEU ALVORECER (cursos personalizados) ----------
@@ -1835,7 +1836,6 @@ async function boot() {
   addEventListener('scroll', () => document.body.classList.toggle('rolou', scrollY > 30), { passive: true });
   $('#fab').onclick = () => toggleAssistant();
   if ($('#dockUso')) { $('#dockUso').onclick = () => iaInfo(); window.addEventListener('ia-uso', dockUso); dockUso(); }
-  { const tr = $('.topright'); if (tr) { tr.insertAdjacentHTML('afterbegin', '<button type="button" class="iconbtn" id="vozBtn" title="Assistente de voz" aria-label="Assistente de voz"><i data-lucide="mic"></i></button>'); $('#vozBtn').onclick = abrirVozAssistente; try { lucide.createIcons(); } catch { } } }
   visualConta();
   window.IAPers && IAPers.topo();
   $('#areasBtn').onclick = () => openAreas();

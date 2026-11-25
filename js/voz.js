@@ -31,7 +31,7 @@ function destinos({ C, S }) {
   for (const p of PAGINAS) out.push({ n: p.n.map(norm), h: p.h, t: p.t, d: p.d });
   return out;
 }
-function acharDestino(txt, deps) {
+export function acharDestino(txt, deps) {
   const u = ' ' + norm(txt) + ' ';
   if (!VERBO.test(norm(txt))) return null;
   let melhor = null, pontos = 0;
