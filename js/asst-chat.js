@@ -14,7 +14,7 @@ const IC = {
   baixo: '<path d="M12 5v14M6 13l6 6 6-6"/>'
 };
 const INICIO = 'Olá! Eu sou o IAlvorecer. Por onde você quer começar? Selecione uma das opções abaixo, envie uma mensagem ou acione o assistente por voz para enviar o seu pedido.';
-const NOTA = 'A qualquer momento, avalie as mensagens no botão positivo ou negativo abaixo delas para ajudar a melhorar o site.';
+const NOTA = 'Avalie as mensagens clicando nos botões positivo ou negativo abaixo para nos ajudar a melhorar.';
 let D = null, msgs = [], pronto = false, ocupado = false, editando = -1, dono = null;
 
 const local = () => D.S.readonly || D.S.isDemo;
@@ -50,7 +50,7 @@ function html(m, i) {
     return `<div class="msg me">${esc(m.text)}</div><div class="msg-acoes me">${botao('editar', i, 'Editar', 'editar')}${botao('copiar', i, 'Copiar', 'copiar')}${botao('voltar', i, 'Voltar ao que era antes desta mensagem', 'voltar')}</div>`;
   }
   const acts = m.actions?.length ? `<div class="act"><b>${m.applied ? '✓ Feito' : m.canceled ? 'Cancelado' : 'Posso fazer isto:'}</b><ul>${m.actions.map(a => `<li>${esc(D.describeAction(a))}</li>`).join('')}</ul>${m.applied || m.canceled ? '' : `<div class="row"><button class="btn btn-pink btn-sm" data-a="aplicar" data-i="${i}">Aplicar</button><button class="btn btn-ghost btn-sm" data-a="cancelar" data-i="${i}">Agora não</button></div>`}</div>` : '';
-  const ops = m.inicio ? `<div class="opcoes"><small>Toque em uma opção para enviar</small>${OPCOES.map(o => `<button type="button" data-a="opcao" data-t="${esc(o)}"><span>${o}</span>${svg(IC.mais)}</button>`).join('')}<button type="button" data-a="outro"><span>Outro - Envie seu pedido</span>${svg(IC.baixo)}</button></div>` : '';
+  const ops = m.inicio ? `<div class="opcoes">${OPCOES.map(o => `<button type="button" data-a="opcao" data-t="${esc(o)}"><span>${o}</span>${svg(IC.mais)}</button>`).join('')}<button type="button" data-a="outro"><span>Outro - Envie seu pedido</span>${svg(IC.baixo)}</button></div>` : '';
   const ouvir = D.voz() ? '<button type="button" data-ouvir></button>' : '';
   const barra = `<div class="msg-acoes">${botao('copiar', i, 'Copiar', 'copiar')}${ouvir}${botao('sim', i, 'Gostei', 'sim', `aria-pressed="${m.voto === 1}"`)}${botao('nao', i, 'Não gostei', 'nao', `aria-pressed="${m.voto === -1}"`)}${versoes(i)}</div>`;
   return `<div class="msg ai">${esc(m.text)}${m.inicio ? `<small class="msg-nota">${NOTA}</small>` : ''}</div>${ops ? ops + barra + acts : barra + acts}`;

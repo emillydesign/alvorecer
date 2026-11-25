@@ -1192,7 +1192,7 @@ function openAssistant(prefill = '') {
     $('#asstS').onclick = () => asstSend();
     import('./asst-voz.js?v=2').then(V => { if (!$('#asstMic')) return; asst.voz = V; V.iniciar({ mic: $('#asstMic'), ta: $('#asstT'), idioma: asstIdioma(), enviar: () => asstSend(true), toast }); asstRender(); }).catch(() => { });
     $('#asstT').onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); asstSend(); } };
-    import('./asst-chat.js?v=3').then(M => { if (!$('#asstM')) return; asst.chat = M; M.iniciar(asstDeps); }).catch(() => toast('Não consegui abrir a conversa. Tente de novo.'));
+    import('./asst-chat.js?v=4').then(M => { if (!$('#asstM')) return; asst.chat = M; M.iniciar(asstDeps); }).catch(() => toast('Não consegui abrir a conversa. Tente de novo.'));
     try { lucide.createIcons(); } catch (e) { }
   }
   if (prefill && !LS.get('ia_asst_rascunho')) { const t = $('#asstT'); t.value = prefill; t.focus(); t.setSelectionRange(prefill.length, prefill.length); }
