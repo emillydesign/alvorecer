@@ -6,9 +6,9 @@
 (function (w) {
   var KEY = 'ia_pers', HEX = /^#[0-9a-f]{6}$/i;
   var BLOCOS = [
-    ['ia', 'Seu limite de IA'], ['essencial', 'O essencial para aprender primeiro'], ['cuidados', 'Cuidados essenciais em etapas'], ['tempo', 'Mais tempo para você'], ['explore', 'O que você pode aprender'], ['areas', 'Áreas de interesse'],
-    ['curso', 'Não achou o seu curso?'], ['metodo', 'Como funciona'], ['assistente', 'Falar com o IAlvorecer'],
-    ['mentoria', 'Mentoria de carreira'], ['cuidar', 'Cuidar de mim'], ['sobre', 'Sobre o IAlvorecer'], ['numeros', 'Seus números']
+    ['ia', 'Seu limite de IA'], ['essencial', 'O essencial para aprender primeiro'], ['cuidados', 'Cuidados essenciais em etapas'], ['tempo', 'Mais tempo para você'], 
+    ['metodo', 'Como funciona'], ['assistente', 'Falar com o IAlvorecer'],
+    ['cuidar', 'Cuidar de mim'], ['sobre', 'Sobre o IAlvorecer'], ['numeros', 'Seus números']
   ];
   var TOPO = [
     ['home', 'Início', '[data-nav="home"]'], ['tech', 'Tecnologia & IA', '[data-nav="tech"]'],

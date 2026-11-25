@@ -233,16 +233,6 @@ async function home() {
   if (nx && !did('lesson')) setTimeout(() => prefetchNext(key), 2500); // a aula do dia já vai sendo preparada enquanto a pessoa olha o início
   const rest = isRestDay(t), hol = holiday(t);
   const name = S.state.profile.name || '';
-  const nCourses = C.languages.length + C.complementary.length + Object.values(C.tracks).reduce((a, x) => a + x.courses.length, 0);
-  const areaId = C.tracks[S.state.area]?.area ? S.state.area : 'design';
-  const A = C.tracks[areaId];
-  const areas = [
-    { t: 'Idiomas', s: `${C.languages.length} idiomas, do zero ao fluente`, i: 'languages', href: '#/idiomas', g: ['#2dd4bf', '#2563eb'], items: ['Aulas personalizadas do A1 ao C2', 'Conversação por voz com correção', 'Cronograma e prova de nível'] },
-    { t: 'Tecnologia & IA', s: 'Rumo ao trabalho dos sonhos', i: 'cpu', href: '#/trilha/tech', g: ['#38bdf8', '#4f46e5'], items: ['IA no dia a dia e IAs grátis', 'Currículo, entrevistas e portfólio', 'Mentoria de carreira'] },
-    { t: A.name, s: 'Sua área de interesse', i: A.icon, href: '#/trilha/' + areaId, g: A.g, items: A.courses.slice(0, 3).map(c => c.title) }
-  ];
-  const cr = S.state.career;
-  const noLang = S.state.profile.prefs?.noLang;
   app.innerHTML = `
   <section class="home-topo" id="homeTopo"></section>
 
@@ -252,16 +242,6 @@ async function home() {
       <div class="panel"><h3>O que gasta</h3><div style="margin-top:12px">${CUSTOS.slice(0, 4).map(([a, c, i]) => `<div class="row small" style="padding:7px 0;border-bottom:1px solid var(--line)"><span>${i} ${a}</span><span class="spacer"></span><b>${c}</b></div>`).join('')}</div><button class="btn btn-ghost btn-sm" data-iainfo style="margin-top:12px">Ver tudo</button></div>
       <div class="panel"><h3>Quer usar mais?</h3><p class="small muted" style="margin:10px 0 14px">Conecte a sua própria IA (Google Gemini, grátis) e use sem o limite do site. Leva 2 minutos e ela continua tão carinhosa e inteligente quanto aqui.</p><button class="btn btn-pink btn-sm" data-iainfo="conectar">Conectar minha IA</button></div>
     </div></section>
-
-        <section class="section" data-bloco="explore"><div class="section-head"><div><div class="eyebrow">Explore</div><h2 style="margin-top:8px">O que você pode aprender aqui</h2></div><span class="small dim">${nCourses} cursos</span></div>
-    <div class="grid g3">${areas.map((a, i) => `<a class="area pat-${['rings', 'grid', 'dots'][i]}" href="${a.href}" style="${grad(a.g)}"><div><span class="aic">${icoOf(a.i)}</span><h3>${esc(a.t)}</h3><p>${esc(a.s)}</p><ul>${a.items.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div><span class="btn btn-pink btn-sm" style="align-self:flex-start;margin-top:18px">Explorar</span></a>`).join('')}</div></section>
-
-  <section class="section" data-bloco="areas"><div class="section-head"><div><div class="eyebrow">Áreas de interesse</div><h2 style="margin-top:8px">Escolha o que faz sentido para você</h2></div><button class="btn btn-ghost btn-sm" id="homeAreas">▦ Todas as áreas</button></div>
-    <p class="muted" style="max-width:720px;margin-bottom:22px">Além de Idiomas e Tecnologia &amp; IA, uma área de interesse aparece no seu menu. Troque quando quiser no botão Áreas do topo, ou peça ao IAlvorecer.</p>
-    <div class="atiles" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr))">${Object.entries(C.tracks).filter(([, x]) => x.area).map(([id, x]) => `<button class="atile pat-dots ${id === areaId ? 'on' : ''}" data-harea="${id}" style="${grad(x.g)}"><i>${icoOf(x.icon)}</i><div><b>${esc(x.name)}</b><br><small>${x.courses.length} cursos</small></div></button>`).join('')}</div>
-  </section>
-
-  <section class="section" data-bloco="curso"><div class="cta-band"><span class="ci">✦</span><div style="flex:1;min-width:220px"><h3 style="font-size:21px">Não achou o seu curso?</h3><p class="muted" style="margin:6px 0 0">Peça ao IAlvorecer e ele cria um curso completo só para você, em Seu Alvorecer.</p></div><button class="btn btn-ghost" id="seuInfo">Como funciona</button><button class="btn btn-pink" id="homeAsk">✦ Pedir um curso</button></div></section>
 
   <section class="section" data-bloco="metodo"><div class="section-head"><div><div class="eyebrow">Método</div><h2 style="margin-top:8px">Como funciona</h2></div></div>
     <div class="grid g4 how">
@@ -282,13 +262,6 @@ async function home() {
     </div>
   </section>
 
-  <section class="section feature" data-bloco="mentoria">
-    <div><div class="eyebrow">Mentoria de carreira</div><h2 style="margin:12px 0 12px">Do trabalho de hoje ao trabalho dos sonhos</h2>
-      <p class="muted">Converse com o IAlvorecer sobre seus objetivos, medos, o salário que você quer e seus sonhos. A conversa fica salva e o plano se atualiza a cada sessão.</p>
-      <a class="btn btn-pink" href="#/mentoria" style="margin-top:20px">${cr?.plan ? 'Ver meu plano de carreira' : 'Começar mentoria'}</a></div>
-    <div class="area pat-rings" style="background:linear-gradient(150deg,#2dd4bf,#4f46e5);min-height:220px"><span class="aic">${ic('compass')}</span><div>${cr?.plan ? `<div class="small" style="opacity:.85">Agora</div><b>${esc(cr.plan.agora || '')}</b>` : '<b>Agora → em 1–2 anos → o sonho</b>'}</div></div>
-  </section>
-
   <section class="section" data-bloco="cuidar"><a class="cta-band" href="#/cuidar"><span class="ci">${ic('heart-handshake')}</span><div style="flex:1;min-width:220px"><h3 style="font-size:21px">Cuidar de mim</h3><p class="muted" style="margin:6px 0 0">Desabafo, alimentação, água e treino com apoio de IA, para quem não pode pagar esses profissionais agora. Com carinho e honestidade, sem substituir profissionais.</p></div><span class="btn btn-pink">Abrir</span></a></section>
   <section class="section feature" data-bloco="sobre"><div><div class="eyebrow">Sobre o IAlvorecer</div><h2 style="margin:12px 0 12px">Um novo dia, uma nova chance</h2><p class="muted">O IAlvorecer é feito com IA para quem não tem condições de pagar cursos, nutricionista, personal trainer ou psicólogo. É uma base para ajudar: pode errar e não substitui profissionais qualificados.</p><div class="row" style="margin-top:20px"><a class="btn btn-ghost" href="#/sobre">Conhecer a história</a><a class="btn btn-pink" href="#/apoiar">Apoiar com Pix</a></div></div>
     <div style="display:flex;flex-direction:column;gap:10px"><button class="task" data-fb="avaliacao" style="text-align:left;width:100%"><span class="ck">⭐</span><span><div class="t">Avaliar o IAlvorecer</div><div class="s">Sua opinião chega direto para a criadora</div></span></button><button class="task" data-fb="erro" style="text-align:left;width:100%"><span class="ck">⚠️</span><span><div class="t">Reportar um erro</div><div class="s">Algo não funcionou? Conte pra gente</div></span></button></div></section>
@@ -301,10 +274,6 @@ async function home() {
   import('./essencial.js?v=26').then(E => { const el = $('#homeTopo'); if (el) { el.innerHTML = E.homeHTML({ C, S, esc, icoOf, grad, saudacao: hello + (name ? ', ' + name : ''), dia: fmtDay(t) + (rest ? (hol ? ' · ' + hol + ': ' : ' · ') + 'dia de descanso' : '') }); const b = $('#homeStart3'); if (b) b.onclick = () => abrirComecar(); E.ligarHome(el); } }).catch(() => { });
   window.IAPers && IAPers.home();
   $('#homeAsst').onclick = () => openAssistant();
-  $('#homeAreas').onclick = () => openAreas();
-  $('#homeAsk').onclick = () => openAssistant('Quero um curso de ');
-  $('#seuInfo').onclick = () => seuInfo();
-  $$('[data-harea]').forEach(b => b.onclick = () => { S.state.area = b.dataset.harea; S.saveState(); location.hash = '#/trilha/' + b.dataset.harea; });
 }
 function lastDoneId(key) { const s = cs(key); const ids = Object.entries(s.done).sort((a, b) => (b[1].date || '').localeCompare(a[1].date || '')); return ids[0]?.[0]; }
 
