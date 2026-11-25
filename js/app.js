@@ -1183,7 +1183,8 @@ function toggleAssistant() { if ($('#asst')) { closeAssistant(); return; } openA
 function openAssistant(prefill = '') {
   carregaMem();
   if (!$('#asst')) {
-    document.body.insertAdjacentHTML('beforeend', `<div class="asst" id="asst"><div class="asst-h"><span class="avatar" style="width:36px;height:36px">✦</span><div><b>IAlvorecer</b><div class="small muted">Faz de tudo para dar certo: tira dúvidas, planeja e ajusta seus estudos</div></div><span class="spacer"></span><button class="iconbtn" id="asstUndo" title="Desfazer a última alteração">↶</button><button class="iconbtn" id="asstX" title="Fechar">✕</button></div><div class="asst-m" id="asstM"></div><div class="asst-c"><textarea id="asstT" rows="1" placeholder="Pergunte ou peça uma mudança…"></textarea><button id="asstS">➤</button></div></div>`);
+    document.body.insertAdjacentHTML('beforeend', `<div class="asst" id="asst"><div class="asst-h"><span class="avatar" style="width:40px;height:40px"><i data-lucide="headset"></i></span><div><b>IAlvorecer</b><div class="small muted">Tira dúvidas e ajusta seus estudos</div></div><span class="spacer"></span><button class="iconbtn" id="asstUndo" title="Desfazer a última alteração">↶</button><button class="iconbtn" id="asstX" title="Fechar">✕</button></div><div class="asst-m" id="asstM"></div><div class="asst-c"><textarea id="asstT" rows="1" placeholder="Pergunte ou peça uma mudança…"></textarea><button id="asstS">➤</button></div></div>`);
+    { const w = $('#dock')?.offsetWidth; if (w) $('#asst').style.width = `min(${Math.max(w, 300)}px, calc(100vw - 16px))`; }
     $('#asstX').onclick = e => { e.stopPropagation(); closeAssistant(); };
     asst.onKey = e => { if (e.key === 'Escape' && $('#asst')) closeAssistant(); };
     document.addEventListener('keydown', asst.onKey);
@@ -1193,6 +1194,7 @@ function openAssistant(prefill = '') {
     $('#asstT').onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); asstSend(); } };
     if (!asst.msgs.length) asst.msgs.push({ role: 'ai', text: `Oi${S.state.profile.name ? ', ' + S.state.profile.name : ''}! Posso tirar dúvidas sobre o IAlvorecer ou mudar seus estudos: cronograma, dias, nível, temas das aulas, e-mails… Tudo o que eu mudar pode ser desfeito no botão ↶.`, sugs: ['Mudar os dias do meu cronograma', 'Quero aulas de 15 minutos', 'Pausar e-mails até segunda', 'Como funciona a prova de nível?', 'Reiniciar o curso de inglês'] });
     asstRender();
+    try { lucide.createIcons(); } catch (e) { }
   }
   if (prefill && !LS.get('ia_asst_rascunho')) { const t = $('#asstT'); t.value = prefill; t.focus(); t.setSelectionRange(prefill.length, prefill.length); }
 }
@@ -1432,6 +1434,16 @@ function iaMeterHTML() {
   const n = Math.min(S?.iaUso?.n || 0, LIMITE_IA), pct = Math.round(n / LIMITE_IA * 100), resto = LIMITE_IA - n;
   return `<div class="ia-meter"><div class="row"><b style="font-size:26px;font-family:var(--h)">${resto}</b><span class="muted small" style="align-self:end;margin-bottom:5px">usos disponíveis hoje</span><span class="spacer"></span><span class="small dim">${n} de ${LIMITE_IA} usados</span></div>
     <div class="progress" style="margin-top:10px;background:rgba(255,255,255,.08)"><i style="width:${pct}%;background:${pct > 85 ? 'linear-gradient(90deg,#ffc876,#ff7a85)' : 'linear-gradient(90deg,var(--mint),var(--sky))'}"></i></div>${S?.isDemo ? '<div class="small dim" style="margin-top:6px">(exemplo)</div>' : ''}</div>`;
+}
+// botão do dock (conta própria): anel com a % de usos de IA já gasta hoje
+function dockUso() {
+  const b = $('#dockUso'); if (!b) return;
+  const propria = S.config?.geminiKey && !S.isDemo;
+  const n = Math.min(S.iaUso?.n || 0, LIMITE_IA), pct = propria ? 0 : Math.round(n / LIMITE_IA * 100), resto = LIMITE_IA - n;
+  const t = propria ? 'Sua própria IA' : `${100 - pct}% disponível`, sub = propria ? 'sem limite do site' : `restam ${resto} usos hoje`;
+  b.classList.toggle('alto', pct > 85);
+  b.title = 'Seu uso de IA hoje'; b.setAttribute('aria-label', `Seu uso de IA hoje: ${t}, ${sub}`);
+  b.innerHTML = `<span class="du-anel"><svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15.5"/><circle class="du-v" cx="18" cy="18" r="15.5" pathLength="100" style="stroke-dasharray:${pct} 100;opacity:${pct ? 1 : 0}"/></svg><em>${propria ? '∞' : pct + '%'}</em></span><span class="du-t"><b>${t}</b><small>${sub}</small></span>`;
 }
 function iaInfo(foco) {
   const ov = openInfo(`<div class="eyebrow">Sua IA</div><h2 style="margin:10px 0 8px">Como funciona o seu limite de IA</h2>
@@ -1817,10 +1829,12 @@ async function boot() {
   setTimeout(startAgua, 2000);
   // (cliques de avaliação/erro tratados no início do boot)
   $('#topbar').hidden = false; $('#tabbar').hidden = false;
-  document.body.insertAdjacentHTML('beforeend', '<div class="dock" id="dock">' + (window.__dockTag || '') + '<button class="dock-mini" type="button" data-comoentrar title="Como entrar" aria-label="Como entrar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M9.2 9.3a2.9 2.9 0 0 1 5.6 1c0 1.9-2.8 2.4-2.8 3.4"/><path d="M12 17h.01"/></svg></button><button class="dock-mini" type="button" data-tema-open title="Cores do site" aria-label="Cores do site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22a10 10 0 1 1 10-10c0 2.8-2.2 4-4.500 4h-2a2 2 0 0 0-1.5 3.300c.9 1.200.2 2.700-2 2.700Z"/><path d="M7.500 12h.01M9.500 7.500h.01M14.500 7h.01M17.500 11h.01" stroke-width="2.800"/></svg></button>' + '<button class="fab" id="fab" type="button" title="Falar com o assistente" aria-label="Falar com o assistente"><i data-lucide="headset"></i><span class="fab-dot" aria-hidden="true"></span></button></div>');
+  if (!S.readonly) window.__dockTag = '<button class="dock-tag dock-visita dock-uso" id="dockUso" type="button"></button>';
+  document.body.insertAdjacentHTML('beforeend', '<div class="dock" id="dock">' + (window.__dockTag || '') + '<button class="dock-mini" type="button" data-comoentrar title="Como entrar" aria-label="Como entrar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.2 8.4a3.9 3.9 0 0 1 7.6 1.2c0 2.6-3.8 3-3.8 5.4"/><path d="M12 19.5h.01" stroke-width="2.8"/></svg></button><button class="dock-mini" type="button" data-tema-open title="Cores do site" aria-label="Cores do site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h9M18 6h2M4 12h2M11 12h9M4 18h9M18 18h2"/><circle cx="15.5" cy="6" r="2.3"/><circle cx="8.5" cy="12" r="2.3"/><circle cx="15.5" cy="18" r="2.3"/></svg></button>' + '<button class="fab" id="fab" type="button" title="Falar com o assistente" aria-label="Falar com o assistente"><i data-lucide="headset"></i><span class="fab-dot" aria-hidden="true"></span></button></div>');
   try { lucide.createIcons(); } catch (e) { }
   addEventListener('scroll', () => document.body.classList.toggle('rolou', scrollY > 30), { passive: true });
   $('#fab').onclick = () => toggleAssistant();
+  if ($('#dockUso')) { $('#dockUso').onclick = () => iaInfo(); window.addEventListener('ia-uso', dockUso); dockUso(); }
   { const tr = $('.topright'); if (tr) { tr.insertAdjacentHTML('afterbegin', '<button type="button" class="iconbtn" id="vozBtn" title="Assistente de voz" aria-label="Assistente de voz"><i data-lucide="mic"></i></button>'); $('#vozBtn').onclick = abrirVozAssistente; try { lucide.createIcons(); } catch { } } }
   visualConta();
   window.IAPers && IAPers.topo();

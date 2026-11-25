@@ -1264,3 +1264,34 @@ a.dock-visita:hover{border-color:rgb(var(--text-rgb));box-shadow:0 0 34px rgba(v
 @media (max-width:460px){.dock-tag.dock-visita{gap:6px;padding:0 8px}.dock-visita>b{font-size:12.5px}.dock-visita .dv-ic{display:none}}
 @media (max-width:360px){.dock-mini,.dock .fab,.dock-tag.dock-visita{height:46px}.dock-mini,.dock .fab{width:46px}.dock-visita>b{white-space:normal;line-height:1.15;text-align:center}}
 @media (prefers-reduced-motion:reduce){.dock .fab::before,.dock .fab::after{animation:none}}
+
+/* ondas mais espaçadas e bolinha verde */
+.dock .fab::before,.dock .fab::after{animation-duration:5.6s}
+.dock .fab::after{animation-delay:2.8s}
+.fab-dot{background:#35d07f;box-shadow:0 0 10px rgba(53,208,127,.9)}
+/* uso de IA no dock (conta própria) */
+button.dock-uso{font:inherit;cursor:pointer;justify-content:flex-start}
+.du-anel{position:relative;flex:none;width:42px;height:42px;display:grid;place-items:center}
+.du-anel svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);fill:none;stroke-width:3}
+.du-anel circle{stroke:rgba(255,255,255,.18)}
+.du-anel .du-v{stroke:rgb(var(--mint-rgb));stroke-linecap:round;filter:drop-shadow(0 0 3px rgb(var(--mint-rgb)))}
+.dock-uso.alto .du-v{stroke:#ffc876}
+.du-anel em{font:700 11px var(--h);font-style:normal;color:#fff}
+.du-t{display:flex;flex-direction:column;gap:2px;text-align:left;white-space:nowrap;line-height:1.15}
+.du-t b{font-family:var(--h);font-size:14.5px;color:#fff}
+.du-t small{font-size:11.5px;font-weight:600;color:rgba(255,255,255,.85)}
+@media (max-width:460px){.du-anel{width:34px;height:34px}.du-anel em{font-size:9.5px}.du-t b{font-size:11.5px}.du-t small{display:none}}
+@media (max-width:360px){button.dock-uso{justify-content:center;padding:0 4px}.du-t{display:none}}
+/* menu de atendimento: mesma linguagem e largura dos botões do dock */
+.asst{right:20px;bottom:92px;color:#fff;border:1.5px solid rgba(var(--text-rgb),.85);border-radius:var(--rq);background:linear-gradient(160deg,color-mix(in srgb,var(--bg-c) 88%,var(--bg-b)),var(--bg-c) 55%,color-mix(in srgb,var(--bg-c) 72%,#021826));box-shadow:0 0 28px rgba(var(--sky-rgb),.45),0 24px 60px rgba(0,0,0,.45)}
+.asst-h{gap:12px;background:linear-gradient(160deg,color-mix(in srgb,var(--bg-c) 72%,rgb(var(--sky-rgb))),color-mix(in srgb,var(--bg-c) 84%,rgb(var(--mint-rgb))));border-bottom:1px solid rgba(var(--text-rgb),.45)}
+.asst-h .small{color:rgba(255,255,255,.85)}
+.asst .avatar{display:grid;place-items:center;flex:none;color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(var(--text-rgb),.85);border-radius:var(--rq)}
+.asst .avatar svg{width:22px;height:22px}
+.asst .iconbtn,.asst-c button{color:#fff;background:linear-gradient(160deg,color-mix(in srgb,var(--bg-c) 72%,rgb(var(--sky-rgb))),color-mix(in srgb,var(--bg-c) 84%,rgb(var(--mint-rgb))));border:1px solid rgba(var(--text-rgb),.7);border-radius:var(--rq)}
+.asst-m .msg.ai{color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(var(--text-rgb),.22)}
+.asst-m .sugs button{color:#fff;background:transparent;border:1px solid rgba(var(--text-rgb),.55);border-radius:var(--rq)}
+.asst-m .sugs button:hover{background:rgba(var(--sky-rgb),.25);border-color:#fff}
+.asst-c{border-top:1px solid rgba(var(--text-rgb),.25)}
+.asst-c textarea{color:#fff;background:rgba(0,0,0,.18);border:1px solid rgba(var(--text-rgb),.45);border-radius:var(--rq)}
+@media (max-width:980px){.asst{right:14px;bottom:140px}}
