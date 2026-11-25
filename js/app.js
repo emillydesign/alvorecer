@@ -896,11 +896,12 @@ async function historico(tab = 'linha') {
 
 // ---------- AJUSTES ----------
 function temaNome() { const T = window.IATema; if (!T) return 'Manhã'; return T.nome(T.atual().id); }
-async function ajustes() {
+async function ajustes(alvo) { // na página Ajustes ou dentro do painel do botão inferior
+  const raiz = alvo?.nodeType ? alvo : app, $ = s => raiz.querySelector(s), $$ = s => [...raiz.querySelectorAll(s)];
   const st = S.state, cf = S.config;
   const langOpts = sel => C.languages.map(l => `<option value="${l.id}" ${l.id === sel ? 'selected' : ''}>${l.name}</option>`).join('');
   const days = [[1, 'Seg'], [2, 'Ter'], [3, 'Qua'], [4, 'Qui'], [5, 'Sex'], [6, 'Sáb'], [0, 'Dom']].filter(([n]) => getStudyDays().days.includes(n) || (st.plan.secondDays || []).includes(n));
-  app.innerHTML = `<div style="max-width:760px">
+  raiz.innerHTML = `<div style="max-width:760px">
   <div class="eyebrow">Ajustes</div><h1 style="margin:6px 0 22px">Seu curso, do seu jeito</h1>
   ${S.isDemo ? '<div class="notice" style="margin-bottom:18px">Modo demonstração: nada é salvo.</div>' : ''}
   <div class="panel" style="margin-bottom:18px"><h3 style="margin-bottom:14px">Perfil</h3>
@@ -931,7 +932,7 @@ async function ajustes() {
   <div class="panel" style="margin-top:22px"><h3 style="margin-bottom:6px">Sua conta</h3><p class="small muted" style="margin-bottom:14px">${S.isDemo ? 'Demonstração (nada é salvo).' : `Conectada como <b>${esc(S.user?.email || '')}</b>. Seus dados ficam guardados na sua conta e só você tem acesso.`}</p>
     <div class="row"><button class="btn btn-ghost btn-sm" id="wipe">🧹 Apagar todos os meus dados</button><button class="btn btn-ghost btn-sm" id="delAcc" style="color:#c0353a">⚠️ Excluir minha conta</button></div>
     <p class="help" style="margin-top:10px">"Apagar dados" zera tudo e recomeça do zero, mas mantém o login. "Excluir conta" apaga os dados e o seu e-mail do IAlvorecer para sempre.</p></div></div>`;
-  $('#diasOpen').onclick = () => abrirDiasEstudo(() => router());
+  $('#diasOpen').onclick = () => abrirDiasEstudo(() => raiz === app ? router() : ajustes(raiz));
   $('#save').onclick = async () => {
     if (S.readonly) return toast('Modo visitante: crie sua conta para salvar seus ajustes.');
     st.profile.name = $('#nm').value.trim() || st.profile.name; st.profile.area = $('#ar').value.trim();
@@ -942,7 +943,7 @@ async function ajustes() {
     const k = $('#gk').value.trim(); if (k !== cf.geminiKey) { cf.geminiKey = k; delete cf.noThinkCfg; delete cf.modelChains; }
     if ($('#gm').value.trim()) cf.model = $('#gm').value.trim(); else delete cf.model;
     cf.email = S.user?.email || cf.email; cf.emailHoraAula = +$('#hA').value; cf.emailsOn = $('#eon').checked; cf.pauseUntil = $('#pz').value || null;
-    S.saveState(); S.saveConfig(); await S.flush(); $('#avatar').textContent = (st.profile.name || 'E')[0].toUpperCase(); toast('Ajustes salvos ✓');
+    S.saveState(); S.saveConfig(); await S.flush(); toast('Ajustes salvos ✓');
   };
   import('./memoria.js?v=1').then(M => { const r = $('#memAj'); if (r) { r.innerHTML = M.memoriaHTML(S); M.ligar(r, { S, openInfo, toast }); } }).catch(() => { });
   $('#tst').onclick = async () => {
@@ -1663,7 +1664,6 @@ async function boasVindas() {
     if (o.langs.length) { S.state.plan.main = o.langs[0]; S.state.plan.second = o.langs[1] || ''; S.state.plan.secondDays = o.langs[1] ? [2, 4] : []; }
     S.state.onboarded = today(); S.isNew = false;
     S.saveState(); await S.flush();
-    $('#avatar').textContent = (P.name || 'B')[0].toUpperCase();
     toast('Tudo pronto! Bons estudos ☀️'); location.hash = '#/';
   };
   draw();
@@ -1795,7 +1795,7 @@ async function boot() {
   // (cliques de avaliação/erro tratados no início do boot)
   $('#topbar').hidden = false; $('#tabbar').hidden = false;
   if (!S.readonly) window.__dockTag = '<button class="dock-tag dock-visita dock-uso" id="dockUso" type="button"><span class="dv-po" aria-hidden="true"><i style="left:6%;animation-delay:-0.0s;animation-duration:5s"></i><i style="left:35%;animation-delay:-1.3s;animation-duration:8s"></i><i style="left:64%;animation-delay:-2.6s;animation-duration:7s"></i><i style="left:93%;animation-delay:-3.9s;animation-duration:6s"></i><i style="left:27%;animation-delay:-5.2s;animation-duration:5s"></i><i style="left:56%;animation-delay:-6.5s;animation-duration:8s"></i><i style="left:85%;animation-delay:-0.8s;animation-duration:7s"></i><i style="left:19%;animation-delay:-2.1s;animation-duration:6s"></i><i style="left:48%;animation-delay:-3.4s;animation-duration:5s"></i><i style="left:77%;animation-delay:-4.7s;animation-duration:8s"></i></span></button>';
-  document.body.insertAdjacentHTML('beforeend', '<div class="dock" id="dock">' + (window.__dockTag || '') + '<button class="dock-mini" type="button" data-comoentrar title="Como entrar" aria-label="Como entrar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.2 8.4a3.9 3.9 0 0 1 7.6 1.2c0 2.6-3.8 3-3.8 5.4"/><path d="M12 19.5h.01" stroke-width="2.8"/></svg></button><button class="dock-mini" type="button" data-tema-open title="Cores do site" aria-label="Cores do site"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h9M18 6h2M4 12h2M11 12h9M4 18h9M18 18h2"/><circle cx="15.5" cy="6" r="2.3"/><circle cx="8.5" cy="12" r="2.3"/><circle cx="15.5" cy="18" r="2.3"/></svg></button>' + '<button class="fab" id="fab" type="button" title="Falar com o assistente" aria-label="Falar com o assistente"><i data-lucide="headset"></i><span class="fab-dot" aria-hidden="true"></span></button></div>');
+  document.body.insertAdjacentHTML('beforeend', '<div class="dock" id="dock">' + (window.__dockTag || '') + '<button class="dock-mini" type="button" data-comoentrar title="Como entrar" aria-label="Como entrar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.2 8.4a3.9 3.9 0 0 1 7.6 1.2c0 2.6-3.8 3-3.8 5.4"/><path d="M12 19.5h.01" stroke-width="2.8"/></svg></button><button class="dock-mini" type="button" data-tema-open title="Ajustes e aparência" aria-label="Ajustes e aparência"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h9M18 6h2M4 12h2M11 12h9M4 18h9M18 18h2"/><circle cx="15.5" cy="6" r="2.3"/><circle cx="8.5" cy="12" r="2.3"/><circle cx="15.5" cy="18" r="2.3"/></svg></button>' + '<button class="fab" id="fab" type="button" title="Falar com o assistente" aria-label="Falar com o assistente"><i data-lucide="headset"></i><span class="fab-dot" aria-hidden="true"></span></button></div>');
   try { lucide.createIcons(); } catch (e) { }
   addEventListener('scroll', () => document.body.classList.toggle('rolou', scrollY > 30), { passive: true });
   $('#fab').onclick = () => toggleAssistant();
@@ -1803,7 +1803,8 @@ async function boot() {
   visualConta();
   window.IAPers && IAPers.topo();
   $('#areasBtn').onclick = () => openAreas();
-  $('#avatar').textContent = (S.state.profile.name || 'A')[0].toUpperCase();
+  window.IAAjustes = el => ajustes(el);
+  addEventListener('hashchange', () => { if (location.hash.startsWith('#/ajustes')) window.dispatchEvent(new CustomEvent('ia-painel', { detail: 'pagina' })); });
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') S.flush(); });
   window.addEventListener('beforeunload', e => { if (Object.keys(S.timers).length) { S.flush(); e.preventDefault(); e.returnValue = ''; } });
   window.addEventListener('hashchange', router);

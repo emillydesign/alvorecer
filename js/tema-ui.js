@@ -16,7 +16,7 @@ let hsv = [0, 0, 1];
 let ov = null, ov2 = null, foco2 = null, foco = null, slot = 'a', cores = null, quadro = 0;
 
 if (T) {
-  document.addEventListener('click', e => { if (e.target.closest('[data-tema-open]')) { if (document.body.classList.contains("pers-edit")) return; e.preventDefault(); if (ov) fechar(); else abrir(); } });
+  document.addEventListener('click', e => { if (e.target.closest('[data-tema-open]')) { if (document.body.classList.contains("pers-edit")) return; e.preventDefault(); if (ov) fechar(); else abrir(e.target.closest('#dock') ? 'ajustes' : 'visual'); } });
   window.addEventListener('ia-painel', e => { if (e.detail !== 'tema') fechar(); });
   window.addEventListener('ia-tema', rotular);
 }
@@ -41,7 +41,18 @@ function normHex(s) {
 }
 const num = v => String(v).replace('.', ',');
 
-function abrir() {
+function aba(a) {
+  if (!ov) return;
+  if (ov2) fecharEditor();
+  ov.querySelectorAll('[data-tm-aba]').forEach(b => { const on = b.dataset.tmAba === a; b.classList.toggle('on', on); b.setAttribute('aria-selected', String(on)); });
+  const aj = ov.querySelector('.tm-aj'), vis = ov.querySelector('.tm-vis');
+  aj.hidden = a !== 'ajustes'; vis.hidden = a === 'ajustes';
+  if (a === 'ajustes' && !aj.firstChild && window.IAAjustes) {
+    window.IAAjustes(aj);
+    aj.querySelector('[data-tema-open]')?.closest('.panel')?.remove(); // a aparência já está na outra aba
+  }
+}
+function abrir(qual) {
   if (ov) return;
   try { window.dispatchEvent(new CustomEvent('ia-painel', { detail: 'tema' })); } catch { }
   foco = document.activeElement;
@@ -50,9 +61,11 @@ function abrir() {
   const cards = T.ORDEM.map(id => `<button type="button" class="tm-card" data-tid="${id}" aria-pressed="false"><img src="img/temas/${id}.webp" alt="" width="84" height="84" loading="lazy"><span class="tm-nome">${T.nome(id)}</span>${id === 'morning' ? '<small>padrão</small>' : ''}<i class="tm-ok" data-lucide="check"></i></button>`).join('');
   ov = document.createElement('div');
   ov.className = 'asst tm-pn'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-labelledby', 'tmTitulo');
-  const temDock = !!document.getElementById('dock');
-  ov.innerHTML = `<div class="asst-h"><span class="asst-logo" aria-hidden="true"></span><b class="brand asst-nome" id="tmTitulo">Aparência</b><span class="spacer"></span><button type="button" class="iconbtn" data-tm-fechar title="Fechar" aria-label="Fechar"><i data-lucide="x"></i></button></div>
-  <div class="tm-corpo">
+  const temDock = !!document.getElementById('dock'), temAj = !!window.IAAjustes && !location.hash.startsWith('#/ajustes');
+  ov.innerHTML = `<div class="asst-h"><span class="asst-logo" aria-hidden="true"></span><b class="brand asst-nome" id="tmTitulo">${temAj ? 'Seu espaço' : 'Aparência'}</b><span class="spacer"></span><button type="button" class="iconbtn" data-tm-fechar title="Fechar" aria-label="Fechar"><i data-lucide="x"></i></button></div>
+  ${temAj ? '<div class="tm-abas" role="tablist"><button type="button" role="tab" data-tm-aba="ajustes"><i data-lucide="settings-2"></i> Ajustes</button><button type="button" role="tab" data-tm-aba="visual"><i data-lucide="palette"></i> Aparência</button></div>' : ''}
+  <div class="tm-corpo tm-aj" hidden></div>
+  <div class="tm-corpo tm-vis">
     ${temDock ? `<button type="button" class="tm-custom" data-pers-open data-pers-aqui><span class="tm-ic2"><i data-lucide="layout-dashboard"></i></span><span class="tm-custom-tx"><b>Personalizar o site</b><small>Mova, pinte e esconda os blocos vendo o site</small></span></button>` : ''}
     <button type="button" class="tm-custom" data-tm-tudo><span class="tm-ic2"><i data-lucide="rotate-ccw"></i></span><span class="tm-custom-tx"><b>Voltar ao padrão</b><small>Restaura as cores e a organização originais</small></span></button>
     <button type="button" class="tm-custom" data-tm-toggle><span class="tm-custom-ic"><i data-lucide="palette"></i></span><span class="tm-custom-tx"><b>Criar a sua paleta</b><small>Escolha as cores no círculo cromático</small></span></button>
@@ -67,7 +80,8 @@ function abrir() {
   ov.addEventListener('input', digitou);
   document.addEventListener('keydown', esc);
   marcarCards(); pintarEditor(); montarSaves(ov); montarLayout();
-  (ov.querySelector('.tm-card.on') || ov.querySelector('.tm-card'))?.focus();
+  aba(temAj && qual === 'ajustes' ? 'ajustes' : 'visual');
+  (ov.querySelector('.tm-abas .on') || ov.querySelector('[data-tm-fechar]'))?.focus({ preventScroll: true });
 }
 
 function abrirEditor() {
@@ -134,6 +148,8 @@ function fechar() {
 function esc(e) { if (e.key === 'Escape') { if (ov2) fecharEditor(); else fechar(); } }
 function clique(e) {
   if (e.target.closest('[data-tm-fechar]')) return fechar();
+  const ab = e.target.closest('[data-tm-aba]'); if (ab) return aba(ab.dataset.tmAba);
+  if (e.target.closest('.tm-aj a[href^="#"]')) return fechar();
   const card = e.target.closest('[data-tid]');
   if (card) { T.usarPreset(card.dataset.tid); cores = { ...T.coresAtuais() }; marcarCards(); pintarEditor(); aviso(); return; }
   if (e.target.closest('[data-tm-tudo]')) {

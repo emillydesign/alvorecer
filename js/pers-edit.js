@@ -162,6 +162,7 @@ function acaoBloco(a, el, b) {
   const id = idDe(el);
   if (a === 'cor') return abrirCor(el, b);
   if (a === 'pai') { const x = pai(el); return x && selecionar(x); }
+  if (a === 'some' && id === 'dock:cores') return dica('Este botão abre os Ajustes e a Aparência, por isso fica sempre visível.');
   if (a === 'some') { if (!P.oculto(P.ler(), el) && seguro(el)) return dica('Este item tem um aviso de segurança ou saúde, por isso fica sempre visível.'); return mudar(p => P.alternar(p, el)); }
   if (a === 'sobe' || a === 'desce') {
     const l = P.grupo(el)?.els || [], i = l.indexOf(el), alvo = l[a === 'sobe' ? i - 1 : i + 1];
