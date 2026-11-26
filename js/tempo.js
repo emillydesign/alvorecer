@@ -43,7 +43,8 @@ function perguntas() {
     const parcial = /^Até 4/.test(resp.horas);
     try {
       const mem = await memoria();
-      const r = await X.AI.gen({ prompt: `${ETICA}${mem}
+      const r = await X.AI.gen({ prompt: `${ETICA}
+${X.AI.UTIL || ''}${mem}
 Respostas da pessoa: ${JSON.stringify(resp)}
 Monte um caminho realista para ela conseguir um trabalho melhor, com mais tempo livre e boa qualidade de vida. ${resp.semArea ? 'Ela não tem área definida: recomende 4 a 6 áreas que costumam pagar bem e combinar com o que ela contou, explicando por quê.' : 'Foque na área que ela escolheu.'} ${parcial ? 'Ela quer meio período ou menos: explique como funciona o trabalho freelancer (como começar, onde oferecer serviços de graça, como montar portfólio, precificar sem se desvalorizar, e divulgar o próprio trabalho em redes sociais), além de MEI.' : 'Se fizer sentido, cite também o freelancer como complemento.'} Considere o horário e o local que ela quer (home office, híbrido, presencial). Inclua um plano de 30/60/90 dias com passos pequenos, e como usar os cursos do IAlvorecer (currículo, entrevistas, portfólio, negociação, comunicação) e a mentoria de carreira.
 Responda só JSON: {"resumo":"2 a 3 frases acolhedoras","caminhos":[{"titulo":"...","texto":"markdown curto","passos":["..."]}],"freelancer":"markdown sobre freelancer (ou vazio se não se aplica)","plano_90":[{"quando":"Primeiros 30 dias","passos":["..."]}],"tempo_livre":"dicas para ganhar tempo no dia a dia, incluindo transporte","aviso":"uma frase honesta lembrando que valores e vagas variam"}` , temperature: 0.4 });

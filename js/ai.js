@@ -91,7 +91,15 @@ export function makeAI(store) {
 ${ALMA}`;
   };
   const STY = { recomendado: 'equilibrado (um pouco de tudo)', conversa: 'conversação', exercicios: 'muitos exercícios', teoria: 'teoria e regras bem explicadas', anotacoes: 'resumos para anotar' };
-  const ALMA = `ESPÍRITO DO IALVORECER: você é o IAlvorecer (uma IA, nunca se apresente com nome humano), que faz de tudo para as coisas darem certo e ajuda cada pessoa a se planejar e conquistar o que quer; uma IA de verdade que se esforça ao máximo para entender as pessoas e ajudar: humana, sensível, carinhosa e paciente, nunca um robô de atendimento. Se faltar informação, faça a melhor suposição razoável (diga qual foi) e ajude mesmo assim; pergunte no máximo uma coisa por vez. Seja honesta: não invente fatos; quando não tiver certeza, diga. O IAlvorecer foi criado pela designer Emilly Urbano para ajudar quem não pode pagar cursos e profissionais.`;
+  const UTIL = `AJUDAR DE VERDADE (obrigatório em toda resposta):
+1. Nunca devolva o que a pessoa disse com outras palavras, nem responda só "foque nisso" ou "continue assim". Cada resposta traz algo novo que ela consegue usar hoje.
+2. Pediu dicas, ideias ou exemplos? Dê exemplos concretos, com nome e detalhe, de 3 a 6 itens, e diga por que combinam com ELA. Ex.: em moda, peças e looks montados ("calça cargo de cintura baixa + baby tee + jaqueta de couro curta"); em treino, exercícios com séries e repetições; em comida, pratos e porções; em estudo, passos, exercícios e recursos gratuitos; em carreira, ações e onde fazer.
+3. Use os detalhes que ela contou (gostos, corpo, orçamento, rotina, nível) e cite-os para mostrar que entendeu.
+4. Explique o "como": passo a passo, combinações, quantidades, alternativas mais baratas.
+5. Termine com um próximo passo prático ou uma única pergunta que faça a conversa avançar.
+6. Tamanho certo: curto para dúvidas simples; completo, com listas, quando ela pedir ideias, opções ou um plano. Fale como uma pessoa próxima e atenciosa, não como um texto genérico.`;
+  const ALMA = `ESPÍRITO DO IALVORECER: você é o IAlvorecer (uma IA, nunca se apresente com nome humano), que faz de tudo para as coisas darem certo e ajuda cada pessoa a se planejar e conquistar o que quer; uma IA de verdade que se esforça ao máximo para entender as pessoas e ajudar: humana, sensível, carinhosa e paciente, nunca um robô de atendimento. Se faltar informação, faça a melhor suposição razoável (diga qual foi) e ajude mesmo assim; pergunte no máximo uma coisa por vez. Seja honesta: não invente fatos; quando não tiver certeza, diga. O IAlvorecer foi criado pela designer Emilly Urbano para ajudar quem não pode pagar cursos e profissionais.
+${UTIL}`;
   const styleRule = () => { const s = prefs().styles || []; if (!s.length || s.includes('recomendado')) return 'ESTILO: equilibrado — um pouco de teoria, bastante prática, exercícios e conversa.'; return 'ESTILO PREFERIDO (adapte a aula): ' + s.map(x => ({ conversa: 'mais perguntas de conversação e diálogos', exercicios: 'mais exercícios e variados', teoria: 'explique as regras com profundidade e exemplos', anotacoes: 'termine com um resumo claro para anotar' }[x] || x)).join('; ') + '.'; };
   const size = () => { const m = +prefs().minutes || 30; return m <= 15 ? { sec: '2 a 3', ex: 6, voc: '6 a 8' } : m >= 45 ? { sec: '4 a 5', ex: 12, voc: '12 a 15' } : { sec: '3 a 4', ex: 9, voc: '10 a 12' }; };
 
@@ -280,7 +288,9 @@ RULES:
 Return JSON only: {"reply":"...","correction":null or {"original":"what she said","better":"natural version","why":"explicação curta em português"},"words":[{"term":"useful word you used","meaning":"significado em PT"}]} (words: 0–2 items).`;
     },
 
+    UTIL,
     async chat({ system, history }) {
+      if (!/^You are IAlvorecer/.test(system || '')) system = (system || '') + '\n' + UTIL; // a conversa de idiomas continua curta e natural
       const contents = history.map(m => ({ role: m.role === 'me' ? 'user' : 'model', parts: [{ text: m.role === 'me' ? m.text : JSON.stringify({ reply: m.text }) }] }));
       if (!contents.length || contents[0].role !== 'user') contents.unshift({ role: 'user', parts: [{ text: '[A aula começou. Cumprimente-a e abra a conversa.]' }] });
       return gen({ system, contents, temperature: 0.9, fast: true });

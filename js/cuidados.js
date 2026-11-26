@@ -73,7 +73,7 @@ const AREAS = {
   estilo: {
     icon: 'shirt', nome: 'Estilo e moda', g: ['#fdba74', '#ec4899'], lazer: true,
     sub: 'Descubra ou mude seu estilo, entenda seu tipo de corpo e aprenda a combinar roupas com conceitos de moda.',
-    foco: 'estilo pessoal e moda: identificar o estilo da pessoa a partir das peças que ela gosta (casual, clássico, minimalista, esportivo, romântico, criativo, street etc.), conceitos profissionais de moda (teoria das cores, cartela de cores, proporções, silhueta, caimento, tecidos, guarda-roupa cápsula, peças-chave, combinação de estampas), tipos de corpo (ampulheta, triângulo, triângulo invertido, retângulo, oval) com a ressalva de que são apenas referências e todo corpo é válido, e como combinar roupas para ocasiões diferentes gastando pouco (brechó, reaproveitar, trocar). Sem padrões de beleza rígidos nem comentários negativos sobre o corpo',
+    foco: 'estilo pessoal e moda: identificar o estilo da pessoa a partir das peças que ela gosta (casual, clássico, minimalista, esportivo, romântico, criativo, street etc.), conceitos profissionais de moda (teoria das cores, cartela de cores, proporções, silhueta, caimento, tecidos, guarda-roupa cápsula, peças-chave, combinação de estampas), tipos de corpo (ampulheta, triângulo, triângulo invertido, retângulo, oval) com a ressalva de que são apenas referências e todo corpo é válido, e como combinar roupas para ocasiões diferentes gastando pouco (brechó, reaproveitar, trocar). Sem padrões de beleza rígidos nem comentários negativos sobre o corpo. Seja MUITO concreto: para cada estilo que a pessoa citar (ex.: anos 2000, roqueiro com jaqueta de couro, minimalista), sugira peças específicas (modelos de calça, blusa, saia, jaqueta, calçado e acessório), cores e tecidos, de 3 a 5 looks montados peça por peça, como adaptar ao tipo de corpo e à ocasião, e onde achar barato (brechó, bazar, customização). Nunca responda só que ela deve focar no estilo que já disse',
     perguntas: [
       { id: 'objetivo', t: 'one', l: 'O que você quer?', o: ['Descobrir meu estilo', 'Mudar meu estilo', 'Montar looks com o que já tenho', 'Montar um guarda-roupa enxuto'] },
       { id: 'pecas', t: 'many', l: 'Peças que você já gosta de usar', o: ['Jeans', 'Alfaiataria', 'Camisetas básicas', 'Vestidos', 'Saias', 'Moletom', 'Camisa social', 'Roupas esportivas', 'Peças estampadas', 'Peças de tricô', 'Jaquetas', 'Acessórios marcantes'] },
@@ -164,7 +164,8 @@ function perguntas(id, el) {
     try {
       const mem = await memoria();
       const parts = [{ text: `${ETICA}${mem}\nÁrea: ${a.nome}. Assunto: ${a.foco}\nRespostas da pessoa: ${JSON.stringify(resp)}${img ? '\nHá uma foto anexada: descreva só o que é visível, sem diagnosticar, e adapte as dicas.' : ''}
-Monte um guia personalizado, realista e sem terrorismo. ${a.lazer ? 'Esta área não é de saúde: deixe "estudos" como lista vazia e não use colchetes duplos.' : 'Se algum termo tiver base científica, escreva-o no texto entre colchetes duplos, como [[ácido salicílico]], e liste o mesmo termo em "estudos".'}
+Monte um guia personalizado, realista e sem terrorismo. Use as respostas dela para ser específico: cada seção precisa de exemplos concretos (produtos por tipo, peças, looks, passos, horários), não só conceitos.
+${X.AI.UTIL || ''} ${a.lazer ? 'Esta área não é de saúde: deixe "estudos" como lista vazia e não use colchetes duplos.' : 'Se algum termo tiver base científica, escreva-o no texto entre colchetes duplos, como [[ácido salicílico]], e liste o mesmo termo em "estudos".'}
 Responda só JSON: {"resumo":"2 a 3 frases acolhedoras","secoes":[{"titulo":"...","texto":"markdown curto com passos e dicas","passos":["..."]}],"quando_procurar_profissional":"quando e por que procurar ajuda profissional","estudos":[{"termo":"mesmo termo usado em [[ ]]","busca":"consulta curta em inglês para o PubMed","mostra":"uma frase honesta sobre o que a literatura em geral indica, sem números inventados"}]}
 Regras de "estudos": NUNCA invente título, autor, ano ou link; só termos de busca reais. ${a.lazer ? '' : 'De 4 a 8 itens.'}` }];
       if (img) parts.push({ inlineData: { mimeType: 'image/jpeg', data: img } });
@@ -214,7 +215,7 @@ function conversa(id, el) {
     busy = true; txt.value = ''; d.hist.push({ role: 'me', text: t }); add('me', t);
     try {
       const mem = await memoria();
-      const r = await X.AI.chat({ system: `${ETICA}${mem}\nÁrea: ${a.nome}. Assunto: ${a.foco}\nPerfil da pessoa: ${JSON.stringify(d.resp)}\nResponda curto (2 a 6 frases) e humano. Responda JSON: {"reply":"..."}`, history: d.hist.slice(-20) });
+      const r = await X.AI.chat({ system: `${ETICA}${mem}\nÁrea: ${a.nome}. Assunto: ${a.foco}\nPerfil da pessoa: ${JSON.stringify(d.resp)}\nResponda como uma pessoa especialista e próxima: dúvida simples, resposta curta; pedido de ideias, exemplos ou looks, resposta completa em markdown com listas e itens concretos. Responda JSON: {"reply":"..."}`, history: d.hist.slice(-20) });
       const rp = r.reply || '…'; d.hist.push({ role: 'ai', text: rp }); add('ai', rp); d.hist = d.hist.slice(-40); save();
     } catch (err) { add('ai', 'Não consegui responder agora: ' + err.message); }
     busy = false;
