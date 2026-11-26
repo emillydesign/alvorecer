@@ -51,10 +51,11 @@ const AREAS = {
   },
   higiene: {
     icon: 'droplets', nome: 'Higiene e cheiro', g: ['#7dd3fc', '#4f46e5'],
-    sub: 'Higiene básica, mau hálito, suor e cheiro nas axilas, e como fazer o perfume durar mais.',
-    foco: 'higiene e cheiro: banho, mau hálito (causas comuns, higiene da língua e fio dental, quando procurar dentista), suor e cheiro nas axilas (cecê) com desodorante x antitranspirante e hábitos, cuidado com pés, como fazer o perfume durar mais (onde aplicar, hidratação da pele, armazenamento), diferença entre perfume, eau de parfum, eau de toilette, colônia e body splash, e a importância de hidratante e protetor solar para a pele. Seja prática, sem constranger.',
+    sub: 'Higiene do corpo todo: banho, íntima masculina e feminina, boca, axilas, pés e cheiro, e como fazer o perfume durar.',
+    foco: 'higiene e cheiro, de forma educativa, respeitosa e sem constranger: higiene íntima masculina (lavar pênis e saco todo dia, retrair o prepúcio com cuidado se for possível, sem forçar, para limpar a glande, secar bem) e feminina (lavar só a parte de fora, a vulva, com água e sabonete suave, sem duchas internas, de frente para trás, secar bem, troca de absorventes), roupa íntima de algodão, quando procurar a UBS (cheiro forte e diferente, coceira, ardor, feridas, corrimento ou secreção diferente), banho, mau hálito (causas comuns, higiene da língua e fio dental, quando procurar dentista), suor e cheiro nas axilas (cecê) com desodorante x antitranspirante e hábitos, cuidado com pés, como fazer o perfume durar mais (onde aplicar, hidratação da pele, armazenamento), diferença entre perfume, eau de parfum, eau de toilette, colônia e body splash, e a importância de hidratante e protetor solar para a pele. Seja prática, sem constranger.',
     perguntas: [
-      { id: 'foco', t: 'many', l: 'O que você quer melhorar?', o: ['Mau hálito', 'Suor e cheiro nas axilas', 'Cheiro nos pés', 'Fazer o perfume durar', 'Escolher entre perfume e body splash', 'Higiene básica do dia a dia', 'Hidratante e protetor solar'] },
+      { id: 'foco', t: 'many', l: 'O que você quer melhorar?', o: ['Higiene íntima', 'Mau hálito', 'Suor e cheiro nas axilas', 'Cheiro nos pés', 'Cheiro forte no corpo', 'Fazer o perfume durar', 'Escolher entre perfume e body splash', 'Higiene básica do dia a dia', 'Hidratante e protetor solar'] },
+      { id: 'corpo', t: 'one', l: 'Para qual corpo são as dicas de higiene íntima?', o: ['Masculino', 'Feminino', 'Os dois', 'Prefiro não dizer'] },
       { id: 'banho', t: 'one', l: 'Sua rotina de higiene hoje', o: ['Bem completa', 'Básica', 'Preciso de ajuda para organizar'] }
     ]
   },
@@ -110,12 +111,27 @@ export async function cuidados(sub) {
   <div class="grid g3">${Object.entries(AREAS).map(([id, a]) => `<a class="area pat-rings" href="#/cuidados/${id}" style="background:linear-gradient(150deg,${a.g[0]},${a.g[1]})"><div><span class="aic"><i data-lucide="${a.icon}"></i></span><h3>${esc(a.nome)}</h3><p>${esc(a.sub)}</p></div><span class="btn btn-pink btn-sm" style="align-self:flex-start;margin-top:18px">Abrir</span></a>`).join('')}</div>`;
 }
 
+// Higiene: guia fixo (não gasta IA), sempre visível na área, com atalhos para pele e água
+const HIG = [
+  ['shower-head', 'Banho e corpo', ['Banho todo dia, ou mais vezes no calor e depois de suar muito.', 'Ensaboe bem axilas, virilha, atrás das orelhas, pescoço, umbigo e entre os dedos dos pés.', 'Seque bem as dobras e os pés: a umidade favorece fungos e cheiro.', 'Toalha seca e só sua; troque ou lave pelo menos uma vez por semana.']],
+  ['flower-2', 'Íntima feminina', ['Lave só a parte de fora (a vulva), com água e sabonete suave ou neutro. A vagina se limpa sozinha: nada de duchas internas.', 'Limpe e lave sempre de frente para trás.', 'Prefira calcinha de algodão e durma sem ela quando puder.', 'Absorvente externo: troque a cada 4 a 6 horas. Interno: siga o tempo da embalagem, nunca mais de 8 horas.', 'Corrimento claro e sem cheiro forte é normal.']],
+  ['user-round', 'Íntima masculina', ['Lave pênis e saco todo dia com água e sabonete suave.', 'Se o prepúcio (a pele da ponta) voltar com facilidade, puxe para trás com cuidado, lave a glande e a dobra, e depois devolva a pele. Nunca force.', 'Seque bem e prefira cueca de algodão.', 'Depois do sexo e de treinar, vale lavar de novo.']],
+  ['smile', 'Boca e hálito', ['Escove os dentes pelo menos 2 vezes por dia, com creme dental com flúor.', 'Passe fio dental todo dia e limpe a língua de trás para frente.', 'Troque a escova a cada 3 meses ou quando as cerdas abrirem.', 'Mau hálito que não passa merece dentista (a UBS também atende).']],
+  ['wind', 'Axilas, pés e roupas', ['Desodorante trata o cheiro; antitranspirante diminui o suor. Passe com a pele seca.', 'Alterne os calçados para secarem e use meias limpas todo dia.', 'Roupas de algodão respiram melhor que as sintéticas.', 'Nunca guarde roupa úmida: o cheiro fica.']],
+  ['hand', 'Mãos e unhas', ['Lave as mãos com sabão por uns 20 segundos: antes de comer, depois do banheiro e ao chegar em casa.', 'Unhas curtas e limpas juntam menos sujeira.']]
+];
+const HIGIENE = `<section class="hg"><div class="hg-cab"><div><div class="eyebrow">Guia rápido</div><h2>Higiene em todos os sentidos</h2></div><p class="muted">O básico para se sentir bem e limpo(a). Logo abaixo, responda as perguntas para um guia só seu.</p></div>
+  <div class="hg-grid">${HIG.map(([ic, t, l]) => `<article class="hg-card"><h3><i data-lucide="${ic}"></i>${t}</h3><ul>${l.map(x => `<li>${x}</li>`).join('')}</ul></article>`).join('')}</div>
+  <article class="hg-card hg-alerta"><h3><i data-lucide="stethoscope"></i>Quando procurar a UBS</h3><p>Cheiro forte e diferente na região íntima, coceira, ardor ao fazer xixi, feridas, bolinhas, corrimento ou secreção diferente do normal, dor, ou um cheiro forte no corpo que apareceu de repente. Não é falta de higiene: pode ser uma infecção que tem tratamento, de graça, no SUS.</p></article>
+  <div class="hg-links"><a class="cp-card" href="#/cuidados/pele"><span class="cp-ic"><i data-lucide="sparkles"></i></span><span class="cp-t"><b>Limpeza do rosto e da pele</b><small>Como lavar o rosto, hidratar e proteger do sol</small></span><span class="cp-go">Abrir</span></a>
+  <a class="cp-card" href="#/cuidar/alimentacao/agua"><span class="cp-ic"><i data-lucide="droplets"></i></span><span class="cp-t"><b>Água e cheiro do corpo</b><small>Pouca água deixa o xixi e o suor com cheiro mais forte</small></span><span class="cp-go">Abrir</span></a></div></section>`;
+
 // ---------- área ----------
 function area(id, tab = 'guia') {
   const a = AREAS[id], d = A(id);
   const tabs = d.guia ? [['guia', 'Seu guia'], ...(a.lazer ? [] : [['estudos', 'Pesquisas científicas']]), ['chat', 'Conversar'], ...(temCompras(id) ? [['compras', 'Comprar bem']] : []), ['perfil', 'Refazer perguntas']] : temCompras(id) ? [['perfil', 'Montar meu guia'], ['compras', 'Comprar bem']] : [];
   if (!d.guia && tab === 'guia') tab = 'perfil';
-  X.app.innerHTML = head('Cuidados', esc(a.nome), esc(a.sub)) + (a.lazer ? AVISO_LAZER : AVISO) +
+  X.app.innerHTML = head('Cuidados', esc(a.nome), esc(a.sub)) + (a.lazer ? AVISO_LAZER : AVISO) + (id === 'higiene' && (tab === 'guia' || tab === 'perfil') ? HIGIENE : '') +
     (tabs.length ? `<div class="tabs">${tabs.map(([k, l]) => `<button data-tab="${k}" class="${k === tab ? 'on' : ''}">${l}</button>`).join('')}</div>` : '') + '<div id="ct"></div>';
   $$('[data-tab]').forEach(b => b.onclick = () => area(id, b.dataset.tab));
   const el = $('#ct');

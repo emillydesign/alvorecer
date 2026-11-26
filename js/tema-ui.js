@@ -60,10 +60,10 @@ function abrir(qual) {
   slot = 'a';
   const cards = T.ORDEM.map(id => `<button type="button" class="tm-card" data-tid="${id}" aria-pressed="false"><img src="img/temas/${id}.webp" alt="" width="84" height="84" loading="lazy"><span class="tm-nome">${T.nome(id)}</span>${id === 'morning' ? '<small>padrão</small>' : ''}<i class="tm-ok" data-lucide="check"></i></button>`).join('');
   ov = document.createElement('div');
-  ov.className = 'asst tm-pn'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-labelledby', 'tmTitulo');
+  ov.className = 'asst tm-pn'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', 'Ajustes e aparência');
   const temDock = !!document.getElementById('dock'), temAj = !!window.IAAjustes && !location.hash.startsWith('#/ajustes');
-  ov.innerHTML = `<div class="asst-h"><span class="asst-logo" aria-hidden="true"></span><b class="brand asst-nome" id="tmTitulo">${temAj ? 'Seu espaço' : 'Aparência'}</b><span class="spacer"></span><button type="button" class="iconbtn" data-tm-fechar title="Fechar" aria-label="Fechar"><i data-lucide="x"></i></button></div>
-  ${temAj ? '<div class="tm-abas" role="tablist"><button type="button" role="tab" data-tm-aba="ajustes"><i data-lucide="settings-2"></i> Ajustes</button><button type="button" role="tab" data-tm-aba="visual"><i data-lucide="palette"></i> Aparência</button></div>' : ''}
+  const fecharBt = '<button type="button" class="iconbtn" data-tm-fechar title="Fechar" aria-label="Fechar"><i data-lucide="x"></i></button>';
+  ov.innerHTML = `<div class="asst-h">${temAj ? `<div class="tm-abas" role="tablist" aria-label="Ajustes e aparência"><button type="button" role="tab" data-tm-aba="ajustes"><i data-lucide="settings-2"></i> Ajustes</button><button type="button" role="tab" data-tm-aba="visual"><i data-lucide="palette"></i> Aparência</button></div>` : '<span class="asst-logo" aria-hidden="true"></span><b class="brand asst-nome" id="tmTitulo">Aparência</b><span class="spacer"></span>'}${fecharBt}</div>
   <div class="tm-corpo tm-aj" hidden></div>
   <div class="tm-corpo tm-vis">
     ${temDock ? `<button type="button" class="tm-custom" data-pers-open data-pers-aqui><span class="tm-ic2"><i data-lucide="layout-dashboard"></i></span><span class="tm-custom-tx"><b>Personalizar o site</b><small>Mova, pinte e esconda os blocos vendo o site</small></span></button>` : ''}

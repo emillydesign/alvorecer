@@ -13,7 +13,7 @@ const authStorage = {
 };
 import { makeAI, NoKeyError } from './ai.js?v=66';
 import { speak, stopSpeaking, pauseSpeaking, resumeSpeaking, onSpeechState, speechState, listen, canListen, canSpeak } from './speech.js?v=69';
-import { initSaude, cuidar, startAgua } from './saude.js?v=73';
+import { initSaude, cuidar, startAgua } from './saude.js?v=74';
 import { PIX_KEY, PIX_NOME, PIX_CIDADE, CONTATO, LIMITE_IA } from './config.js?v=63';
 
 let C, S, AI;
@@ -121,7 +121,7 @@ function addCards(list, key, source) {
 }
 
 // ---------- roteamento ----------
-const routes = { tempo: async () => { const m = await import('./tempo.js?v=2'); m.initTempo({ S, AI, app, toast }); return m.tempo(); }, agenda: async (t) => { const m = await import('./agenda.js?v=73'); m.initAgenda({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.agenda(t); }, 'boas-vindas': boasVindas, nivelamento, cronograma, mentoria, seu, cuidar: (s) => cuidar(s), cuidados: async (s) => { const m = await import('./cuidados.js?v=73'); m.initCuidados({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.cuidados(s); }, compras: async (id) => { const m = await import('./compras.js?v=1'); m.paginaCompras(app, id); }, sobre, apoiar, '': home, idiomas, cursos, trilha, curso, aula, conversa, memorizacao, revisao, teste, historico, ajustes, guia };
+const routes = { tempo: async () => { const m = await import('./tempo.js?v=2'); m.initTempo({ S, AI, app, toast }); return m.tempo(); }, agenda: async (t) => { const m = await import('./agenda.js?v=73'); m.initAgenda({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.agenda(t); }, 'boas-vindas': boasVindas, nivelamento, cronograma, mentoria, seu, cuidar: (s, t) => cuidar(s, t), cuidados: async (s) => { const m = await import('./cuidados.js?v=74'); m.initCuidados({ S, AI, app, toast, setCleanup: f => cleanup = f }); return m.cuidados(s); }, compras: async (id) => { const m = await import('./compras.js?v=1'); m.paginaCompras(app, id); }, sobre, apoiar, '': home, idiomas, cursos, trilha, curso, aula, conversa, memorizacao, revisao, teste, historico, ajustes, guia };
 let cleanup = null;
 let navTok = 0, navFeito = 0;
 async function router() {
@@ -897,8 +897,7 @@ async function ajustes(alvo) { // na página Ajustes ou dentro do painel do bot�
   const langOpts = sel => C.languages.map(l => `<option value="${l.id}" ${l.id === sel ? 'selected' : ''}>${l.name}</option>`).join('');
   const days = [[1, 'Seg'], [2, 'Ter'], [3, 'Qua'], [4, 'Qui'], [5, 'Sex'], [6, 'Sáb'], [0, 'Dom']].filter(([n]) => getStudyDays().days.includes(n) || (st.plan.secondDays || []).includes(n));
   raiz.innerHTML = `<div style="max-width:760px">
-  <div class="eyebrow">Ajustes</div><h1 style="margin:6px 0 22px">Seu curso, do seu jeito</h1>
-  ${S.isDemo ? '<div class="notice" style="margin-bottom:18px">Modo demonstração: nada é salvo.</div>' : ''}
+  ${raiz === app ? `<div class="eyebrow">Ajustes</div><h1 style="margin:6px 0 22px">Seu curso, do seu jeito</h1>${S.isDemo ? '<div class="notice" style="margin-bottom:18px">Modo demonstração: nada é salvo.</div>' : ''}` : ''}
   <div class="panel" style="margin-bottom:18px"><h3 style="margin-bottom:14px">Perfil</h3>
     <div class="grid g2"><div class="field"><label>Seu nome</label><input id="nm" value="${esc(st.profile.name)}"></div><div class="field"><label>Sua área profissional</label><input id="ar" value="${esc(st.profile.area)}"></div></div>
     <div class="field"><label>Idioma das aulas (Tecnologia, áreas de interesse e Seu Alvorecer) e do IAlvorecer</label><select id="cl">${[['pt', 'Português'], ['en', 'Inglês (English)'], ['es', 'Espanhol (Español)']].map(([v, l]) => `<option value="${v}" ${(st.profile.prefs?.contentLang || 'pt') === v ? 'selected' : ''}>${l}</option>`).join('')}</select><div class="help">Dá pra mudar só de um curso no topo da página dele (PT / EN / ES). Os cursos de idiomas seguem o seu nível.</div></div></div>
