@@ -67,13 +67,20 @@ function completarAgua(itens, p) {
 export async function agenda(tab = 'hoje') {
   const d = A();
   if (!d.perfil && !d.itens.length) return perguntas();
-  const abas = [['hoje', 'Hoje'], ['rotina', 'Minha rotina'], ['ajustar', 'Falar com o IAlvorecer'], ['ferias', 'Férias e folgas']];
+  const abas = [['hoje', 'Hoje'], ['adaptar', 'Adaptar minha rotina'], ['rotina', 'Minha rotina'], ['ajustar', 'Falar com o IAlvorecer'], ['ferias', 'Férias e folgas']];
   if (!abas.some(a => a[0] === tab)) tab = 'hoje';
   X.app.innerHTML = `<div class="eyebrow">Agenda</div><h1 style="margin:10px 0 18px">Sua rotina, do seu jeito</h1>
     <div class="tabs">${abas.map(([k, l]) => `<button data-tab="${k}" class="${k === tab ? 'on' : ''}">${l}</button>`).join('')}</div><div id="ag"></div>`;
   $$('[data-tab]').forEach(b => b.onclick = () => { location.hash = '#/agenda/' + b.dataset.tab; });
-  ({ hoje, rotina, ajustar, ferias })[tab]();
+  ({ hoje, rotina, ajustar, ferias, adaptar })[tab]();
 }
+
+// ---------- adaptar a rotina (js/rotina-ajuda.js, sem gastar IA) ----------
+function adaptar() {
+  import('./rotina-ajuda.js?v=2').then(M => { const el = $('#ag'); if (el) M.abrir(el, { S: X.S, toast: X.toast, salvar: save, voltar: () => { location.hash = '#/agenda/hoje'; } }); })
+    .catch(() => X.toast('Não consegui abrir agora. Tente de novo.'));
+}
+const convite = () => `<a class="ra-convite" href="#/agenda/adaptar"><span class="ra-ic"><i data-lucide="sparkles"></i></span><span><b>Adaptar minha rotina</b><small>Responda perguntas rápidas e receba horários para treino, água, pausas e sono, do seu jeito</small></span><span class="btn btn-pink btn-sm">Começar</span></a>`;
 
 // ---------- perguntas iniciais ----------
 function perguntas() {
@@ -109,7 +116,7 @@ function perguntas() {
     const p = { ocupacao: oc.value, inicio: $('#q-ini').value, fim: $('#q-fim').value, transporte: Math.max(0, Math.min(240, +$('#q-tr').value || 0)), transporteVolta: Math.max(0, Math.min(240, +$('#q-tv').value || 0)), acordar: h('ac'), almoco: h('al'), dormir: h('do'), higieneSono: $('#q-hs').checked };
     if (![p.acordar, p.almoco, p.dormir].every(x => x === '' || HORA.test(x)) || (p.ocupacao !== 'nenhum' && !(HORA.test(p.inicio) && HORA.test(p.fim)))) return X.toast('Confira os horários.');
     if (p.ocupacao !== 'nenhum' && min(p.fim) <= min(p.inicio)) return X.toast('O fim precisa ser depois do início.');
-    const d = A(); d.perfil = p; d.itens = gerarRotina(p); save(); location.hash = '#/agenda/hoje'; agenda('hoje');
+    const d = A(); d.perfil = p; d.itens = gerarRotina(p); save(); location.hash = '#/agenda/adaptar';
   };
 }
 function infoSono() {
@@ -130,7 +137,7 @@ function hoje() {
   const nFeitos = lista.filter(i => feitos[i.id]).length, prox = lista.find(i => !feitos[i.id] && i.hora >= agora);
   const ml = lista.filter(i => feitos[i.id]).reduce((s, i) => s + (i.ml || 0), 0), mlTotal = lista.reduce((s, i) => s + (i.ml || 0), 0);
   const parado = hojeNoFeriasOuFolga(d, t);
-  $('#ag').innerHTML = `<p class="muted" style="margin:0 0 14px">${esc(fmtDay(t))}${parado ? ' · hoje você está de folga ou férias, então trabalho e estudo ficam de fora' : ''}</p>
+  $('#ag').innerHTML = `${d.adaptar ? '' : convite()}<p class="muted" style="margin:0 0 14px">${esc(fmtDay(t))}${parado ? ' · hoje você está de folga ou férias, então trabalho e estudo ficam de fora' : ''}</p>
     <div class="panel" style="margin-bottom:18px"><div class="row"><b>${nFeitos} de ${lista.length} feitos</b><span class="spacer"></span>${mlTotal ? `<span class="small muted">Água: ${ml} de ${mlTotal} ml planejados · meta do dia ${(metaAgua() / 1000).toFixed(1)} L</span>` : ''}</div>
       <div style="height:8px;border-radius:99px;background:var(--line);margin-top:12px;overflow:hidden"><div style="height:100%;width:${lista.length ? Math.round(nFeitos / lista.length * 100) : 0}%;background:var(--mint)"></div></div></div>
     ${lista.length ? lista.map(i => `<label class="panel check" style="margin-bottom:10px;padding:14px 18px;gap:14px;${prox?.id === i.id ? 'outline:2px solid var(--mint)' : ''}">
@@ -164,7 +171,7 @@ function rotina() {
       <div class="field" style="margin:0"><label>Tipo</label><select id="n-tp">${Object.entries(TIPOS).map(([k, v]) => `<option value="${k}">${esc(v.n)}</option>`).join('')}</select></div></div>
       <div class="tabs" id="n-dias" style="margin:14px 0 0">${chips(UTEIS)}</div>
       <div class="row" style="margin-top:12px"><button class="btn btn-pink btn-sm" id="n-ok">Adicionar</button><span class="spacer"></span><button class="btn btn-ghost btn-sm" id="n-ref">Refazer perguntas iniciais</button></div></div>
-    ${itens.length ? itens.map(i => `<div class="panel" style="margin-bottom:10px;padding:14px 18px"><div class="row" style="gap:14px"><b style="min-width:56px">${esc(i.hora)}</b><span style="flex:1">${esc(i.titulo)}${i.ml ? ` <span class="small muted">· ${i.ml} ml</span>` : ''}<br><span class="small muted">${esc(TIPOS[i.tipo]?.n || 'Outro')} · ${i.dias.length === 7 ? 'todos os dias' : i.dias.map(n => DIAS[n]).join(', ')}</span></span><button class="btn btn-ghost btn-sm" data-del="${esc(i.id)}">Remover</button></div></div>`).join('') : '<div class="panel muted">Sua rotina está vazia.</div>'}`;
+    ${itens.length ? itens.map(i => `<div class="panel" style="margin-bottom:10px;padding:14px 18px"><div class="row" style="gap:14px"><b style="min-width:56px">${esc(i.hora)}</b><span style="flex:1">${esc(i.titulo)}${i.ml ? ` <span class="small muted">· ${i.ml} ml</span>` : ''}<br>${i.rec ? '<span class="ra-tag">recomendado</span> ' : ''}<span class="small muted">${esc(TIPOS[i.tipo]?.n || 'Outro')} · ${i.dias.length === 7 ? 'todos os dias' : i.dias.map(n => DIAS[n]).join(', ')}</span></span><button class="btn btn-ghost btn-sm" data-del="${esc(i.id)}">Remover</button></div></div>`).join('') : '<div class="panel muted">Sua rotina está vazia.</div>'}`;
   let dias = [...UTEIS];
   $$('#n-dias [data-dia]').forEach(b => b.onclick = () => { const n = +b.dataset.dia; dias = dias.includes(n) ? dias.filter(x => x !== n) : [...dias, n]; b.classList.toggle('on'); });
   $('#n-ok').onclick = () => {
